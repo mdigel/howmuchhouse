@@ -1,0 +1,143 @@
+Replit Prompt: Home Purchase Calculator Copilot
+
+Create a react app. 
+
+It will be both a calculator app for helping users figure out how much house they can afford. Also, there will be an AI chat bot that users can interact with. AI chat bot will have access to the users inputs into the calculator. 
+
+## Inputs
+
+The user will first enter “Basic inputs”:
+  householdIncome,
+  downPayment,
+  annualInterestRate,
+  loanTermYears,
+  state,
+  filingStatus,
+
+And then if they want “Advanced Inputs”:
+  hoaFees = 0, // Default HOA fees to $0
+  homeownersInsurance = 1915, // Default Homeowners Insurance to $1,915/year
+  pmiInput = null, // Optional PMI as input (annual), default to null
+  propertyTaxInput = null, // Optional property tax as input (annual dollar amount), default to null
+  pretaxContributions = 0,
+  dependents = 0
+
+
+## Outputs
+
+I have already created a javascript function that takes the above inputs and outputs object in the following formats. You do not need to write this function. 
+
+#Income Summary Object:
+{
+  grossIncome: 358000,
+  adjustedGrossIncome: 358000,
+  federalTax: 66072,
+  stateTax: 38485,
+  socialSecurityTax: 9932.4,
+  medicareTax: 5191,
+  additionalMedicareTax: 972,
+  totalTax: 120652.4,
+  childTaxCredit: 0,
+  netIncome: 237347.6
+}
+
+#Max Home Price Stats: 
+{
+{
+  description: 'Max Mortgage Scenario with as close to 50/30/20 budget as possible',
+  mortgagePaymentStats: {
+    purchasePrice: 1232666.5,
+    loanAmount: 1082666.5,
+    downpayment: 150000,
+    totalPayment: 8356.26,
+    mortgagePayment: 6754.43,
+    propertyTax: 1027.22,
+    pmi: 415.02,
+    homeownersInsurance: 159.58,
+    hoa: 0
+  },
+scenario: {
+    monthlyNetIncome: 19778.97,
+    mortgage: { mortgagePayment: 8353.33, mortgagePercentage: 0.42 },
+    wants: { amount: 5933.69, percentage: 0.3 },
+    remainingNeeds: { amount: 2966.84, percentage: 0.15 },
+    savings: { amount: 2525.1, percentage: 0.13 }
+  }
+}
+
+#Different Saving Scenario Stats:
+[
+  {
+    description: '20% Saving Scenario',
+    mortgagePaymentStats: {
+      purchasePrice: 908684.5,
+      loanAmount: 758684.5,
+      downpayment: 150000,
+      totalPayment: 5940.85,
+      mortgagePayment: 4733.2,
+      propertyTax: 757.24,
+      pmi: 290.83,
+      homeownersInsurance: 159.58,
+      hoa: 0
+    },
+    scenario: {
+      mortgage: { mortgagePayment: 5933.69, mortgagePercentage: 0.3 },
+      wants: { amount: 5933.69, percentage: 0.3 },
+      remainingNeeds: { amount: 3955.7933333333335, percentage: 0.2 },
+      savings: { amount: 3955.7933333333335, percentage: 0.2 }
+    }
+  },
+  {
+    description: '25% Saving Scenario',
+    mortgagePaymentStats: {
+      purchasePrice: 775237,
+      loanAmount: 625237,
+      downpayment: 150000,
+      totalPayment: 4945.95,
+      mortgagePayment: 3900.67,
+      propertyTax: 646.03,
+      pmi: 239.67,
+      homeownersInsurance: 159.58,
+      hoa: 0
+    },
+    scenario: {
+      mortgage: { mortgagePayment: 4944.74, mortgagePercentage: 0.25 },
+      wants: { amount: 5933.69, percentage: 0.3 },
+      remainingNeeds: { amount: 3955.7933333333335, percentage: 0.2 },
+      savings: { amount: 4944.741666666667, percentage: 0.25 }
+    }
+  },
+  {
+    description: '30% Saving Scenario',
+    mortgagePaymentStats: {
+      purchasePrice: 669789.5,
+      loanAmount: 519789.5,
+      downpayment: 150000,
+      totalPayment: 3960.55,
+      mortgagePayment: 3242.81,
+      propertyTax: 558.16,
+      pmi: 0,
+      homeownersInsurance: 159.58,
+      hoa: 0
+    },
+    scenario: {
+      mortgage: { mortgagePayment: 3955.79, mortgagePercentage: 0.2 },
+      wants: { amount: 5933.69, percentage: 0.3 },
+      remainingNeeds: { amount: 3955.7933333333335, percentage: 0.2 },
+      savings: { amount: 5933.69, percentage: 0.3 }
+    }
+  }
+]
+
+## User Experience
+Reference the Balsamiq design. Use the same style as stripe.com
+When the page loads, the user should see a page with the title of the website “HowMuchHouseCanIAfford.ai” and the “basic inputs”. 
+Once the user has entered in their basic inputs and pressed the “Calculate” button, display the output of the 4 different home price scenarios and the AI chat experience.
+
+
+## AI Chat Experience
+Only allow the user to ask 1 question to the AI before asking for them to pay $2.99 to “continue the conversation”. Collect payment via Stripe. 
+On the first question to the AI limit the character count to 3000 characters. Gracefully error handle with a warning to the user if they go over 1000 characters. 
+For follow up questions once the user has paid create some limit for AI usage so my app doesn’t make me go bankrupt. 
+
+
