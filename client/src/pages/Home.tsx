@@ -46,14 +46,21 @@ export default function Home() {
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
 
+      console.log('Sending calculation request with data:', { ...basicData, ...advancedData });
+
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...basicData, ...advancedData })
       });
       
-      if (!response.ok) throw new Error('Calculation failed');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Calculation failed: ${errorText}`);
+      }
+      
       const data = await response.json();
+      console.log('Received calculation results:', data);
       setResults(data);
     } catch (error) {
       console.error('Failed to calculate:', error);
