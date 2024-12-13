@@ -10,42 +10,113 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/calculate", async (req, res) => {
     try {
       // This would call your existing calculator function
-      // For now, we'll just echo back some mock data
+      const { householdIncome, downPayment } = req.body;
+      
+      // Mock calculation based on input
       const mockResults = {
         incomeSummary: {
-          grossIncome: 358000,
-          adjustedGrossIncome: 358000,
-          federalTax: 66072,
-          stateTax: 38485,
-          socialSecurityTax: 9932.4,
-          medicareTax: 5191,
-          additionalMedicareTax: 972,
-          totalTax: 120652.4,
+          grossIncome: Number(householdIncome),
+          adjustedGrossIncome: Number(householdIncome),
+          federalTax: Number(householdIncome) * 0.22,
+          stateTax: Number(householdIncome) * 0.08,
+          socialSecurityTax: Math.min(Number(householdIncome) * 0.062, 9932.4),
+          medicareTax: Number(householdIncome) * 0.0145,
+          additionalMedicareTax: Number(householdIncome) > 200000 ? (Number(householdIncome) - 200000) * 0.009 : 0,
           childTaxCredit: 0,
-          netIncome: 237347.6
+          get totalTax() {
+            return this.federalTax + this.stateTax + this.socialSecurityTax + 
+                   this.medicareTax + this.additionalMedicareTax - this.childTaxCredit;
+          },
+          get netIncome() {
+            return this.grossIncome - this.totalTax;
+          }
         },
         maxHomePrice: {
-          description: "Max Mortgage Scenario",
+          description: "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
           mortgagePaymentStats: {
-            purchasePrice: 1232666.5,
-            loanAmount: 1082666.5,
-            downpayment: 150000,
-            totalPayment: 8356.26,
-            mortgagePayment: 6754.43,
-            propertyTax: 1027.22,
-            pmi: 415.02,
+            purchasePrice: Number(householdIncome) * 3.5,
+            loanAmount: (Number(householdIncome) * 3.5) - Number(downPayment),
+            downpayment: Number(downPayment),
+            totalPayment: ((Number(householdIncome) * 3.5) * 0.06) / 12,
+            mortgagePayment: ((Number(householdIncome) * 3.5) * 0.048) / 12,
+            propertyTax: ((Number(householdIncome) * 3.5) * 0.01) / 12,
+            pmi: Number(downPayment) < (Number(householdIncome) * 3.5) * 0.2 ? 100 : 0,
             homeownersInsurance: 159.58,
             hoa: 0
           },
           scenario: {
-            monthlyNetIncome: 19778.97,
-            mortgage: { mortgagePayment: 8353.33, mortgagePercentage: 0.42 },
-            wants: { amount: 5933.69, percentage: 0.3 },
-            remainingNeeds: { amount: 2966.84, percentage: 0.15 },
-            savings: { amount: 2525.1, percentage: 0.13 }
+            monthlyNetIncome: (Number(householdIncome) - (Number(householdIncome) * 0.3)) / 12,
+            mortgage: { 
+              mortgagePayment: ((Number(householdIncome) * 3.5) * 0.06) / 12,
+              mortgagePercentage: 0.42 
+            },
+            wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
+            remainingNeeds: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 },
+            savings: { amount: (Number(householdIncome) * 0.13) / 12, percentage: 0.13 }
           }
         },
-        savingScenarios: [/* ... your saving scenarios ... */]
+        savingScenarios: [
+          {
+            description: "20% Saving Scenario",
+            mortgagePaymentStats: {
+              purchasePrice: Number(householdIncome) * 2.5,
+              loanAmount: (Number(householdIncome) * 2.5) - Number(downPayment),
+              downpayment: Number(downPayment),
+              totalPayment: ((Number(householdIncome) * 2.5) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 2.5) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 2.5) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 2.5) * 0.2 ? 75 : 0,
+              homeownersInsurance: 159.58,
+              hoa: 0
+            },
+            scenario: {
+              mortgage: { mortgagePayment: ((Number(householdIncome) * 2.5) * 0.06) / 12, mortgagePercentage: 0.3 },
+              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
+              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
+              savings: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 }
+            }
+          },
+          {
+            description: "25% Saving Scenario",
+            mortgagePaymentStats: {
+              purchasePrice: Number(householdIncome) * 2.2,
+              loanAmount: (Number(householdIncome) * 2.2) - Number(downPayment),
+              downpayment: Number(downPayment),
+              totalPayment: ((Number(householdIncome) * 2.2) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 2.2) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 2.2) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 2.2) * 0.2 ? 50 : 0,
+              homeownersInsurance: 159.58,
+              hoa: 0
+            },
+            scenario: {
+              mortgage: { mortgagePayment: ((Number(householdIncome) * 2.2) * 0.06) / 12, mortgagePercentage: 0.25 },
+              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
+              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
+              savings: { amount: (Number(householdIncome) * 0.25) / 12, percentage: 0.25 }
+            }
+          },
+          {
+            description: "30% Saving Scenario",
+            mortgagePaymentStats: {
+              purchasePrice: Number(householdIncome) * 1.9,
+              loanAmount: (Number(householdIncome) * 1.9) - Number(downPayment),
+              downpayment: Number(downPayment),
+              totalPayment: ((Number(householdIncome) * 1.9) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 1.9) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 1.9) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 1.9) * 0.2 ? 0 : 0,
+              homeownersInsurance: 159.58,
+              hoa: 0
+            },
+            scenario: {
+              mortgage: { mortgagePayment: ((Number(householdIncome) * 1.9) * 0.06) / 12, mortgagePercentage: 0.2 },
+              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
+              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
+              savings: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 }
+            }
+          }
+        ]
       };
 
       res.json(mockResults);
