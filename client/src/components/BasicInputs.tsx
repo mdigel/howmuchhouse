@@ -7,12 +7,25 @@ import { Input } from "@/components/ui/input";
 import type { BasicInputType } from "@/lib/calculatorTypes";
 
 const basicInputSchema = z.object({
-  householdIncome: z.string().transform(Number),
-  downPayment: z.string().transform(Number),
-  annualInterestRate: z.string().transform(Number),
-  loanTermYears: z.string().transform(Number),
-  state: z.string(),
-  filingStatus: z.string()
+  householdIncome: z.string()
+    .min(1, "Income is required")
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val > 0, "Please enter a valid income"),
+  downPayment: z.string()
+    .min(1, "Down payment is required")
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val >= 0, "Please enter a valid amount"),
+  annualInterestRate: z.string()
+    .min(1, "Interest rate is required")
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val > 0 && val < 100, "Please enter a valid interest rate between 0-100"),
+  loanTermYears: z.string()
+    .transform((val) => Number(val))
+    .default("30"),
+  state: z.string()
+    .min(1, "State is required"),
+  filingStatus: z.enum(["single", "married", "head"])
+    .default("single")
 });
 
 interface BasicInputsProps {
@@ -35,16 +48,22 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <h2 className="text-2xl font-semibold">Basic Inputs</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
           <FormField
             control={form.control}
             name="householdIncome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Household Income</FormLabel>
+                <FormLabel className="flex items-center gap-2">
+                  Household Income
+                  <span className="text-sm text-muted-foreground">(per year)</span>
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Annual income" {...field} />
+                  <Input 
+                    placeholder="Enter your annual income" 
+                    {...field}
+                    className="max-w-md"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -56,9 +75,16 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
             name="downPayment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Down Payment</FormLabel>
+                <FormLabel className="flex items-center gap-2">
+                  Down Payment
+                  <span className="text-sm text-muted-foreground">(available for down payment)</span>
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Down payment amount" {...field} />
+                  <Input 
+                    placeholder="Enter your down payment amount" 
+                    {...field}
+                    className="max-w-md"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -72,7 +98,11 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
               <FormItem>
                 <FormLabel>Interest Rate (%)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Annual interest rate" {...field} />
+                  <Input 
+                    placeholder="Current mortgage rate" 
+                    {...field}
+                    className="max-w-md"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -81,12 +111,16 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
 
           <FormField
             control={form.control}
-            name="loanTermYears"
+            name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Loan Term (Years)</FormLabel>
+                <FormLabel>State</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input 
+                    placeholder="Your state (e.g., CA)" 
+                    {...field}
+                    className="max-w-md"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -94,7 +128,12 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
           />
         </div>
 
-        <Button type="submit">Calculate</Button>
+        <Button 
+          type="submit" 
+          className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+        >
+          Calculate
+        </Button>
       </form>
     </Form>
   );
