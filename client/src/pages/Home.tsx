@@ -37,12 +37,18 @@ export default function Home() {
   });
 
   const handleCalculate = async () => {
-    const basicValid = await basicForm.trigger();
-    const advancedValid = await advancedForm.trigger();
-
-    if (!basicValid || !advancedValid) return;
-
     try {
+      const basicValid = await basicForm.trigger();
+      const advancedValid = await advancedForm.trigger();
+
+      console.log('Form validation results:', { basicValid, advancedValid });
+      console.log('Form errors:', basicForm.formState.errors, advancedForm.formState.errors);
+
+      if (!basicValid || !advancedValid) {
+        console.log('Form validation failed');
+        return;
+      }
+
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
 
@@ -51,11 +57,20 @@ export default function Home() {
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...basicData, ...advancedData })
+        body: JSON.stringify({ 
+          ...basicData,
+          ...advancedData,
+          // Ensure numbers are properly parsed
+          householdIncome: Number(basicData.householdIncome),
+          downPayment: Number(basicData.downPayment),
+          annualInterestRate: Number(basicData.annualInterestRate),
+          loanTermYears: Number(basicData.loanTermYears),
+        })
       });
       
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('API Error:', errorText);
         throw new Error(`Calculation failed: ${errorText}`);
       }
       
@@ -64,6 +79,7 @@ export default function Home() {
       setResults(data);
     } catch (error) {
       console.error('Failed to calculate:', error);
+      // You might want to show this error to the user with a toast notification
     }
   };
 

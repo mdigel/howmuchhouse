@@ -31,6 +31,7 @@ export const basicInputSchema = z.object({
     .length(2, "Please enter a valid 2-letter state code"),
   filingStatus: z.enum(["single", "married", "head"])
     .default("single")
+    .optional()
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
