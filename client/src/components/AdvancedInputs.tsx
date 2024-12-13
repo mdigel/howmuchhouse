@@ -17,35 +17,35 @@ export const advancedInputSchema = z.object({
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
-    .refine((val) => val >= 0, "Amount cannot be negative")
+    .refine((val) => val >= 0, "Please enter positive numbers only")
     .default("0"),
   homeownersInsurance: z.string()
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "1915" : val)
     .transform(Number)
-    .refine((val) => val >= 0, "Amount cannot be negative")
+    .refine((val) => val >= 0, "Please enter positive numbers only")
     .default("1915"),
   pmiInput: z.string()
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? null : Number(val))
-    .refine((val) => val === null || val >= 0, "Amount cannot be negative")
+    .refine((val) => val === null || val >= 0, "Please enter positive numbers only")
     .nullable(),
   propertyTaxInput: z.string()
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? null : Number(val))
-    .refine((val) => val === null || val >= 0, "Amount cannot be negative")
+    .refine((val) => val === null || val >= 0, "Please enter positive numbers only")
     .nullable(),
   pretaxContributions: z.string()
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
-    .refine((val) => val >= 0, "Amount cannot be negative")
+    .refine((val) => val >= 0, "Please enter positive numbers only")
     .default("0"),
   dependents: z.string()
     .regex(/^[0-9]+$/, "Please enter a whole number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
-    .refine((val) => val >= 0, "Amount cannot be negative")
+    .refine((val) => val >= 0, "Please enter positive numbers only")
     .default("0")
 });
 
@@ -112,6 +112,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             step="0.01"
                             placeholder="Annual PMI" 
                             {...field}
+                            value={field.value ?? ''}
                           />
                         </FormControl>
                         <FormMessage />
@@ -132,6 +133,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             step="0.01"
                             placeholder="Annual property tax" 
                             {...field}
+                            value={field.value ?? ''}
                           />
                         </FormControl>
                         <FormMessage />

@@ -11,13 +11,12 @@ export const basicInputSchema = z.object({
     .min(1, "Income is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => val >= 0, "Amount cannot be negative")
-    .refine((val) => val > 0, "Please enter a valid income amount"),
+    .refine((val) => val > 0, "Please enter positive numbers only"),
   downPayment: z.string()
     .min(1, "Down payment is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => val >= 0, "Amount cannot be negative"),
+    .refine((val) => val >= 0, "Please enter positive numbers only"),
   annualInterestRate: z.string()
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
