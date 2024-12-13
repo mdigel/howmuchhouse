@@ -27,12 +27,12 @@ export default function Home() {
   const advancedForm = useForm<AdvancedInputType>({
     resolver: zodResolver(advancedInputSchema),
     defaultValues: {
-      hoaFees: 0,
-      homeownersInsurance: 1915,
+      hoaFees: "0",
+      homeownersInsurance: "1915",
       pmiInput: null,
       propertyTaxInput: null,
-      pretaxContributions: 0,
-      dependents: 0
+      pretaxContributions: "0",
+      dependents: "0"
     }
   });
 

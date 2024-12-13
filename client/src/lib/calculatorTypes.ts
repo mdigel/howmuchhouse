@@ -8,12 +8,12 @@ export interface BasicInputType {
 }
 
 export interface AdvancedInputType {
-  hoaFees: number;
-  homeownersInsurance: number;
+  hoaFees: string;
+  homeownersInsurance: string;
   pmiInput: number | null;
   propertyTaxInput: number | null;
-  pretaxContributions: number;
-  dependents: number;
+  pretaxContributions: string;
+  dependents: string;
 }
 
 export interface IncomeSummary {
