@@ -21,7 +21,10 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <div className="grid md:grid-cols-3 gap-8">
+            <h2 className="text-2xl font-semibold mb-6">
+              {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)} Max Price You Can Afford
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
           {/* Transaction Section */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Transaction</h3>
@@ -84,7 +87,7 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Needs:</span>
+                <span className="text-muted-foreground">Remaining Needs:</span>
                 <div className="text-right">
                   <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.remainingNeeds.amount)}</span>
                   <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.remainingNeeds.percentage)}</span>
@@ -111,7 +114,9 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
 
       {results.savingScenarios.map((scenario, index) => (
         <Card key={index} className="p-6">
-          <h3 className="text-xl font-semibold mb-4">{scenario.description}</h3>
+          <h3 className="text-2xl font-semibold mb-6">
+            {formatCurrency(scenario.mortgagePaymentStats.purchasePrice)} and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
+          </h3>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Transaction Section */}
             <div>
