@@ -42,8 +42,8 @@ export interface MortgagePaymentStats {
 }
 
 export interface ScenarioBreakdown {
-  mortgagePayment: number;
-  mortgagePercentage: number;
+  amount: number;
+  percentage: number;
 }
 
 export interface Scenario {

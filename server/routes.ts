@@ -47,8 +47,8 @@ export function registerRoutes(app: Express): Server {
           scenario: {
             monthlyNetIncome: (Number(householdIncome) - (Number(householdIncome) * 0.3)) / 12,
             mortgage: { 
-              mortgagePayment: ((Number(householdIncome) * 3.5) * 0.06) / 12,
-              mortgagePercentage: 0.42 
+              amount: ((Number(householdIncome) * 3.5) * 0.06) / 12,
+              percentage: 0.42 
             },
             wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
             remainingNeeds: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 },
@@ -70,7 +70,7 @@ export function registerRoutes(app: Express): Server {
               hoa: 0
             },
             scenario: {
-              mortgage: { mortgagePayment: ((Number(householdIncome) * 2.5) * 0.06) / 12, mortgagePercentage: 0.3 },
+              mortgage: { amount: ((Number(householdIncome) * 2.5) * 0.06) / 12, percentage: 0.3 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
               remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
               savings: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 }
@@ -90,7 +90,7 @@ export function registerRoutes(app: Express): Server {
               hoa: 0
             },
             scenario: {
-              mortgage: { mortgagePayment: ((Number(householdIncome) * 2.2) * 0.06) / 12, mortgagePercentage: 0.25 },
+              mortgage: { amount: ((Number(householdIncome) * 2.2) * 0.06) / 12, percentage: 0.25 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
               remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
               savings: { amount: (Number(householdIncome) * 0.25) / 12, percentage: 0.25 }
@@ -110,7 +110,7 @@ export function registerRoutes(app: Express): Server {
               hoa: 0
             },
             scenario: {
-              mortgage: { mortgagePayment: ((Number(householdIncome) * 1.9) * 0.06) / 12, mortgagePercentage: 0.2 },
+              mortgage: { amount: ((Number(householdIncome) * 1.9) * 0.06) / 12, percentage: 0.2 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
               remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
               savings: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 }
