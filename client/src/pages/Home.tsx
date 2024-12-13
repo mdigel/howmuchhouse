@@ -77,6 +77,7 @@ export default function Home() {
       const data = await response.json();
       console.log('Received calculation results:', data);
       setResults(data);
+      console.log('Updated results state:', data);
     } catch (error) {
       console.error('Failed to calculate:', error);
       // You might want to show this error to the user with a toast notification
@@ -102,12 +103,12 @@ export default function Home() {
           </Button>
         </Card>
 
-        {results && (
-          <>
+        {results ? (
+          <div className="space-y-8">
             <AffordabilityResults results={results} />
             <AiChat calculatorData={results} />
-          </>
-        )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
