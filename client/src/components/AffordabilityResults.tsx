@@ -20,71 +20,89 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
 
   return (
     <div className="space-y-6">
-      <Accordion type="multiple" className="w-full">
-        <AccordionItem value="assumptions">
-          <AccordionTrigger className="text-lg font-semibold">
-            Assumptions
-          </AccordionTrigger>
-          <AccordionContent>
-            <Card className="p-4">
-              <div className="space-y-2">
-                <p>- Based on your income and current market conditions</p>
-                <p>- Using current mortgage rates and standard lending criteria</p>
-                <p>- Including estimated property taxes and insurance</p>
-                <p>- PMI included if down payment is less than 20%</p>
-              </div>
-            </Card>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-
       <Card className="p-6">
-        <h2 className="text-2xl font-semibold mb-4">Maximum Purchase Price: {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)}</h2>
-        <div className="grid gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Transaction Section */}
           <div>
-            <h3 className="text-lg font-medium mb-2">Monthly Payment Breakdown</h3>
-            <div className="grid gap-2">
-              <div className="flex justify-between">
-                <span>Mortgage Payment:</span>
-                <span>{formatCurrency(results.maxHomePrice.mortgagePaymentStats.mortgagePayment)}</span>
+            <h3 className="text-xl font-semibold mb-4">Transaction</h3>
+            <div className="space-y-2">
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Purchase Price:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Property Tax:</span>
-                <span>{formatCurrency(results.maxHomePrice.mortgagePaymentStats.propertyTax)}</span>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Loan Amount:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.loanAmount)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>PMI:</span>
-                <span>{formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Insurance:</span>
-                <span>{formatCurrency(results.maxHomePrice.mortgagePaymentStats.homeownersInsurance)}</span>
-              </div>
-              <div className="flex justify-between font-semibold border-t pt-2">
-                <span>Total Monthly Payment:</span>
-                <span>{formatCurrency(results.maxHomePrice.mortgagePaymentStats.totalPayment)}</span>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Downpayment:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.downpayment)}</span>
               </div>
             </div>
           </div>
 
+          {/* Mortgage Payment Section */}
           <div>
-            <h3 className="text-lg font-medium mb-2">Monthly Budget</h3>
-            <div className="grid gap-2">
-              <div className="flex justify-between">
-                <span>Housing ({formatPercentage(results.maxHomePrice.scenario.mortgage.mortgagePercentage)}):</span>
-                <span>{formatCurrency(results.maxHomePrice.scenario.mortgage.mortgagePayment)}</span>
+            <h3 className="text-xl font-semibold mb-4">Mortgage Payment</h3>
+            <div className="space-y-2">
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Total Monthly Payment:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.totalPayment)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Other Needs ({formatPercentage(results.maxHomePrice.scenario.remainingNeeds.percentage)}):</span>
-                <span>{formatCurrency(results.maxHomePrice.scenario.remainingNeeds.amount)}</span>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Mortgage:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.mortgagePayment)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Wants ({formatPercentage(results.maxHomePrice.scenario.wants.percentage)}):</span>
-                <span>{formatCurrency(results.maxHomePrice.scenario.wants.amount)}</span>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Property Tax:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.propertyTax)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Savings ({formatPercentage(results.maxHomePrice.scenario.savings.percentage)}):</span>
-                <span>{formatCurrency(results.maxHomePrice.scenario.savings.amount)}</span>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">PMI:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi)}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Home Owners Insurance:</span>
+                <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.homeownersInsurance)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Monthly Budget Section */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Monthly Budget:</h3>
+            <div className="space-y-2">
+              <div className="flex flex-col">
+                <span className="text-muted-foreground">Net Income:</span>
+                <span className="text-lg">{formatCurrency(results.incomeSummary.netIncome / 12)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Mortgage:</span>
+                <div className="text-right">
+                  <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.mortgage.amount)}</span>
+                  <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.mortgage.percentage)}</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Needs:</span>
+                <div className="text-right">
+                  <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.remainingNeeds.amount)}</span>
+                  <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.remainingNeeds.percentage)}</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Wants:</span>
+                <div className="text-right">
+                  <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.wants.amount)}</span>
+                  <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.wants.percentage)}</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Saving:</span>
+                <div className="text-right">
+                  <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.savings.amount)}</span>
+                  <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.savings.percentage)}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -93,33 +111,78 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
 
       {results.savingScenarios.map((scenario, index) => (
         <Card key={index} className="p-6">
-          <h3 className="text-xl font-semibold mb-4">
-            {scenario.description}: {formatCurrency(scenario.mortgagePaymentStats.purchasePrice)}
-          </h3>
-          <div className="grid gap-4">
+          <h3 className="text-xl font-semibold mb-4">{scenario.description}</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Transaction Section */}
             <div>
-              <h4 className="font-medium mb-2">Monthly Payment Breakdown</h4>
-              <div className="grid gap-2">
-                <div className="flex justify-between">
-                  <span>Mortgage Payment:</span>
-                  <span>{formatCurrency(scenario.mortgagePaymentStats.mortgagePayment)}</span>
+              <h4 className="text-lg font-medium mb-3">Transaction</h4>
+              <div className="space-y-2">
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Purchase Price:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.purchasePrice)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Total Monthly Payment:</span>
-                  <span>{formatCurrency(scenario.mortgagePaymentStats.totalPayment)}</span>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Loan Amount:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.loanAmount)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Downpayment:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.downpayment)}</span>
                 </div>
               </div>
             </div>
+
+            {/* Mortgage Payment Section */}
             <div>
-              <h4 className="font-medium mb-2">Monthly Budget</h4>
-              <div className="grid gap-2">
-                <div className="flex justify-between">
-                  <span>Housing ({formatPercentage(scenario.scenario.mortgage.mortgagePercentage)}):</span>
-                  <span>{formatCurrency(scenario.scenario.mortgage.mortgagePayment)}</span>
+              <h4 className="text-lg font-medium mb-3">Mortgage Payment</h4>
+              <div className="space-y-2">
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Total Monthly Payment:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.totalPayment)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Savings ({formatPercentage(scenario.scenario.savings.percentage)}):</span>
-                  <span>{formatCurrency(scenario.scenario.savings.amount)}</span>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Mortgage:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.mortgagePayment)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Property Tax:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.propertyTax)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">PMI:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.pmi)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Home Owners Insurance:</span>
+                  <span className="text-lg">{formatCurrency(scenario.mortgagePaymentStats.homeownersInsurance)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Monthly Budget Section */}
+            <div>
+              <h4 className="text-lg font-medium mb-3">Monthly Budget</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Mortgage:</span>
+                  <div className="text-right">
+                    <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>
+                    <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.mortgage.percentage)}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Wants:</span>
+                  <div className="text-right">
+                    <span className="text-lg">{formatCurrency(scenario.scenario.wants.amount)}</span>
+                    <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.wants.percentage)}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Saving:</span>
+                  <div className="text-right">
+                    <span className="text-lg">{formatCurrency(scenario.scenario.savings.amount)}</span>
+                    <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.savings.percentage)}</span>
+                  </div>
                 </div>
               </div>
             </div>
