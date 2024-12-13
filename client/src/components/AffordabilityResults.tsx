@@ -168,11 +168,22 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
             <div>
               <h4 className="text-lg font-medium mb-3">Monthly Budget</h4>
               <div className="space-y-2">
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">Net Income:</span>
+                  <span className="text-lg">{formatCurrency(results.incomeSummary.netIncome / 12)}</span>
+                </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Mortgage:</span>
                   <div className="text-right">
                     <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>
                     <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.mortgage.percentage)}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Remaining Needs:</span>
+                  <div className="text-right">
+                    <span className="text-lg">{formatCurrency(scenario.scenario.remainingNeeds.amount)}</span>
+                    <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.remainingNeeds.percentage)}</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
