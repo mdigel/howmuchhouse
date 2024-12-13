@@ -11,6 +11,7 @@ import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
   
   const basicForm = useForm<BasicInputType>({
     resolver: zodResolver(basicInputSchema),
@@ -37,6 +38,7 @@ export default function Home() {
   });
 
   const handleCalculate = async () => {
+    setIsCalculating(true);
     try {
       const basicValid = await basicForm.trigger();
       const advancedValid = await advancedForm.trigger();
@@ -81,34 +83,55 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to calculate:', error);
       // You might want to show this error to the user with a toast notification
+    } finally {
+      setIsCalculating(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">HowMuchHouseCanIAfford.ai</h1>
-          <p className="text-muted-foreground">The smartest AI for the biggest purchase of your life</p>
-        </div>
+      <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
+        <div>
+          <div className="text-center lg:text-left space-y-4 mb-8">
+            <h1 className="text-4xl font-bold">HowMuchHouseCanIAfford.ai</h1>
+            <p className="text-muted-foreground">The smartest AI for the biggest purchase of your life</p>
+          </div>
 
-        <Card className="p-6 space-y-6">
+          <Card className="p-6 space-y-6">
           <BasicInputs form={basicForm} />
           <AdvancedInputs form={advancedForm} />
           <Button 
             onClick={handleCalculate}
-            className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+            disabled={isCalculating}
+            className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary relative"
           >
-            Calculate
+            {isCalculating ? (
+              <>
+                <span className="opacity-0">Calculate</span>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                </div>
+              </>
+            ) : (
+              'Calculate'
+            )}
           </Button>
         </Card>
 
-        {results ? (
-          <div className="space-y-8">
-            <AffordabilityResults results={results} />
-            <AiChat calculatorData={results} />
-          </div>
-        ) : null}
+        </div>
+
+        <div className="lg:pl-8">
+          {results ? (
+            <div className="space-y-8">
+              <AffordabilityResults results={results} />
+              <AiChat calculatorData={results} />
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center justify-center h-full text-muted-foreground">
+              Enter your details and click Calculate to see results
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
