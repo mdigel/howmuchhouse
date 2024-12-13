@@ -9,14 +9,15 @@ import type { BasicInputType } from "@/lib/calculatorTypes";
 export const basicInputSchema = z.object({
   householdIncome: z.string()
     .min(1, "Income is required")
-    .regex(/^\d+$/, "Please enter numbers only")
+    .regex(/^[0-9]*$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => val > 0, "Please enter a valid income"),
+    .refine((val) => val >= 0, "Amount cannot be negative")
+    .refine((val) => val > 0, "Please enter a valid income amount"),
   downPayment: z.string()
     .min(1, "Down payment is required")
-    .regex(/^\d+$/, "Please enter numbers only")
+    .regex(/^[0-9]*$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => val >= 0, "Please enter a valid amount"),
+    .refine((val) => val >= 0, "Amount cannot be negative"),
   annualInterestRate: z.string()
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")

@@ -14,37 +14,42 @@ import type { AdvancedInputType } from "@/lib/calculatorTypes";
 
 export const advancedInputSchema = z.object({
   hoaFees: z.string()
-    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
+    .refine((val) => val >= 0, "Amount cannot be negative")
     .default("0"),
   homeownersInsurance: z.string()
-    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "1915" : val)
     .transform(Number)
+    .refine((val) => val >= 0, "Amount cannot be negative")
     .default("1915"),
   pmiInput: z.string()
-    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? null : Number(val))
+    .refine((val) => val === null || val >= 0, "Amount cannot be negative")
     .nullable(),
   propertyTaxInput: z.string()
-    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? null : Number(val))
+    .refine((val) => val === null || val >= 0, "Amount cannot be negative")
     .nullable(),
   pretaxContributions: z.string()
-    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
+    .refine((val) => val >= 0, "Amount cannot be negative")
     .default("0"),
   dependents: z.string()
-    .regex(/^\d+$/, "Please enter a whole number")
+    .regex(/^[0-9]+$/, "Please enter a whole number")
     .transform(val => val === "" ? "0" : val)
     .transform(Number)
+    .refine((val) => val >= 0, "Amount cannot be negative")
     .default("0")
 });
 
-export function AdvancedInputs({ form }: AdvancedInputsProps) {
-
+export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<AdvancedInputType>> }) {
   return (
     <Accordion type="single" collapsible className="mt-6">
       <AccordionItem value="advanced">
@@ -174,8 +179,7 @@ export function AdvancedInputs({ form }: AdvancedInputsProps) {
                     )}
                   />
                 </div>
-
-                </div>
+              </div>
             </div>
           </Form>
         </AccordionContent>
