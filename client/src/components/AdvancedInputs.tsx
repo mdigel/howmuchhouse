@@ -190,10 +190,13 @@ export function AdvancedInputs({ onSubmit }: AdvancedInputsProps) {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">Update Calculation</Button>
+                <Button 
+                  type="submit" 
+                  className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+                >
+                  Calculate
+                </Button>
               </div>
-
-              <Button type="submit">Update Calculation</Button>
             </form>
           </Form>
         </AccordionContent>
