@@ -9,21 +9,26 @@ import type { BasicInputType } from "@/lib/calculatorTypes";
 const basicInputSchema = z.object({
   householdIncome: z.string()
     .min(1, "Income is required")
+    .regex(/^\d+$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => !isNaN(val) && val > 0, "Please enter a valid income"),
+    .refine((val) => val > 0, "Please enter a valid income"),
   downPayment: z.string()
     .min(1, "Down payment is required")
+    .regex(/^\d+$/, "Please enter numbers only")
     .transform((val) => Number(val))
-    .refine((val) => !isNaN(val) && val >= 0, "Please enter a valid amount"),
+    .refine((val) => val >= 0, "Please enter a valid amount"),
   annualInterestRate: z.string()
     .min(1, "Interest rate is required")
+    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
     .transform((val) => Number(val))
-    .refine((val) => !isNaN(val) && val > 0 && val < 100, "Please enter a valid interest rate between 0-100"),
+    .refine((val) => val > 0 && val < 100, "Please enter a valid interest rate between 0-100"),
   loanTermYears: z.string()
     .transform((val) => Number(val))
     .default("30"),
   state: z.string()
-    .min(1, "State is required"),
+    .min(1, "State is required")
+    .regex(/^[A-Za-z]+$/, "Please enter letters only")
+    .length(2, "Please enter a valid 2-letter state code"),
   filingStatus: z.enum(["single", "married", "head"])
     .default("single")
 });
@@ -60,6 +65,9 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <Input 
+                    type="number"
+                    min="0"
+                    step="1"
                     placeholder="Enter your annual income" 
                     {...field}
                     className="max-w-md"
@@ -81,6 +89,9 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <Input 
+                    type="number"
+                    min="0"
+                    step="1"
                     placeholder="Enter your down payment amount" 
                     {...field}
                     className="max-w-md"
@@ -99,6 +110,10 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
                 <FormLabel>Interest Rate (%)</FormLabel>
                 <FormControl>
                   <Input 
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
                     placeholder="Current mortgage rate" 
                     {...field}
                     className="max-w-md"
@@ -117,9 +132,15 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
                 <FormLabel>State</FormLabel>
                 <FormControl>
                   <Input 
+                    type="text"
+                    maxLength={2}
                     placeholder="Your state (e.g., CA)" 
                     {...field}
-                    className="max-w-md"
+                    className="max-w-md uppercase"
+                    onInput={(e) => {
+                      const input = e.currentTarget;
+                      input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
