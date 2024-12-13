@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import type { BasicInputType } from "@/lib/calculatorTypes";
 
-const basicInputSchema = z.object({
+export const basicInputSchema = z.object({
   householdIncome: z.string()
     .min(1, "Income is required")
     .regex(/^\d+$/, "Please enter numbers only")
@@ -33,26 +33,10 @@ const basicInputSchema = z.object({
     .default("single")
 });
 
-interface BasicInputsProps {
-  onSubmit: (data: BasicInputType) => void;
-}
-
-export function BasicInputs({ onSubmit }: BasicInputsProps) {
-  const form = useForm<z.infer<typeof basicInputSchema>>({
-    resolver: zodResolver(basicInputSchema),
-    defaultValues: {
-      householdIncome: "",
-      downPayment: "",
-      annualInterestRate: "",
-      loanTermYears: "30",
-      state: "",
-      filingStatus: "single"
-    }
-  });
-
+export function BasicInputs({ form }: BasicInputsProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-6">
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -149,13 +133,7 @@ export function BasicInputs({ onSubmit }: BasicInputsProps) {
           />
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
-        >
-          Calculate
-        </Button>
-      </form>
+        </div>
     </Form>
   );
 }

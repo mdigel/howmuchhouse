@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import type { AdvancedInputType } from "@/lib/calculatorTypes";
 
-const advancedInputSchema = z.object({
+export const advancedInputSchema = z.object({
   hoaFees: z.string()
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
@@ -43,22 +43,7 @@ const advancedInputSchema = z.object({
     .default("0")
 });
 
-interface AdvancedInputsProps {
-  onSubmit: (data: AdvancedInputType) => void;
-}
-
-export function AdvancedInputs({ onSubmit }: AdvancedInputsProps) {
-  const form = useForm<z.infer<typeof advancedInputSchema>>({
-    resolver: zodResolver(advancedInputSchema),
-    defaultValues: {
-      hoaFees: "0",
-      homeownersInsurance: "1915",
-      pmiInput: null,
-      propertyTaxInput: null,
-      pretaxContributions: "0",
-      dependents: "0"
-    }
-  });
+export function AdvancedInputs({ form }: AdvancedInputsProps) {
 
   return (
     <Accordion type="single" collapsible className="mt-6">
@@ -66,7 +51,7 @@ export function AdvancedInputs({ onSubmit }: AdvancedInputsProps) {
         <AccordionTrigger>Advanced Inputs</AccordionTrigger>
         <AccordionContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-6">
               <div className="grid gap-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <FormField
@@ -190,14 +175,8 @@ export function AdvancedInputs({ onSubmit }: AdvancedInputsProps) {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
-                >
-                  Calculate
-                </Button>
-              </div>
-            </form>
+                </div>
+            </div>
           </Form>
         </AccordionContent>
       </AccordionItem>

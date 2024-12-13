@@ -1,22 +1,55 @@
 import { useState } from "react";
-import { BasicInputs } from "@/components/BasicInputs";
-import { AdvancedInputs } from "@/components/AdvancedInputs";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BasicInputs, basicInputSchema } from "@/components/BasicInputs";
+import { AdvancedInputs, advancedInputSchema } from "@/components/AdvancedInputs";
 import { AffordabilityResults } from "@/components/AffordabilityResults";
 import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
 
 export default function Home() {
-  const [basicInputs, setBasicInputs] = useState<BasicInputType | null>(null);
-  const [advancedInputs, setAdvancedInputs] = useState<AdvancedInputType | null>(null);
   const [results, setResults] = useState<CalculatorResults | null>(null);
+  
+  const basicForm = useForm<BasicInputType>({
+    resolver: zodResolver(basicInputSchema),
+    defaultValues: {
+      householdIncome: 0,
+      downPayment: 0,
+      annualInterestRate: 0,
+      loanTermYears: 30,
+      state: "",
+      filingStatus: "single"
+    }
+  });
 
-  const handleCalculate = async (basic: BasicInputType, advanced: AdvancedInputType) => {
+  const advancedForm = useForm<AdvancedInputType>({
+    resolver: zodResolver(advancedInputSchema),
+    defaultValues: {
+      hoaFees: 0,
+      homeownersInsurance: 1915,
+      pmiInput: null,
+      propertyTaxInput: null,
+      pretaxContributions: 0,
+      dependents: 0
+    }
+  });
+
+  const handleCalculate = async () => {
+    const basicValid = await basicForm.trigger();
+    const advancedValid = await advancedForm.trigger();
+
+    if (!basicValid || !advancedValid) return;
+
     try {
+      const basicData = basicForm.getValues();
+      const advancedData = advancedForm.getValues();
+
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...basic, ...advanced })
+        body: JSON.stringify({ ...basicData, ...advancedData })
       });
       
       if (!response.ok) throw new Error('Calculation failed');
@@ -35,24 +68,15 @@ export default function Home() {
           <p className="text-muted-foreground">The smartest AI for the biggest purchase of your life</p>
         </div>
 
-        <Card className="p-6">
-          <BasicInputs 
-            onSubmit={(inputs) => {
-              setBasicInputs(inputs);
-              if (advancedInputs) {
-                handleCalculate(inputs, advancedInputs);
-              }
-            }} 
-          />
-
-          <AdvancedInputs
-            onSubmit={(inputs) => {
-              setAdvancedInputs(inputs);
-              if (basicInputs) {
-                handleCalculate(basicInputs, inputs);
-              }
-            }}
-          />
+        <Card className="p-6 space-y-6">
+          <BasicInputs form={basicForm} />
+          <AdvancedInputs form={advancedForm} />
+          <Button 
+            onClick={handleCalculate}
+            className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+          >
+            Calculate
+          </Button>
         </Card>
 
         {results && (
