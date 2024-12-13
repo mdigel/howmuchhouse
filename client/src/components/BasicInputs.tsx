@@ -23,7 +23,9 @@ export const basicInputSchema = z.object({
     .transform((val) => Number(val))
     .refine((val) => val > 0 && val < 100, "Please enter a valid interest rate between 0-100"),
   loanTermYears: z.string()
-    .transform((val) => Number(val))
+    .regex(/^[0-9]+$/, "Please enter a valid number")
+    .transform((val) => val === "" ? "30" : val)
+    .transform(Number)
     .default("30"),
   state: z.string()
     .min(1, "State is required")
