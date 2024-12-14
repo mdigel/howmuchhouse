@@ -24,11 +24,11 @@ interface InfoTooltipProps {
 function InfoTooltip({ text }: InfoTooltipProps) {
   return (
     <Tooltip>
-      <TooltipTrigger>
-        <Info className="inline-block w-4 h-4 ml-1 text-muted-foreground" />
+      <TooltipTrigger asChild>
+        <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
       </TooltipTrigger>
-      <TooltipContent>
-        <p className="max-w-xs">{text}</p>
+      <TooltipContent side="right" align="start" className="max-w-[280px]">
+        <p className="text-sm">{text}</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -188,6 +188,7 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
               {formatCurrency(scenario.mortgagePaymentStats.purchasePrice)} and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
+              <p className="text-muted-foreground mb-6">This scenario shows what your budget would look like if you purchased a home for {formatCurrency(scenario.mortgagePaymentStats.purchasePrice)}.</p>
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Transaction Section */}
                 <div>
