@@ -67,11 +67,17 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Loan Amount:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Loan Amount
+                      <InfoTooltip text="The amount you'll need to borrow from the lender after your down payment" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.loanAmount)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Downpayment:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Downpayment
+                      <InfoTooltip text="The initial payment you'll make upfront to purchase the home" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.downpayment)}</span>
                   </div>
                 </div>
@@ -82,23 +88,38 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
                 <h3 className="text-xl font-semibold mb-4">Mortgage Payment</h3>
                 <div className="space-y-2">
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Total Monthly Payment:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Total Monthly Payment
+                      <InfoTooltip text="Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.totalPayment)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Mortgage:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Mortgage
+                      <InfoTooltip text="Your base monthly payment towards the principal and interest of your loan" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.mortgagePayment)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Property Tax:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Property Tax
+                      <InfoTooltip text="Annual property taxes divided into monthly payments" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.propertyTax)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">PMI:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      PMI
+                      <InfoTooltip text="Private Mortgage Insurance required when down payment is less than 20%" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi)}</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Home Owners Insurance:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Home Owners Insurance
+                      <InfoTooltip text="Required insurance to protect your home and its contents" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.homeownersInsurance)}</span>
                   </div>
                 </div>
@@ -109,32 +130,47 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
                 <h3 className="text-xl font-semibold mb-4">Monthly Budget:</h3>
                 <div className="space-y-2">
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Net Income:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Net Income
+                      <InfoTooltip text="Your monthly income after taxes and deductions" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.incomeSummary.netIncome / 12)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Mortgage:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Mortgage
+                      <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
+                    </span>
                     <div className="text-right">
                       <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.mortgage.amount)}</span>
                       <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.mortgage.percentage)}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Remaining Needs:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Remaining Needs
+                      <InfoTooltip text="Essential expenses like utilities, groceries, and healthcare" />
+                    </span>
                     <div className="text-right">
                       <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.remainingNeeds.amount)}</span>
                       <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.remainingNeeds.percentage)}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Wants:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Wants
+                      <InfoTooltip text="Discretionary spending on entertainment, dining out, and hobbies" />
+                    </span>
                     <div className="text-right">
                       <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.wants.amount)}</span>
                       <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.wants.percentage)}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Saving:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Saving
+                      <InfoTooltip text="Money set aside for future goals, emergencies, and investments" />
+                    </span>
                     <div className="text-right">
                       <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.savings.amount)}</span>
                       <span className="text-muted-foreground ml-2">{formatPercentage(results.maxHomePrice.scenario.savings.percentage)}</span>
