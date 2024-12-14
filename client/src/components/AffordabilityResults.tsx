@@ -3,6 +3,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
   Accordion,
@@ -41,8 +42,9 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
     new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 0 }).format(decimal);
 
   return (
-    <div className="space-y-6">
-      <Accordion type="single" collapsible className="w-full">
+    <TooltipProvider>
+      <div className="space-y-6">
+        <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-0">
           <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent">
             {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)} Max Price You Can Afford
@@ -240,6 +242,7 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
           </AccordionItem>
         ))}
       </Accordion>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
