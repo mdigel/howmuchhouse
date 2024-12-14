@@ -1,4 +1,9 @@
-import { Card } from "@/components/ui/card";
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +14,23 @@ import type { CalculatorResults } from "@/lib/calculatorTypes";
 
 interface AffordabilityResultsProps {
   results: CalculatorResults;
+}
+
+interface InfoTooltipProps {
+  text: string;
+}
+
+function InfoTooltip({ text }: InfoTooltipProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <Info className="inline-block w-4 h-4 ml-1 text-muted-foreground" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="max-w-xs">{text}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 export function AffordabilityResults({ results }: AffordabilityResultsProps) {
@@ -26,13 +48,20 @@ export function AffordabilityResults({ results }: AffordabilityResultsProps) {
             {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)} Max Price You Can Afford
           </AccordionTrigger>
           <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
+            <p className="text-muted-foreground mb-6">
+              This scenario represents the maximum house price you can afford while maintaining a balanced budget. 
+              It aims to keep your mortgage payment at a sustainable level while ensuring you have enough for other expenses and savings.
+            </p>
             <div className="grid md:grid-cols-3 gap-8">
               {/* Transaction Section */}
               <div>
                 <h3 className="text-xl font-semibold mb-4">Transaction</h3>
                 <div className="space-y-2">
                   <div className="flex flex-col">
-                    <span className="text-muted-foreground">Purchase Price:</span>
+                    <span className="text-muted-foreground flex items-center">
+                      Purchase Price
+                      <InfoTooltip text="The total price of the home you can purchase in this scenario" />
+                    </span>
                     <span className="text-lg">{formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice)}</span>
                   </div>
                   <div className="flex flex-col">
