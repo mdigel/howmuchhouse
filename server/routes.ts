@@ -214,8 +214,8 @@ export function registerRoutes(app: Express): Server {
           }
         ],
         mode: "payment",
-        success_url: `${process.env.REPLIT_DOMAINS?.split(",")[0]}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.REPLIT_DOMAINS?.split(",")[0]}/cancel`
+        success_url: `https://${process.env.REPLIT_DOMAINS?.split(",")[0]}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS?.split(",")[0]}/cancel`
       });
 
       res.json({ sessionId: session.id });
