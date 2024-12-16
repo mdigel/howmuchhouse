@@ -121,10 +121,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error("Invalid checkout session");
       }
 
-      const result = await stripe.redirectToCheckout({ sessionId });
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
+      // Redirect to Stripe checkout
+      const checkoutUrl = `https://checkout.stripe.com/c/pay/${sessionId}`;
+      window.location.href = checkoutUrl;
     } catch (error) {
       console.error('Payment error:', error);
       toast({
