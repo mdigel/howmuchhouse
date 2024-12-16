@@ -102,7 +102,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const handlePayment = async () => {
     try {
       const stripe = await loadStripe();
-      if (!stripe) throw new Error("Stripe failed to load");
+      if (!stripe) {
+        throw new Error("Payment system unavailable. Please try again later.");
+      }
 
       const response = await fetch("/api/create-checkout", {
         method: "POST",
@@ -110,20 +112,26 @@ export function AiChat({ calculatorData }: AiChatProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create checkout session");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to create checkout session");
       }
 
       const { sessionId } = await response.json();
-      const result = await stripe.redirectToCheckout({ sessionId });
+      if (!sessionId) {
+        throw new Error("Invalid checkout session");
+      }
 
+      const result = await stripe.redirectToCheckout({ sessionId });
       if (result.error) {
         throw new Error(result.error.message);
       }
     } catch (error) {
       console.error('Payment error:', error);
       toast({
-        title: "Payment Error",
-        description: "Unable to process payment. Please try again later.",
+        title: "Payment System Error",
+        description: error instanceof Error 
+          ? error.message 
+          : "Unable to process payment. Please try again later.",
         variant: "destructive"
       });
     }
