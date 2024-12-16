@@ -129,19 +129,36 @@ export function registerRoutes(app: Express): Server {
     const { message, calculatorData, isPaid } = req.body;
 
     try {
+      // Validate message length
+      if (message.length > 3000) {
+        return res.status(400).json({ 
+          error: "Message too long",
+          message: "Please keep your input under 3000 characters to prevent excessive API usage."
+        });
+      }
+
       // Here you would integrate with your AI service
+      // For now using mock response, replace with actual OpenAI integration
       const mockResponse = "Based on your income and current market conditions, " +
         "I can help you understand your home affordability better. " +
-        "Would you like me to explain any specific aspects of the calculation?";
+        "Would you like me to explain any specific aspects of the calculation?\n\n" +
+        "Your current home price range appears to be optimal for your income level, " +
+        "but there are a few considerations we should discuss regarding your down payment " +
+        "and monthly budget allocation.";
 
       res.json({ response: mockResponse });
     } catch (error) {
-      res.status(500).json({ error: "Failed to get AI response" });
+      console.error("Chat API Error:", error);
+      res.status(500).json({ 
+        error: "Failed to get AI response",
+        message: "Our AI service is temporarily unavailable. Please try again in a few moments."
+      });
     }
   });
 
   app.post("/api/create-checkout", async (req, res) => {
     try {
+      // Create Stripe checkout session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -158,13 +175,30 @@ export function registerRoutes(app: Express): Server {
           }
         ],
         mode: "payment",
-        success_url: `${process.env.REPLIT_DOMAINS?.split(",")[0]}/success`,
+        success_url: `${process.env.REPLIT_DOMAINS?.split(",")[0]}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.REPLIT_DOMAINS?.split(",")[0]}/cancel`
       });
 
       res.json({ sessionId: session.id });
     } catch (error) {
-      res.status(500).json({ error: "Failed to create checkout session" });
+      console.error("Stripe Checkout Error:", error);
+      res.status(500).json({ 
+        error: "Payment processing failed",
+        message: "Unable to initialize payment. Please try again later."
+      });
+    }
+  });
+
+  app.post("/api/feedback", async (req, res) => {
+    const { isHelpful, response } = req.body;
+    try {
+      // Here you would store the feedback in your database
+      // For now, just log it
+      console.log("AI Response Feedback:", { isHelpful, response });
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Feedback Error:", error);
+      res.status(500).json({ error: "Failed to save feedback" });
     }
   });
 

@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { MessageCircle, LightbulbIcon, Loader2 } from "lucide-react";
 import { loadStripe } from "@/lib/stripeClient";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
 
@@ -10,23 +11,33 @@ interface AiChatProps {
   calculatorData: CalculatorResults;
 }
 
+const EXAMPLE_QUESTIONS = [
+  "What's a good down payment amount for this house price?",
+  "How does my mortgage payment compare to recommended guidelines?",
+  "What are the pros and cons of this budget allocation?",
+  "Should I consider a shorter loan term?"
+];
+
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState<string | null>(null);
   const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const { toast } = useToast();
 
   const handleSubmit = async () => {
     if (message.length > 3000) {
       toast({
         title: "Message too long",
-        description: "Please limit your question to 3000 characters",
+        description: "Please keep your input under 3000 characters so you don't bankrupt us.",
         variant: "destructive"
       });
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -38,18 +49,25 @@ export function AiChat({ calculatorData }: AiChatProps) {
         })
       });
 
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to get response");
+      }
       
       const data = await response.json();
       setResponse(data.response);
       setHasAskedQuestion(true);
       setMessage("");
+      setFeedbackGiven(false);
     } catch (error) {
+      console.error('Chat error:', error);
       toast({
-        title: "Error",
-        description: "Failed to get AI response",
+        title: "Something went wrong",
+        description: "Please try again. If the problem persists, the service might be temporarily unavailable.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,6 +81,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
         headers: { "Content-Type": "application/json" }
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session");
+      }
+
       const { sessionId } = await response.json();
       const result = await stripe.redirectToCheckout({ sessionId });
 
@@ -70,21 +92,68 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error(result.error.message);
       }
     } catch (error) {
+      console.error('Payment error:', error);
       toast({
         title: "Payment Error",
-        description: "Failed to process payment",
+        description: "Unable to process payment. Please try again later.",
         variant: "destructive"
       });
     }
   };
 
+  const handleFeedback = async (isHelpful: boolean) => {
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isHelpful, response })
+      });
+      setFeedbackGiven(true);
+      toast({
+        title: "Thank you for your feedback!",
+        description: "Your input helps us improve our responses.",
+      });
+    } catch (error) {
+      console.error('Feedback error:', error);
+    }
+  };
+
   return (
     <Card className="p-6 space-y-4">
-      <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <MessageCircle className="h-6 w-6" />
+        <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
+      </div>
+      
+      {!hasAskedQuestion && (
+        <div className="bg-muted p-4 rounded-lg space-y-2">
+          <div className="flex items-center gap-2">
+            <LightbulbIcon className="h-4 w-4" />
+            <p className="font-medium">Example questions you can ask:</p>
+          </div>
+          <ul className="space-y-1 text-sm text-muted-foreground">
+            {EXAMPLE_QUESTIONS.map((q, i) => (
+              <li key={i} className="cursor-pointer hover:text-foreground transition-colors" onClick={() => setMessage(q)}>
+                • {q}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       
       {response && (
-        <div className="bg-muted p-4 rounded-lg">
-          <p className="whitespace-pre-wrap">{response}</p>
+        <div className="space-y-4">
+          <div className="bg-muted p-4 rounded-lg">
+            <p className="whitespace-pre-wrap">{response}</p>
+          </div>
+          
+          {!feedbackGiven && (
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-sm text-muted-foreground">Was this response helpful?</span>
+              <Button variant="outline" size="sm" onClick={() => handleFeedback(true)}>👍 Yes</Button>
+              <Button variant="outline" size="sm" onClick={() => handleFeedback(false)}>👎 No</Button>
+            </div>
+          )}
         </div>
       )}
 
@@ -95,20 +164,37 @@ export function AiChat({ calculatorData }: AiChatProps) {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Ask about your home affordability calculation..."
             className="min-h-[100px]"
+            maxLength={3000}
           />
-          <div className="flex justify-end">
-            <Button onClick={handleSubmit}>
-              Ask Question
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">
+              {message.length}/3000 characters
+            </span>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={isLoading || message.trim().length === 0}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Thinking...
+                </>
+              ) : (
+                'Ask Question'
+              )}
             </Button>
           </div>
         </div>
       )}
 
       {hasAskedQuestion && !isPaid && (
-        <div className="text-center space-y-4">
-          <p>Continue the conversation for $2.99</p>
-          <Button onClick={handlePayment}>
-            Unlock Unlimited Questions
+        <div className="text-center space-y-4 bg-muted p-6 rounded-lg">
+          <h3 className="font-semibold text-lg">Want More Insights?</h3>
+          <p className="text-muted-foreground">
+            Continue the conversation with unlimited follow-up questions to make the most informed decision about your home purchase.
+          </p>
+          <Button onClick={handlePayment} className="w-full max-w-xs bg-gradient-to-r from-primary to-primary/90">
+            Unlock Unlimited Questions for $2.99
           </Button>
         </div>
       )}

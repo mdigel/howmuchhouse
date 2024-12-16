@@ -9,9 +9,20 @@ export const users = pgTable("users", {
 
 export const aiChats = pgTable("ai_chats", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  sessionId: text("session_id").notNull(),
+  message: text("message").notNull(),
+  response: text("response").notNull(),
+  characterCount: integer("character_count").notNull(),
   hasPaid: boolean("has_paid").default(false),
-  questionCount: integer("question_count").default(0),
+  isHelpful: boolean("is_helpful").default(null),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  stripeSessionId: text("stripe_session_id").notNull(),
+  status: text("status").notNull(),
+  amount: integer("amount").notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });
 
