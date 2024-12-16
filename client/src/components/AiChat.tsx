@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, LightbulbIcon, Loader2 } from "lucide-react";
+import { MessageCircle, LightbulbIcon, Loader2, ThumbsUp, ThumbsDown } from "lucide-react";
 import { loadStripe } from "@/lib/stripeClient";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
 
@@ -25,7 +25,20 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [isPaid, setIsPaid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Check URL params for successful payment
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkoutSessionId = params.get('session_id');
+    
+    if (checkoutSessionId) {
+      setIsPaid(true);
+      // Remove the session_id from URL without refreshing
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   const handleSubmit = async () => {
     if (message.length > 3000) {
@@ -39,9 +52,18 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
     setIsLoading(true);
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json"
+      };
+      
+      // Add session ID if we have one
+      if (sessionId) {
+        headers["X-Session-Id"] = sessionId;
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           message,
           calculatorData,
@@ -50,8 +72,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to get response");
+        const errorData = await response.json().catch(() => ({ message: "Failed to get response" }));
+        throw new Error(errorData.message || "An unexpected error occurred");
+      }
+      
+      // Get and store session ID from response headers
+      const newSessionId = response.headers.get("X-Session-Id");
+      if (newSessionId) {
+        setSessionId(newSessionId);
       }
       
       const data = await response.json();
@@ -63,7 +91,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       console.error('Chat error:', error);
       toast({
         title: "Something went wrong",
-        description: "Please try again. If the problem persists, the service might be temporarily unavailable.",
+        description: error instanceof Error ? error.message : "Please try again. If the problem persists, the service might be temporarily unavailable.",
         variant: "destructive"
       });
     } finally {
@@ -102,10 +130,15 @@ export function AiChat({ calculatorData }: AiChatProps) {
   };
 
   const handleFeedback = async (isHelpful: boolean) => {
+    if (!response) return;
+    
     try {
       await fetch("/api/feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(sessionId && { "X-Session-Id": sessionId })
+        },
         body: JSON.stringify({ isHelpful, response })
       });
       setFeedbackGiven(true);
@@ -115,6 +148,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
       });
     } catch (error) {
       console.error('Feedback error:', error);
+      toast({
+        title: "Feedback Error",
+        description: "Unable to save your feedback. Please try again later.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -133,8 +171,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
           </div>
           <ul className="space-y-1 text-sm text-muted-foreground">
             {EXAMPLE_QUESTIONS.map((q, i) => (
-              <li key={i} className="cursor-pointer hover:text-foreground transition-colors" onClick={() => setMessage(q)}>
-                • {q}
+              <li 
+                key={i} 
+                className="cursor-pointer hover:text-foreground transition-colors flex items-center gap-2" 
+                onClick={() => setMessage(q)}
+              >
+                <span>•</span>
+                <span className="flex-1">{q}</span>
               </li>
             ))}
           </ul>
@@ -150,8 +193,22 @@ export function AiChat({ calculatorData }: AiChatProps) {
           {!feedbackGiven && (
             <div className="flex items-center justify-center gap-4">
               <span className="text-sm text-muted-foreground">Was this response helpful?</span>
-              <Button variant="outline" size="sm" onClick={() => handleFeedback(true)}>👍 Yes</Button>
-              <Button variant="outline" size="sm" onClick={() => handleFeedback(false)}>👎 No</Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleFeedback(true)}
+                className="flex items-center gap-2"
+              >
+                <ThumbsUp className="h-4 w-4" /> Yes
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleFeedback(false)}
+                className="flex items-center gap-2"
+              >
+                <ThumbsDown className="h-4 w-4" /> No
+              </Button>
             </div>
           )}
         </div>
@@ -173,6 +230,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             <Button 
               onClick={handleSubmit} 
               disabled={isLoading || message.trim().length === 0}
+              className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
                 <>
@@ -191,11 +249,20 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <div className="text-center space-y-4 bg-muted p-6 rounded-lg">
           <h3 className="font-semibold text-lg">Want More Insights?</h3>
           <p className="text-muted-foreground">
-            Continue the conversation with unlimited follow-up questions to make the most informed decision about your home purchase.
+            You've used your free question! Continue the conversation with unlimited follow-up questions 
+            to make the most informed decision about your home purchase.
           </p>
-          <Button onClick={handlePayment} className="w-full max-w-xs bg-gradient-to-r from-primary to-primary/90">
-            Unlock Unlimited Questions for $2.99
-          </Button>
+          <div className="space-y-2">
+            <Button 
+              onClick={handlePayment} 
+              className="w-full max-w-xs bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+            >
+              Unlock Unlimited Questions for $2.99
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Secure payment powered by Stripe
+            </p>
+          </div>
         </div>
       )}
     </Card>

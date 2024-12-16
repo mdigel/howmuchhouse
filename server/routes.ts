@@ -1,6 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
+import OpenAI from "openai";
+import { db } from "../db";
+import { aiChats } from "../db/schema";
+import { eq } from "drizzle-orm";
+import crypto from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2023-10-16"
@@ -137,16 +142,50 @@ export function registerRoutes(app: Express): Server {
         });
       }
 
-      // Here you would integrate with your AI service
-      // For now using mock response, replace with actual OpenAI integration
-      const mockResponse = "Based on your income and current market conditions, " +
-        "I can help you understand your home affordability better. " +
-        "Would you like me to explain any specific aspects of the calculation?\n\n" +
-        "Your current home price range appears to be optimal for your income level, " +
-        "but there are a few considerations we should discuss regarding your down payment " +
-        "and monthly budget allocation.";
+      // Create session if it doesn't exist
+      const sessionId = req.headers['x-session-id'] as string || crypto.randomUUID();
 
-      res.json({ response: mockResponse });
+      // Store chat in database
+      const chat = await db.insert(aiChats).values({
+        sessionId,
+        message,
+        response: '', // Will be updated after AI response
+        characterCount: message.length,
+        hasPaid: isPaid,
+      }).returning();
+
+      // Configure OpenAI
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      // Call OpenAI API
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful real estate and financial advisor assistant. You help users understand their home affordability calculations and provide advice based on their financial situation."
+          },
+          {
+            role: "user",
+            content: `Here is the user's financial data:\n${JSON.stringify(calculatorData, null, 2)}\n\nUser's question: ${message}`
+          }
+        ],
+        model: "gpt-3.5-turbo",
+        max_tokens: 500,
+        temperature: 0.7,
+      });
+
+      const response = completion.choices[0]?.message?.content || "I apologize, but I couldn't generate a response. Please try asking your question differently.";
+
+      // Update chat with AI response
+      await db.update(aiChats)
+        .set({ response })
+        .where(eq(aiChats.id, chat[0].id));
+
+      // Set session ID in response headers
+      res.setHeader('X-Session-Id', sessionId);
+      res.json({ response });
     } catch (error) {
       console.error("Chat API Error:", error);
       res.status(500).json({ 
