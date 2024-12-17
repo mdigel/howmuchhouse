@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -258,27 +259,72 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {hasAskedQuestion && !isPaid && (
-        <div className="text-center space-y-4 bg-muted p-6 rounded-lg">
-          <h3 className="font-semibold text-lg">Want More Insights?</h3>
+      <AnimatePresence>
+        {hasAskedQuestion && !isPaid && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center space-y-4 bg-muted p-6 rounded-lg"
+          >
+            <motion.h3
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="font-semibold text-lg"
+            >
+              Want More Insights?
+            </motion.h3>
           <p className="text-muted-foreground">
             You've used your free question! Continue the conversation with unlimited follow-up questions 
             to make the most informed decision about your home purchase.
           </p>
           <div className="space-y-2">
-            <Button 
-              onClick={handlePayment} 
-              className="w-full max-w-xs bg-gradient-to-r from-primary to-primary/90 hover:to-primary"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-xs mx-auto"
             >
-              Unlock Unlimited Questions for $2.99
-            </Button>
+              <Button 
+                onClick={handlePayment} 
+                disabled={isLoading}
+                className={`
+                  w-full bg-gradient-to-r from-primary to-primary/90 
+                  hover:to-primary hover:scale-105 transition-all duration-200
+                  ${isLoading ? 'animate-pulse' : ''}
+                `}
+              >
+                {isLoading ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Processing...
+                  </motion.div>
+                ) : (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    Unlock Unlimited Questions for $2.99
+                  </motion.span>
+                )}
+              </Button>
+            </motion.div>
             <p className="text-xs text-muted-foreground">
               Secure payment powered by Stripe
             </p>
           </div>
-        </div>
-      )}
-    <PaymentSuccessModal 
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <PaymentSuccessModal 
         isOpen={showSuccessModal} 
         onClose={handleSuccessModalClose} 
       />
