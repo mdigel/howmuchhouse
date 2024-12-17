@@ -1,9 +1,9 @@
 import { loadStripe as loadStripeJs } from "@stripe/stripe-js";
 
-const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_TEST_PUBLISHABLE_KEY;
 
 if (!STRIPE_PUBLISHABLE_KEY) {
-  throw new Error('Missing Stripe publishable key - Please check environment variables');
+  throw new Error('Missing Stripe test publishable key - Please check environment variables');
 }
 
 let stripePromise: Promise<any> | null = null;

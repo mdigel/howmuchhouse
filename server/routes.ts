@@ -7,12 +7,12 @@ import { aiChats } from "../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("Missing Stripe secret key - Please check environment variables");
+if (!process.env.STRIPE_TEST_SECRET_KEY) {
+  throw new Error("Missing Stripe test secret key - Please check environment variables");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
+const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
+  apiVersion: "2023-10-16",
   typescript: true
 });
 
