@@ -29,6 +29,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
+  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(null); // Added state for user inputs
+  const [calculationComplete, setCalculationComplete] = useState(false); // Added state for calculation completion
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -46,18 +48,31 @@ export function AiChat({ calculatorData }: AiChatProps) {
       const savedState = localStorage.getItem('calculatorState');
       if (savedState) {
         try {
-          const { calculator, chat } = JSON.parse(savedState);
+          const { calculator, chat, userInputs } = JSON.parse(savedState);
+          
           // Update calculator data in parent component
           if (calculator) {
             Object.assign(calculatorData, calculator);
           }
+          
           // Restore chat state
           if (chat) {
             setMessage(chat.message || '');
             setResponse(chat.response);
             setHasAskedQuestion(chat.hasAsked);
+            sessionStorage.setItem('chatHistory', JSON.stringify({
+              firstQuestion: chat.message,
+              firstResponse: chat.response
+            }));
           }
-          // Clean up stored state
+          
+          // Store user inputs in session storage for persistence
+          if (userInputs) {
+            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+            sessionStorage.setItem('calculationComplete', 'true');
+          }
+          
+          // Clean up localStorage state since we've moved it to sessionStorage
           localStorage.removeItem('calculatorState');
         } catch (error) {
           console.error('Failed to restore application state:', error);
@@ -133,16 +148,30 @@ export function AiChat({ calculatorData }: AiChatProps) {
     try {
       setIsLoading(true);
       
-      // Save state before initiating checkout
+      // Save all necessary state before initiating checkout
       if (calculatorData) {
+        // Get form inputs from session storage if they exist
+        const userInputs = sessionStorage.getItem('userInputs') 
+          ? JSON.parse(sessionStorage.getItem('userInputs')!)
+          : null;
+
         localStorage.setItem('calculatorState', JSON.stringify({
           calculator: calculatorData,
           chat: {
             message,
             response,
             hasAsked: hasAskedQuestion
-          }
+          },
+          userInputs: userInputs
         }));
+
+        // Save initial chat interaction to session storage
+        if (message && response) {
+          sessionStorage.setItem('chatHistory', JSON.stringify({
+            firstQuestion: message,
+            firstResponse: response
+          }));
+        }
       }
       
       const checkoutResponse = await fetch("/api/create-checkout", {
@@ -308,51 +337,51 @@ export function AiChat({ calculatorData }: AiChatProps) {
             >
               Want More Insights?
             </motion.h3>
-          <p className="text-muted-foreground">
-            You've used your free question! Continue the conversation with unlimited follow-up questions 
-            to make the most informed decision about your home purchase.
-          </p>
-          <div className="space-y-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full max-w-xs mx-auto"
-            >
-              <Button 
-                onClick={handlePayment} 
-                disabled={isLoading}
-                className={`
-                  w-full bg-gradient-to-r from-primary to-primary/90 
-                  hover:to-primary hover:scale-105 transition-all duration-200
-                  ${isLoading ? 'animate-pulse' : ''}
-                `}
-              >
-                {isLoading ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Processing...
-                  </motion.div>
-                ) : (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    Unlock Unlimited Questions for $2.99
-                  </motion.span>
-                )}
-              </Button>
-            </motion.div>
-            <p className="text-xs text-muted-foreground">
-              Secure payment powered by Stripe
+            <p className="text-muted-foreground">
+              You've used your free question! Continue the conversation with unlimited follow-up questions 
+              to make the most informed decision about your home purchase.
             </p>
-          </div>
+            <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-xs mx-auto"
+              >
+                <Button 
+                  onClick={handlePayment} 
+                  disabled={isLoading}
+                  className={`
+                    w-full bg-gradient-to-r from-primary to-primary/90 
+                    hover:to-primary hover:scale-105 transition-all duration-200
+                    ${isLoading ? 'animate-pulse' : ''}
+                  `}
+                >
+                  {isLoading ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Processing...
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      Unlock Unlimited Questions for $2.99
+                    </motion.span>
+                  )}
+                </Button>
+              </motion.div>
+              <p className="text-xs text-muted-foreground">
+                Secure payment powered by Stripe
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
