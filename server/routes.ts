@@ -221,7 +221,11 @@ export function registerRoutes(app: Express): Server {
         billing_address_collection: 'auto'
       });
 
-      res.json({ sessionId: session.id });
+      // Return both session ID and URL
+      res.json({ 
+        sessionId: session.id,
+        url: session.url // Stripe's hosted checkout URL
+      });
     } catch (error) {
       console.error("Stripe Checkout Error:", error);
       res.status(500).json({ 

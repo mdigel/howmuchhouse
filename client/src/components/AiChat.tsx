@@ -114,16 +114,23 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error(errorData.message || "Failed to create checkout session");
       }
 
-      const { sessionId } = await response.json();
-      if (!sessionId) {
-        throw new Error("Invalid checkout session");
+      const data = await response.json();
+      if (!data.url) {
+        throw new Error("Checkout URL not provided");
       }
 
-      // Initialize Stripe
-      const stripe = await loadStripe();
+      // Redirect to Stripe's hosted checkout page
+      window.location.href = data.url;
+
+      // Get the checkout URL from the response
+      const { url } = await response.json();
       
-      // Redirect to checkout
-      window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
+      if (!url) {
+        throw new Error("Failed to get checkout URL");
+      }
+
+      // Redirect to Stripe's hosted checkout page
+      window.location.href = url;
       
     } catch (error) {
       console.error('Payment error:', error);
