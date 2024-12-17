@@ -102,37 +102,25 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
-      console.log('Initiating payment process...');
       
       const response = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
 
-      console.log('Received response:', response.status);
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create checkout session");
-      }
-
       const data = await response.json();
-      console.log('Checkout data received:', { hasUrl: !!data.url });
-
-      if (!data.url) {
-        throw new Error("Checkout URL not provided by the server");
+      
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Failed to create checkout session");
       }
 
-      console.log('Redirecting to:', data.url);
-      window.location.assign(data.url);
+      window.location.href = data.url;
       
     } catch (error) {
       console.error('Payment error:', error);
       toast({
-        title: "Payment System Error",
-        description: error instanceof Error 
-          ? error.message 
-          : "Unable to process payment. Please try again later.",
+        title: "Payment Error",
+        description: "Unable to start checkout process. Please try again.",
         variant: "destructive"
       });
     } finally {
