@@ -145,17 +145,17 @@ export function AiChat({ calculatorData }: AiChatProps) {
         }));
       }
       
-      const response = await fetch("/api/create-checkout", {
+      const checkoutResponse = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to create checkout session");
+      if (!checkoutResponse.ok) {
+        const errorData = await checkoutResponse.json();
+        throw new Error(errorData.message || "Failed to create checkout session");
       }
 
+      const data = await checkoutResponse.json();
       if (!data.url) {
         throw new Error("Checkout URL not received");
       }
