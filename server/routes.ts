@@ -198,6 +198,7 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/create-checkout", async (req, res) => {
     try {
       // Create Stripe checkout session
+      const origin = `${req.protocol}://${req.get('host')}`;
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -214,8 +215,10 @@ export function registerRoutes(app: Express): Server {
           }
         ],
         mode: "payment",
-        success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${req.protocol}://${req.get('host')}/`
+        success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/`,
+        allow_promotion_codes: true,
+        billing_address_collection: 'auto'
       });
 
       res.json({ sessionId: session.id });

@@ -122,8 +122,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
       }
 
       // Redirect to Stripe checkout
-      const checkoutUrl = `https://checkout.stripe.com/c/pay/${sessionId}`;
-      window.location.href = checkoutUrl;
+      const result = await stripe.redirectToCheckout({
+        sessionId
+      });
+      
+      if (result?.error) {
+        throw new Error(result.error.message);
+      }
     } catch (error) {
       console.error('Payment error:', error);
       toast({
