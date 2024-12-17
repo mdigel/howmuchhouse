@@ -41,6 +41,18 @@ export function AiChat({ calculatorData }: AiChatProps) {
     if (isSuccess && sessionId) {
       setIsPaid(true);
       setShowSuccessModal(true);
+      
+      // Restore calculator data from local storage
+      const savedData = localStorage.getItem('calculatorData');
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          // Keep using the saved data in parent component
+          calculatorData = parsedData;
+        } catch (error) {
+          console.error('Failed to parse saved calculator data:', error);
+        }
+      }
     }
   }, []);
 
@@ -110,6 +122,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
+      
+      // Save calculator data to local storage before checkout
+      localStorage.setItem('calculatorData', JSON.stringify(calculatorData));
       
       // Create checkout session
       const response = await fetch("/api/create-checkout", {
