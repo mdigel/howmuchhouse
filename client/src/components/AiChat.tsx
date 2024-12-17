@@ -101,11 +101,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
   const handlePayment = async () => {
     try {
-      const stripe = await loadStripe();
-      if (!stripe) {
-        throw new Error("Payment system unavailable. Please try again later.");
-      }
-
+      setIsLoading(true);
+      
+      // Create checkout session
       const response = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
@@ -121,14 +119,12 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error("Invalid checkout session");
       }
 
-      // Redirect to Stripe checkout
-      const result = await stripe.redirectToCheckout({
-        sessionId
-      });
+      // Initialize Stripe
+      const stripe = await loadStripe();
       
-      if (result?.error) {
-        throw new Error(result.error.message);
-      }
+      // Redirect to checkout
+      window.location.href = `https://checkout.stripe.com/c/pay/${sessionId}`;
+      
     } catch (error) {
       console.error('Payment error:', error);
       toast({
@@ -138,6 +134,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
           : "Unable to process payment. Please try again later.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
