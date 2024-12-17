@@ -7,8 +7,13 @@ import { aiChats } from "../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2023-10-16"
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("Missing Stripe secret key - Please check environment variables");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+  typescript: true
 });
 
 export function registerRoutes(app: Express): Server {
@@ -198,35 +203,44 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/create-checkout", async (req, res) => {
     try {
       const origin = `${req.protocol}://${req.get('host')}`;
-      
-      // Create a Stripe Checkout Session
+      console.log('Creating checkout session with origin:', origin);
+
       const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
-              currency: "usd",
+              currency: 'usd',
               product_data: {
-                name: "AI Chat Access",
-                description: "Unlimited access to AI home buying assistant"
+                name: 'AI Chat Access',
+                description: 'Unlimited access to AI home buying assistant'
               },
-              unit_amount: 299 // $2.99
+              unit_amount: 299,
             },
-            quantity: 1
-          }
+            quantity: 1,
+          },
         ],
-        mode: "payment",
-        success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/`,
+        mode: 'payment',
+        success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/?canceled=true`,
+      });
+
+      console.log('Created session:', { 
+        sessionId: session.id,
+        hasUrl: !!session.url 
       });
 
       if (!session.url) {
-        throw new Error("Failed to generate checkout URL");
+        throw new Error('Checkout session URL was not generated');
       }
 
-      res.json({ url: session.url });
+      res.status(200).json({ url: session.url });
     } catch (error) {
-      console.error("Stripe Checkout Error:", error);
-      res.status(500).json({ error: "Failed to create checkout session" });
+      console.error('Stripe checkout error:', error);
+      res.status(500).json({ 
+        error: 'Failed to create checkout session',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
