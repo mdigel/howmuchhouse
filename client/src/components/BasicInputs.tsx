@@ -6,26 +6,26 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import type { BasicInputType } from "@/lib/calculatorTypes";
 
+interface BasicInputsProps {
+  form: ReturnType<typeof useForm<BasicInputType>>;
+}
+
 export const basicInputSchema = z.object({
   householdIncome: z.string()
     .min(1, "Income is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
-    .transform((val) => Number(val))
-    .refine((val) => val > 0, "Please enter positive numbers only"),
+    .refine((val) => val === "" || Number(val) > 0, "Please enter positive numbers only"),
   downPayment: z.string()
     .min(1, "Down payment is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
-    .transform((val) => Number(val))
-    .refine((val) => val >= 0, "Please enter positive numbers only"),
+    .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
   annualInterestRate: z.string()
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
-    .transform((val) => Number(val))
-    .refine((val) => val > 0 && val < 100, "Please enter a valid interest rate between 0-100"),
+    .refine((val) => val === "" || (Number(val) > 0 && Number(val) < 100), "Please enter a valid interest rate between 0-100"),
   loanTermYears: z.string()
     .regex(/^[0-9]+$/, "Please enter a valid number")
-    .transform((val) => val === "" ? "30" : val)
-    .transform(Number)
+    .transform(val => val === "" ? "30" : val)
     .default("30"),
   state: z.string()
     .min(1, "State is required")
@@ -33,7 +33,6 @@ export const basicInputSchema = z.object({
     .length(2, "Please enter a valid 2-letter state code"),
   filingStatus: z.enum(["single", "married", "head"])
     .default("single")
-    .optional()
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
@@ -135,8 +134,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             )}
           />
         </div>
-
-        </div>
+      </div>
     </Form>
   );
 }

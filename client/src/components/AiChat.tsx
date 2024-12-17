@@ -46,14 +46,34 @@ export function AiChat({ calculatorData }: AiChatProps) {
       
       // Restore all state after successful payment
       const savedState = localStorage.getItem('calculatorState');
-      console.log('Retrieved saved state:', savedState); // Debug log
+      console.log('Retrieved saved state:', savedState);
       
       if (savedState) {
         try {
           const { calculator, chat, userInputs } = JSON.parse(savedState);
-          console.log('Parsed state:', { calculator, chat, userInputs }); // Debug log
+          console.log('Parsed state:', { calculator, chat, userInputs });
           
-          // Update calculator data in parent component
+          // Trigger event to restore form inputs in parent component
+          if (userInputs) {
+            const restoreEvent = new CustomEvent('restoreUserInputs', {
+              detail: { inputs: userInputs }
+            });
+            window.dispatchEvent(restoreEvent);
+            console.log('Dispatched restore event with inputs:', userInputs);
+            
+            // Save to session storage for persistence
+            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+            sessionStorage.setItem('calculationComplete', 'true');
+            
+            // Trigger calculation after a short delay to ensure inputs are restored
+            setTimeout(() => {
+              const calculateEvent = new CustomEvent('triggerCalculation');
+              window.dispatchEvent(calculateEvent);
+              console.log('Triggered calculation');
+            }, 500);
+          }
+          
+          // Update calculator data
           if (calculator) {
             Object.assign(calculatorData, calculator);
           }
@@ -64,25 +84,16 @@ export function AiChat({ calculatorData }: AiChatProps) {
             if (chat.response) setResponse(chat.response);
             setHasAskedQuestion(true);
             
-            // Save chat history to session storage
+            // Save chat history
             const chatHistory = {
               firstQuestion: chat.message,
               firstResponse: chat.response
             };
-            console.log('Saving chat history:', chatHistory); // Debug log
+            console.log('Saving chat history:', chatHistory);
             sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
           }
           
-          // Restore calculation state
-          if (userInputs) {
-            setUserInputs(userInputs);
-            setCalculationComplete(true);
-            console.log('Restoring user inputs:', userInputs); // Debug log
-            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
-            sessionStorage.setItem('calculationComplete', 'true');
-          }
-          
-          // Clean up localStorage only after successful restoration
+          // Clean up localStorage after successful restoration
           localStorage.removeItem('calculatorState');
         } catch (error) {
           console.error('Failed to restore application state:', error);

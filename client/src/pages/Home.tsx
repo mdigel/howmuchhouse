@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BasicInputs, basicInputSchema } from "@/components/BasicInputs";
@@ -8,6 +8,16 @@ import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
+
+// Define custom event types
+interface RestoreInputsEvent extends CustomEvent {
+  detail: {
+    inputs: {
+      basic?: Record<string, string | number>;
+      advanced?: Record<string, string | number | null>;
+    };
+  };
+}
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
@@ -37,6 +47,41 @@ export default function Home() {
     }
   });
 
+  // Add event listeners for state restoration after payment
+  useEffect(() => {
+    const handleRestoreInputs = (event: RestoreInputsEvent) => {
+      console.log('Restoring inputs:', event.detail.inputs);
+      const { basic, advanced } = event.detail.inputs;
+      
+      if (basic) {
+        Object.entries(basic).forEach(([key, value]) => {
+          basicForm.setValue(key as keyof BasicInputType, String(value));
+        });
+      }
+      
+      if (advanced) {
+        Object.entries(advanced).forEach(([key, value]) => {
+          advancedForm.setValue(key as keyof AdvancedInputType, value === null ? null : String(value));
+        });
+      }
+    };
+
+    const handleTriggerCalculation = () => {
+      console.log('Auto-triggering calculation');
+      handleCalculate();
+    };
+
+    // Add event listeners with type casting
+    window.addEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+    window.addEventListener('triggerCalculation', handleTriggerCalculation);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+      window.removeEventListener('triggerCalculation', handleTriggerCalculation);
+    };
+  }, [basicForm, advancedForm]);
+
   const handleCalculate = async () => {
     setIsCalculating(true);
     try {
@@ -53,6 +98,14 @@ export default function Home() {
 
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
+
+      // Store current form inputs in session storage
+      const userInputs = {
+        basic: basicData,
+        advanced: advancedData
+      };
+      sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+      console.log('Saved form inputs to sessionStorage:', userInputs);
 
       console.log('Sending calculation request with data:', { ...basicData, ...advancedData });
 
@@ -98,26 +151,25 @@ export default function Home() {
           </div>
 
           <Card className="p-6 space-y-6">
-          <BasicInputs form={basicForm} />
-          <AdvancedInputs form={advancedForm} />
-          <Button 
-            onClick={handleCalculate}
-            disabled={isCalculating}
-            className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary relative"
-          >
-            {isCalculating ? (
-              <>
-                <span className="opacity-0">Calculate</span>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                </div>
-              </>
-            ) : (
-              'Calculate'
-            )}
-          </Button>
-        </Card>
-
+            <BasicInputs form={basicForm} />
+            <AdvancedInputs form={advancedForm} />
+            <Button 
+              onClick={handleCalculate}
+              disabled={isCalculating}
+              className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary relative"
+            >
+              {isCalculating ? (
+                <>
+                  <span className="opacity-0">Calculate</span>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                </>
+              ) : (
+                'Calculate'
+              )}
+            </Button>
+          </Card>
         </div>
 
         <div className="lg:pl-8">
