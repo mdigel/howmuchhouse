@@ -42,30 +42,25 @@ export function AiChat({ calculatorData }: AiChatProps) {
       setIsPaid(true);
       setShowSuccessModal(true);
       
-      // Restore calculator data from local storage
-      const savedData = localStorage.getItem('calculatorData');
-      if (savedData) {
+      // Restore all state after successful payment
+      const savedState = localStorage.getItem('calculatorState');
+      if (savedState) {
         try {
-          const parsedData = JSON.parse(savedData);
-          // Keep using the saved data in parent component
-          calculatorData = parsedData;
-        } catch (error) {
-          console.error('Failed to parse saved calculator data:', error);
-        }
-      }
-
-      // Restore chat state from local storage
-      const savedChatState = localStorage.getItem('chatState');
-      if (savedChatState) {
-        try {
-          const { lastMessage, lastResponse } = JSON.parse(savedChatState);
-          setMessage(lastMessage || '');
-          setResponse(lastResponse);
-          if (lastResponse) {
-            setHasAskedQuestion(true);
+          const { calculator, chat } = JSON.parse(savedState);
+          // Update calculator data in parent component
+          if (calculator) {
+            Object.assign(calculatorData, calculator);
           }
+          // Restore chat state
+          if (chat) {
+            setMessage(chat.message || '');
+            setResponse(chat.response);
+            setHasAskedQuestion(chat.hasAsked);
+          }
+          // Clean up stored state
+          localStorage.removeItem('calculatorState');
         } catch (error) {
-          console.error('Failed to parse saved chat state:', error);
+          console.error('Failed to restore application state:', error);
         }
       }
     }
@@ -138,38 +133,41 @@ export function AiChat({ calculatorData }: AiChatProps) {
     try {
       setIsLoading(true);
       
-      // Save calculator data and chat state to local storage before checkout
-      localStorage.setItem('calculatorData', JSON.stringify(calculatorData));
-      localStorage.setItem('chatState', JSON.stringify({
-        lastMessage: message,
-        lastResponse: response
-      }));
+      // Save state before initiating checkout
+      if (calculatorData) {
+        localStorage.setItem('calculatorState', JSON.stringify({
+          calculator: calculatorData,
+          chat: {
+            message,
+            response,
+            hasAsked: hasAskedQuestion
+          }
+        }));
+      }
       
-      // Create checkout session
       const response = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create checkout session");
-      }
-
-      const { url } = await response.json();
+      const data = await response.json();
       
-      if (!url) {
-        throw new Error("No checkout URL received");
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create checkout session");
       }
 
-      // Direct navigation to Stripe's checkout page
-      window.location.href = url;
+      if (!data.url) {
+        throw new Error("Checkout URL not received");
+      }
+
+      // Navigate to Stripe checkout
+      window.location.assign(data.url);
       
     } catch (error) {
       console.error('Payment error:', error);
       toast({
         title: "Payment Error",
-        description: "Unable to start checkout. If you're using an ad blocker, please disable it for this site and try again.",
+        description: error instanceof Error ? error.message : "Failed to start checkout. Please try again.",
         variant: "destructive"
       });
     } finally {
