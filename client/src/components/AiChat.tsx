@@ -46,40 +46,55 @@ export function AiChat({ calculatorData }: AiChatProps) {
       
       // Restore all state after successful payment
       const savedState = localStorage.getItem('calculatorState');
+      console.log('Retrieved saved state:', savedState); // Debug log
+      
       if (savedState) {
         try {
           const { calculator, chat, userInputs } = JSON.parse(savedState);
+          console.log('Parsed state:', { calculator, chat, userInputs }); // Debug log
           
           // Update calculator data in parent component
           if (calculator) {
             Object.assign(calculatorData, calculator);
           }
           
-          // Restore chat state
+          // Restore chat state and message history
           if (chat) {
-            setMessage(chat.message || '');
-            setResponse(chat.response);
-            setHasAskedQuestion(chat.hasAsked);
-            sessionStorage.setItem('chatHistory', JSON.stringify({
+            if (chat.message) setMessage(chat.message);
+            if (chat.response) setResponse(chat.response);
+            setHasAskedQuestion(true);
+            
+            // Save chat history to session storage
+            const chatHistory = {
               firstQuestion: chat.message,
               firstResponse: chat.response
-            }));
+            };
+            console.log('Saving chat history:', chatHistory); // Debug log
+            sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
           }
           
-          // Store user inputs in session storage for persistence
+          // Restore calculation state
           if (userInputs) {
+            setUserInputs(userInputs);
+            setCalculationComplete(true);
+            console.log('Restoring user inputs:', userInputs); // Debug log
             sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
             sessionStorage.setItem('calculationComplete', 'true');
           }
           
-          // Clean up localStorage state since we've moved it to sessionStorage
+          // Clean up localStorage only after successful restoration
           localStorage.removeItem('calculatorState');
         } catch (error) {
           console.error('Failed to restore application state:', error);
+          toast({
+            title: "State Restoration Error",
+            description: "There was an issue restoring your previous session. Please try refreshing the page.",
+            variant: "destructive"
+          });
         }
       }
     }
-  }, []);
+  }, [calculatorData, toast]);
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
@@ -150,27 +165,39 @@ export function AiChat({ calculatorData }: AiChatProps) {
       
       // Save all necessary state before initiating checkout
       if (calculatorData) {
-        // Get form inputs from session storage if they exist
-        const userInputs = sessionStorage.getItem('userInputs') 
-          ? JSON.parse(sessionStorage.getItem('userInputs')!)
-          : null;
+        // Get current form inputs and calculation state
+        const savedInputs = sessionStorage.getItem('userInputs');
+        const currentInputs = savedInputs ? JSON.parse(savedInputs) : null;
+        
+        console.log('Saving state before payment:', {
+          calculatorData,
+          message,
+          response,
+          currentInputs
+        });
 
-        localStorage.setItem('calculatorState', JSON.stringify({
+        // Save complete state to localStorage
+        const stateToSave = {
           calculator: calculatorData,
           chat: {
             message,
             response,
-            hasAsked: hasAskedQuestion
+            hasAsked: true
           },
-          userInputs: userInputs
-        }));
-
-        // Save initial chat interaction to session storage
+          userInputs: currentInputs
+        };
+        
+        localStorage.setItem('calculatorState', JSON.stringify(stateToSave));
+        console.log('Saved state to localStorage:', stateToSave);
+        
+        // Save initial chat interaction to session storage for backup
         if (message && response) {
-          sessionStorage.setItem('chatHistory', JSON.stringify({
+          const chatHistory = {
             firstQuestion: message,
             firstResponse: response
-          }));
+          };
+          sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+          console.log('Saved chat history to sessionStorage:', chatHistory);
         }
       }
       
