@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { MessageCircle, LightbulbIcon, Loader2, ThumbsUp, ThumbsDown } from "lucide-react";
 import { loadStripe } from "@/lib/stripeClient";
+import { PaymentSuccessModal } from "@/components/ui/payment-success-modal";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
 
 interface AiChatProps {
@@ -28,17 +29,23 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   // Check URL params for successful payment
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const checkoutSessionId = params.get('session_id');
+    const isSuccess = params.get('success') === 'true';
+    const sessionId = params.get('session_id');
     
-    if (checkoutSessionId) {
+    if (isSuccess && sessionId) {
       setIsPaid(true);
-      // Remove the session_id from URL without refreshing
-      window.history.replaceState({}, '', window.location.pathname);
+      setShowSuccessModal(true);
     }
   }, []);
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+  };
 
   const handleSubmit = async () => {
     if (message.length > 3000) {
@@ -271,6 +278,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
           </div>
         </div>
       )}
+    <PaymentSuccessModal 
+        isOpen={showSuccessModal} 
+        onClose={handleSuccessModalClose} 
+      />
     </Card>
   );
 }
