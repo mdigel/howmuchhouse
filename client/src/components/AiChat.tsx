@@ -162,13 +162,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error("No checkout URL received");
       }
 
-      // Direct redirect to Stripe's checkout page
-      // Use window.open as a fallback if direct navigation is blocked
-      const newWindow = window.open(url, '_self');
-      if (!newWindow) {
-        // If popup is blocked, try direct navigation
-        window.location.href = url;
-      }
+      // Direct navigation to Stripe's checkout page
+      window.location.href = url;
       
     } catch (error) {
       console.error('Payment error:', error);

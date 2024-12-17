@@ -223,6 +223,7 @@ export function registerRoutes(app: Express): Server {
         mode: 'payment',
         success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/?canceled=true`,
+        allow_promotion_codes: true,
       });
 
       console.log('Created session:', { 
