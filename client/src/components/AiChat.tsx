@@ -102,35 +102,29 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
+      console.log('Initiating payment process...');
       
-      // Create checkout session
       const response = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
 
+      console.log('Received response:', response.status);
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to create checkout session");
       }
 
       const data = await response.json();
+      console.log('Checkout data received:', { hasUrl: !!data.url });
+
       if (!data.url) {
-        throw new Error("Checkout URL not provided");
+        throw new Error("Checkout URL not provided by the server");
       }
 
-      // Redirect to Stripe's hosted checkout page
-      window.location.href = data.url;
-
-      // Get the checkout URL from the response
-      const { url } = await response.json();
-      
-      if (!url) {
-        throw new Error("Failed to get checkout URL");
-      }
-
-      // Redirect to Stripe's hosted checkout page
-      window.location.href = url;
+      console.log('Redirecting to:', data.url);
+      window.location.assign(data.url);
       
     } catch (error) {
       console.error('Payment error:', error);
