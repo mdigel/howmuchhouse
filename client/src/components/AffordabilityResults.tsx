@@ -15,6 +15,7 @@ import type { CalculatorResults } from "@/lib/calculatorTypes";
 
 interface AffordabilityResultsProps {
   results: CalculatorResults;
+  isLoading?: boolean;
 }
 
 interface InfoTooltipProps {
@@ -36,12 +37,18 @@ function InfoTooltip({ text }: InfoTooltipProps) {
   );
 }
 
-export function AffordabilityResults({ results }: AffordabilityResultsProps) {
+import { AffordabilitySkeleton } from "@/components/ui/affordability-skeleton";
+
+export function AffordabilityResults({ results, isLoading = false }: AffordabilityResultsProps) {
   const formatCurrency = (amount: number) => 
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
   const formatPercentage = (decimal: number) =>
     new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 0 }).format(decimal);
+
+  if (isLoading) {
+    return <AffordabilitySkeleton />;
+  }
 
   return (
     <div className="space-y-6">
