@@ -103,24 +103,31 @@ export function AiChat({ calculatorData }: AiChatProps) {
     try {
       setIsLoading(true);
       
+      // Create checkout session
       const response = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
 
-      const data = await response.json();
-      
-      if (!response.ok || !data.url) {
-        throw new Error(data.error || "Failed to create checkout session");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to create checkout session");
       }
 
-      window.location.href = data.url;
+      const { url } = await response.json();
+      
+      if (!url) {
+        throw new Error("No checkout URL received");
+      }
+
+      // Direct redirect to Stripe's checkout page
+      window.location.replace(url);
       
     } catch (error) {
       console.error('Payment error:', error);
       toast({
         title: "Payment Error",
-        description: "Unable to start checkout process. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to start checkout. Please try again.",
         variant: "destructive"
       });
     } finally {
