@@ -129,13 +129,18 @@ export function AiChat({ calculatorData }: AiChatProps) {
       }
 
       // Direct redirect to Stripe's checkout page
-      window.location.replace(url);
+      // Use window.open as a fallback if direct navigation is blocked
+      const newWindow = window.open(url, '_self');
+      if (!newWindow) {
+        // If popup is blocked, try direct navigation
+        window.location.href = url;
+      }
       
     } catch (error) {
       console.error('Payment error:', error);
       toast({
         title: "Payment Error",
-        description: error instanceof Error ? error.message : "Unable to start checkout. Please try again.",
+        description: "Unable to start checkout. If you're using an ad blocker, please disable it for this site and try again.",
         variant: "destructive"
       });
     } finally {
