@@ -27,7 +27,8 @@ const EXAMPLE_QUESTIONS = [
   "Should I consider a shorter loan term?"
 ];
 
-const MAX_QUESTIONS = 5;
+const FREE_QUESTIONS = 1;
+const PAID_QUESTIONS = 5;
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
@@ -124,10 +125,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
-    if (isPaid && questionsAsked >= MAX_QUESTIONS) {
+    const maxQuestions = isPaid ? PAID_QUESTIONS : FREE_QUESTIONS;
+    if (questionsAsked >= maxQuestions) {
       toast({
         title: "Question limit reached",
-        description: "You've used all 5 questions in this session. To continue asking questions, you'll need to make another payment.",
+        description: isPaid 
+          ? "You've used all 5 questions in this session. To continue asking questions, you'll need to make another payment."
+          : "You've used your free question. To continue asking questions, please make a payment.",
         variant: "destructive"
       });
       return;
@@ -308,14 +312,26 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
       </div>
       
-      <div className="space-y-2">
-        {/*  Need to modify this section to render messages in a chat-like UI */}
-        {messages.map((msg, index) => (
-          <div key={index} className={`p-4 rounded-lg ${msg.role === 'user' ? 'bg-muted' : 'bg-gray-100'}`}>
-            <p className="whitespace-pre-wrap">{msg.content}</p>
+      {!hasAskedQuestion && (
+        <div className="bg-muted p-4 rounded-lg space-y-2">
+          <div className="flex items-center gap-2">
+            <LightbulbIcon className="h-4 w-4" />
+            <p className="font-medium">Example questions you can ask:</p>
           </div>
-        ))}
-      </div>
+          <ul className="space-y-1 text-sm text-muted-foreground">
+            {EXAMPLE_QUESTIONS.map((q, i) => (
+              <li 
+                key={i} 
+                className="cursor-pointer hover:text-foreground transition-colors flex items-center gap-2" 
+                onClick={() => setMessage(q)}
+              >
+                <span>•</span>
+                <span className="flex-1">{q}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {(!hasAskedQuestion || isPaid) && (
         <div className="space-y-4">
@@ -332,7 +348,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             </span>
             <Button 
               onClick={handleSubmit} 
-              disabled={isLoading || message.trim().length === 0 || (!isPaid && questionsAsked >= MAX_QUESTIONS)}
+              disabled={isLoading || message.trim().length === 0 || questionsAsked >= (isPaid ? PAID_QUESTIONS : FREE_QUESTIONS)}
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
@@ -345,11 +361,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
               )}
             </Button>
           </div>
-          {!isPaid && questionsAsked >= MAX_QUESTIONS && (
-            <p className="text-sm text-red-500">You've reached the question limit for this session. Please make a payment to continue.</p>
+          {!isPaid && questionsAsked >= FREE_QUESTIONS && (
+            <p className="text-sm text-red-500">You've used your free question. Please make a payment to continue.</p>
           )}
-          {!isPaid && questionsAsked < MAX_QUESTIONS && (
-            <p className="text-sm text-muted-foreground">Questions Remaining: {MAX_QUESTIONS - questionsAsked}</p>
+          {!isPaid && questionsAsked < FREE_QUESTIONS && (
+            <p className="text-sm text-muted-foreground">Questions Remaining: {FREE_QUESTIONS - questionsAsked}</p>
+          )}
+          {isPaid && (
+            <p className="text-sm text-muted-foreground">Questions Remaining: {PAID_QUESTIONS - questionsAsked}</p>
           )}
         </div>
       )}

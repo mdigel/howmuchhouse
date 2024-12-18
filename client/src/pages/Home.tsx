@@ -177,8 +177,8 @@ export default function Home() {
       <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
           <div className="text-center lg:text-left space-y-4 mb-8">
-            <h1 className="text-4xl font-bold">HowMuchHouseCanIAfford.ai</h1>
-            <p className="text-muted-foreground">The smartest AI for the biggest purchase of your life</p>
+            <h1 className="text-4xl font-bold">How Much Home Could I Afford.ai</h1>
+            <p className="text-muted-foreground"> AI for the biggest purchase of your life.</p>
           </div>
 
           <Card className="p-6 space-y-6">
