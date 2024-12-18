@@ -111,27 +111,38 @@ export default function Home() {
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
 
+      // Store form state
       const userInputs = {
         basic: basicData,
         advanced: advancedData
       };
       sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
 
+      // Prepare API request data with proper number conversions
+      const requestData = {
+        ...advancedData,
+        householdIncome: parseFloat(basicData.householdIncome as string),
+        downPayment: parseFloat(basicData.downPayment as string),
+        annualInterestRate: parseFloat(basicData.annualInterestRate as string),
+        loanTermYears: basicData.loanTermYears,
+        state: basicData.state,
+        filingStatus: basicData.filingStatus,
+        hoaFees: parseFloat(advancedData.hoaFees as string),
+        homeownersInsurance: parseFloat(advancedData.homeownersInsurance as string),
+        pretaxContributions: parseFloat(advancedData.pretaxContributions as string),
+        dependents: parseInt(advancedData.dependents as string, 10),
+      };
+
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          ...basicData,
-          ...advancedData,
-          householdIncome: Number(basicData.householdIncome),
-          downPayment: Number(basicData.downPayment),
-          annualInterestRate: Number(basicData.annualInterestRate),
-          loanTermYears: Number(basicData.loanTermYears),
-        })
+        body: JSON.stringify(requestData)
       });
       
       if (!response.ok) {
-        throw new Error(`Calculation failed: ${await response.text()}`);
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error(`Calculation failed: ${errorText}`);
       }
       
       const data = await response.json();
