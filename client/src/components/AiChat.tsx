@@ -147,13 +147,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
         headers["X-Session-Id"] = sessionId;
       }
 
-      // Add user message to chat
+      // Add user message to chat and clear input
       const userMessage: Message = {
         role: 'user',
         content: message,
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, userMessage]);
+      setMessage(""); // Clear input immediately
 
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -432,10 +433,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
             >
               {isLoading ? (
                 <>
-                  <span className="opacity-0">Ask</span>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Thinking...
                 </>
               ) : (
                 'Ask Question'
@@ -466,7 +465,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && questionsAsked >= FREE_QUESTIONS && (
+        {hasAskedQuestion && !isPaid && questionsAsked > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
