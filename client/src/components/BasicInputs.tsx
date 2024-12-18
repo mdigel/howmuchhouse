@@ -138,6 +138,15 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     onInput={(e) => {
                       const input = e.currentTarget;
                       input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+                      if (input.value.length === 2) {
+                        form.trigger('state');
+                      }
+                    }}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      if (e.target.value.length === 2) {
+                        form.trigger('state');
+                      }
                     }}
                   />
                 </FormControl>
