@@ -23,9 +23,9 @@ export default function Home() {
   const basicForm = useForm<BasicInputType>({
     resolver: zodResolver(basicInputSchema),
     defaultValues: {
-      householdIncome: 0,
-      downPayment: 0,
-      annualInterestRate: 0,
+      householdIncome: "",
+      downPayment: "",
+      annualInterestRate: "",
       loanTermYears: 30,
       state: "",
       filingStatus: "single"
