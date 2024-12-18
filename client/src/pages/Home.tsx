@@ -178,7 +178,15 @@ export default function Home() {
         <div>
           <div className="text-left space-y-2 mb-8">
             <div className="flex items-center gap-2">
-              <h1 className="text-[2rem] leading-8 tracking-tight font-bold font-noto-sans">How Much Home Could I Afford.ai</h1>
+              <h1 className="text-[2rem] leading-8 tracking-tight font-bold font-noto-sans">
+                How Much <span className="relative">
+                  Home
+                  <span className="absolute inset-0 bg-[#006AFF]/10 -rotate-1"></span>
+                </span> Could I <span className="relative">
+                  Afford.ai
+                  <span className="absolute inset-0 bg-[#006AFF]/10 rotate-1"></span>
+                </span>
+              </h1>
             </div>
             <p className="text-muted-foreground text-base">AI for the biggest purchase of your life.</p>
           </div>
