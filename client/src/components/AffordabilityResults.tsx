@@ -76,9 +76,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Transaction Section */}
                 <div className="bg-muted/30 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <span>Transaction</span>
-                  </h3>
+                  <h3 className="text-xl font-semibold mb-6">Transaction</h3>
                   <div className="space-y-4">
                     <div className="flex flex-col">
                       <span className="text-muted-foreground flex items-center text-sm">
@@ -112,9 +110,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
 
                 {/* Mortgage Payment Section */}
                 <div className="bg-muted/30 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <span>Mortgage Payment</span>
-                  </h3>
+                  <h3 className="text-xl font-semibold mb-6">Mortgage Payment</h3>
                   <div className="space-y-4">
                     <div className="flex flex-col">
                       <span className="text-muted-foreground flex items-center text-sm">
@@ -245,10 +241,8 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 {/* First row: Transaction and Mortgage Payment */}
                 <div className="grid md:grid-cols-2 gap-8">
                   {/* Transaction Section */}
-                  <div className="bg-muted/30 p-6 rounded-lg h-full">
-                    <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                      <span>Transaction</span>
-                    </h3>
+                  <div className="bg-muted/30 p-6 rounded-lg">
+                    <h3 className="text-xl font-semibold mb-6">Transaction</h3>
                     <div className="space-y-4">
                       <div className="flex flex-col">
                         <span className="text-muted-foreground flex items-center text-sm">
@@ -282,9 +276,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
 
                   {/* Mortgage Payment Section */}
                   <div className="bg-muted/30 p-6 rounded-lg">
-                    <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                      <span>Mortgage Payment</span>
-                    </h3>
+                    <h3 className="text-xl font-semibold mb-6">Mortgage Payment</h3>
                     <div className="space-y-4">
                       <div className="flex flex-col">
                         <span className="text-muted-foreground flex items-center text-sm">
@@ -336,57 +328,55 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 </div>
 
                 {/* Monthly Budget Section */}
-                <div className="bg-muted/30 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <span>Monthly Budget</span>
-                  </h3>
-                  <div className="space-y-4">
+                <div className="bg-muted/30 p-6 rounded-lg w-full">
+                  <h3 className="text-xl font-semibold mb-4">Monthly Budget</h3>
+                  <div className="space-y-2">
                     <div className="flex flex-col">
-                      <span className="text-muted-foreground flex items-center text-sm">
+                      <span className="text-muted-foreground flex items-center">
                         Net Income
                         <InfoTooltip text="Your monthly income after taxes and deductions" />
                       </span>
-                      <span className="text-lg font-semibold">
-                        {formatCurrency(results.incomeSummary.netIncome / 12).split('.')[0]}
+                      <span className="text-lg">
+                        {formatCurrency(results.incomeSummary.netIncome / 12)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground flex items-center text-sm">
+                      <span className="text-muted-foreground flex items-center">
                         Mortgage
                         <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
                       </span>
                       <div className="text-right">
-                        <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount).split('.')[0]}</span>
+                        <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>
                         <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.mortgage.percentage)}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground flex items-center text-sm">
+                      <span className="text-muted-foreground flex items-center">
                         Remaining Needs
                         <InfoTooltip text="Essential expenses like utilities, groceries, and healthcare" />
                       </span>
                       <div className="text-right">
-                        <span className="text-lg">{formatCurrency(scenario.scenario.remainingNeeds.amount).split('.')[0]}</span>
+                        <span className="text-lg">{formatCurrency(scenario.scenario.remainingNeeds.amount)}</span>
                         <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.remainingNeeds.percentage)}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground flex items-center text-sm">
+                      <span className="text-muted-foreground flex items-center">
                         Wants
                         <InfoTooltip text="Discretionary spending on entertainment, dining out, and hobbies" />
                       </span>
                       <div className="text-right">
-                        <span className="text-lg">{formatCurrency(scenario.scenario.wants.amount).split('.')[0]}</span>
+                        <span className="text-lg">{formatCurrency(scenario.scenario.wants.amount)}</span>
                         <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.wants.percentage)}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground flex items-center text-sm">
+                      <span className="text-muted-foreground flex items-center">
                         Saving
                         <InfoTooltip text="Money set aside for future goals, emergencies, and investments" />
                       </span>
                       <div className="text-right">
-                        <span className="text-lg">{formatCurrency(scenario.scenario.savings.amount).split('.')[0]}</span>
+                        <span className="text-lg">{formatCurrency(scenario.scenario.savings.amount)}</span>
                         <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.savings.percentage)}</span>
                       </div>
                     </div>
