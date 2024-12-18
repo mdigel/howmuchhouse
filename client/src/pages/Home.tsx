@@ -8,14 +8,16 @@ import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
-import { motion } from 'framer-motion'; // Added import for motion
 
-type RestoreInputsEventDetail = {
-  inputs: {
-    basic?: Partial<BasicInputType>;
-    advanced?: Partial<AdvancedInputType>;
+// Define custom event types
+interface RestoreInputsEvent extends CustomEvent {
+  detail: {
+    inputs: {
+      basic?: Record<string, string | number>;
+      advanced?: Record<string, string | number | null>;
+    };
   };
-};
+}
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
@@ -27,7 +29,7 @@ export default function Home() {
       householdIncome: "",
       downPayment: "",
       annualInterestRate: "",
-      loanTermYears: 30,
+      loanTermYears: "30",
       state: "",
       filingStatus: "single"
     }
@@ -45,58 +47,70 @@ export default function Home() {
     }
   });
 
+  // Add event listeners for state restoration after payment
   useEffect(() => {
-    const handleRestoreInputs = async (detail: RestoreInputsEventDetail) => {
-      const { basic, advanced } = detail.inputs;
-      
-      try {
-        if (basic) {
-          for (const [key, value] of Object.entries(basic)) {
-            basicForm.setValue(key as keyof BasicInputType, value);
+    const restoreAndCalculate = async () => {
+      const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
+        const { basic, advanced } = event.detail.inputs;
+        console.log('Restoring form inputs:', { basic, advanced });
+        
+        try {
+          if (basic) {
+            await Promise.all(
+              Object.entries(basic).map(async ([key, value]) => {
+                console.log(`Setting basic form value: ${key} = ${value}`);
+                await basicForm.setValue(key as keyof BasicInputType, String(value));
+              })
+            );
           }
-        }
-        
-        if (advanced) {
-          for (const [key, value] of Object.entries(advanced)) {
-            advancedForm.setValue(key as keyof AdvancedInputType, value);
+          
+          if (advanced) {
+            await Promise.all(
+              Object.entries(advanced).map(async ([key, value]) => {
+                console.log(`Setting advanced form value: ${key} = ${value}`);
+                await advancedForm.setValue(key as keyof AdvancedInputType, value === null ? null : String(value));
+              })
+            );
           }
+          
+          // Validate forms before calculation
+          const [basicValid, advancedValid] = await Promise.all([
+            basicForm.trigger(),
+            advancedForm.trigger()
+          ]);
+          
+          if (basicValid && advancedValid) {
+            console.log('Forms validated, triggering calculation');
+            await handleCalculate();
+          } else {
+            console.error('Form validation failed after restoration');
+          }
+        } catch (error) {
+          console.error('Error restoring form values:', error);
         }
-        
-        const [basicValid, advancedValid] = await Promise.all([
-          basicForm.trigger(),
-          advancedForm.trigger()
-        ]);
-        
-        if (basicValid && advancedValid) {
-          await handleCalculate();
+      };
+
+      // Add event listener for restoring inputs
+      window.addEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+
+      // Check if we have stored inputs in session storage
+      const storedInputs = sessionStorage.getItem('userInputs');
+      if (storedInputs) {
+        try {
+          const inputs = JSON.parse(storedInputs);
+          console.log('Found stored inputs:', inputs);
+          await handleRestoreInputs(new CustomEvent('restoreUserInputs', { detail: { inputs } }));
+        } catch (error) {
+          console.error('Failed to parse stored inputs:', error);
         }
-      } catch (error) {
-        console.error('Error restoring form values:', error);
       }
+
+      return () => {
+        window.removeEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+      };
     };
 
-    const handleCustomEvent = (event: Event) => {
-      if (event instanceof CustomEvent) {
-        handleRestoreInputs(event.detail);
-      }
-    };
-
-    window.addEventListener('restoreUserInputs', handleCustomEvent);
-
-    const storedInputs = sessionStorage.getItem('userInputs');
-    if (storedInputs) {
-      try {
-        const inputs = JSON.parse(storedInputs);
-        const event = new CustomEvent('restoreUserInputs', { detail: { inputs } });
-        handleCustomEvent(event);
-      } catch (error) {
-        console.error('Failed to parse stored inputs:', error);
-      }
-    }
-
-    return () => {
-      window.removeEventListener('restoreUserInputs', handleCustomEvent);
-    };
+    restoreAndCalculate();
   }, [basicForm, advancedForm]);
 
   const handleCalculate = async () => {
@@ -104,6 +118,9 @@ export default function Home() {
     try {
       const basicValid = await basicForm.trigger();
       const advancedValid = await advancedForm.trigger();
+
+      console.log('Form validation results:', { basicValid, advancedValid });
+      console.log('Form errors:', basicForm.formState.errors, advancedForm.formState.errors);
 
       if (!basicValid || !advancedValid) {
         console.log('Form validation failed');
@@ -113,30 +130,28 @@ export default function Home() {
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
 
-      console.log('Form data:', { basicData, advancedData });
-
-      // Prepare API request data with proper number conversions
-      const requestData = {
-        householdIncome: parseFloat(basicData.householdIncome),
-        downPayment: parseFloat(basicData.downPayment),
-        annualInterestRate: parseFloat(basicData.annualInterestRate),
-        loanTermYears: basicData.loanTermYears,
-        state: basicData.state,
-        filingStatus: basicData.filingStatus,
-        hoaFees: parseFloat(advancedData.hoaFees),
-        homeownersInsurance: parseFloat(advancedData.homeownersInsurance),
-        pmiInput: advancedData.pmiInput ? parseFloat(advancedData.pmiInput) : null,
-        propertyTaxInput: advancedData.propertyTaxInput ? parseFloat(advancedData.propertyTaxInput) : null,
-        pretaxContributions: parseFloat(advancedData.pretaxContributions),
-        dependents: parseInt(advancedData.dependents)
+      // Store current form inputs in session storage
+      const userInputs = {
+        basic: basicData,
+        advanced: advancedData
       };
+      sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+      console.log('Saved form inputs to sessionStorage:', userInputs);
 
-      console.log('Sending request with data:', requestData);
+      console.log('Sending calculation request with data:', { ...basicData, ...advancedData });
 
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify({ 
+          ...basicData,
+          ...advancedData,
+          // Ensure numbers are properly parsed
+          householdIncome: Number(basicData.householdIncome),
+          downPayment: Number(basicData.downPayment),
+          annualInterestRate: Number(basicData.annualInterestRate),
+          loanTermYears: Number(basicData.loanTermYears),
+        })
       });
       
       if (!response.ok) {
@@ -147,17 +162,11 @@ export default function Home() {
       
       const data = await response.json();
       console.log('Received calculation results:', data);
-      
-      // Store form state after successful calculation
-      const userInputs = {
-        basic: basicData,
-        advanced: advancedData
-      };
-      sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
-      
       setResults(data);
+      console.log('Updated results state:', data);
     } catch (error) {
       console.error('Failed to calculate:', error);
+      // You might want to show this error to the user with a toast notification
     } finally {
       setIsCalculating(false);
     }
@@ -165,7 +174,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start">
+      <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
           <div className="text-left space-y-2 mb-8">
             <div className="flex items-center gap-2">
@@ -198,27 +207,19 @@ export default function Home() {
 
         <div className="lg:pl-8">
           {results ? (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
+            <div className="space-y-8">
               <AffordabilityResults results={results} />
               <AiChat calculatorData={results} />
-            </motion.div>
+            </div>
           ) : (
-            <motion.div 
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="hidden lg:block p-8 bg-card rounded-lg border border-border/50 mt-[6.5rem]"
-            >
+            <div className="hidden lg:flex flex-col items-center justify-center h-full space-y-6 p-8 bg-card rounded-lg border border-border/50">
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-semibold">Let's Find Your Dream Home 🏠</h2>
                 <p className="text-muted-foreground">
                   Fill in your details on the left to see:
                 </p>
               </div>
-              <div className="space-y-4 text-left w-full max-w-md mt-6">
+              <div className="space-y-4 text-left w-full max-w-md">
                 <div className="flex items-start gap-3">
                   <span className="text-xl">💰</span>
                   <div>
@@ -241,7 +242,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
