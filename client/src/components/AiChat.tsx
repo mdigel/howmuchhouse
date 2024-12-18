@@ -9,6 +9,13 @@ import { loadStripe } from "@/lib/stripeClient";
 import { PaymentSuccessModal } from "@/components/ui/payment-success-modal";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
 
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+  feedback?: boolean;
+}
+
 interface AiChatProps {
   calculatorData: CalculatorResults;
 }
@@ -20,18 +27,20 @@ const EXAMPLE_QUESTIONS = [
   "Should I consider a shorter loan term?"
 ];
 
+const MAX_QUESTIONS = 5;
+
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
-  const [response, setResponse] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [questionsAsked, setQuestionsAsked] = useState(0);
   const { toast } = useToast();
-  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(null); // Added state for user inputs
-  const [calculationComplete, setCalculationComplete] = useState(false); // Added state for calculation completion
-
+  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(null);
+  const [calculationComplete, setCalculationComplete] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Check URL params for successful payment
@@ -116,16 +125,32 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
+    if (isPaid && questionsAsked >= MAX_QUESTIONS) {
+      toast({
+        title: "Question limit reached",
+        description: "You've used all 5 questions in this session. To continue asking questions, you'll need to make another payment.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const headers: Record<string, string> = {
         "Content-Type": "application/json"
       };
       
-      // Add session ID if we have one
       if (sessionId) {
         headers["X-Session-Id"] = sessionId;
       }
+
+      // Add user message to chat
+      const userMessage: Message = {
+        role: 'user',
+        content: message,
+        timestamp: Date.now()
+      };
+      setMessages(prev => [...prev, userMessage]);
 
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -142,17 +167,28 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error(errorData.message || "An unexpected error occurred");
       }
       
-      // Get and store session ID from response headers
       const newSessionId = response.headers.get("X-Session-Id");
       if (newSessionId) {
         setSessionId(newSessionId);
       }
       
       const data = await response.json();
-      setResponse(data.response);
+      
+      // Add assistant message to chat
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.response,
+        timestamp: Date.now()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      
       setHasAskedQuestion(true);
       setMessage("");
       setFeedbackGiven(false);
+      
+      if (isPaid) {
+        setQuestionsAsked(prev => prev + 1);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       toast({
@@ -178,7 +214,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         console.log('Saving state before payment:', {
           calculatorData,
           message,
-          response,
+          messages,
           currentInputs
         });
 
@@ -187,7 +223,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
           calculator: calculatorData,
           chat: {
             message,
-            response,
+            messages,
             hasAsked: true
           },
           userInputs: currentInputs
@@ -197,10 +233,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
         console.log('Saved state to localStorage:', stateToSave);
         
         // Save initial chat interaction to session storage for backup
-        if (message && response) {
+        if (message && messages.length > 0) {
           const chatHistory = {
             firstQuestion: message,
-            firstResponse: response
+            messages: messages
           };
           sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
           console.log('Saved chat history to sessionStorage:', chatHistory);
@@ -238,17 +274,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
   };
 
   const handleFeedback = async (isHelpful: boolean) => {
-    if (!response) return;
+    if (!messages || messages.length === 0) return;
     
     try {
+      const lastMessage = messages[messages.length -1];
       await fetch("/api/feedback", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
           ...(sessionId && { "X-Session-Id": sessionId })
         },
-        body: JSON.stringify({ isHelpful, response })
+        body: JSON.stringify({ isHelpful, response: lastMessage.content })
       });
+      setMessages(messages.map(msg => msg.role === 'assistant' ? {...msg, feedback: isHelpful} : msg));
       setFeedbackGiven(true);
       toast({
         title: "Thank you for your feedback!",
@@ -271,56 +309,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
       </div>
       
-      {!hasAskedQuestion && (
-        <div className="bg-muted p-4 rounded-lg space-y-2">
-          <div className="flex items-center gap-2">
-            <LightbulbIcon className="h-4 w-4" />
-            <p className="font-medium">Example questions you can ask:</p>
+      <div className="space-y-2">
+        {/*  Need to modify this section to render messages in a chat-like UI */}
+        {messages.map((msg, index) => (
+          <div key={index} className={`p-4 rounded-lg ${msg.role === 'user' ? 'bg-muted' : 'bg-gray-100'}`}>
+            <p className="whitespace-pre-wrap">{msg.content}</p>
           </div>
-          <ul className="space-y-1 text-sm text-muted-foreground">
-            {EXAMPLE_QUESTIONS.map((q, i) => (
-              <li 
-                key={i} 
-                className="cursor-pointer hover:text-foreground transition-colors flex items-center gap-2" 
-                onClick={() => setMessage(q)}
-              >
-                <span>•</span>
-                <span className="flex-1">{q}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      
-      {response && (
-        <div className="space-y-4">
-          <div className="bg-muted p-4 rounded-lg">
-            <p className="whitespace-pre-wrap">{response}</p>
-          </div>
-          
-          {!feedbackGiven && (
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-sm text-muted-foreground">Was this response helpful?</span>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleFeedback(true)}
-                className="flex items-center gap-2"
-              >
-                <ThumbsUp className="h-4 w-4" /> Yes
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleFeedback(false)}
-                className="flex items-center gap-2"
-              >
-                <ThumbsDown className="h-4 w-4" /> No
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+        ))}
+      </div>
 
       {(!hasAskedQuestion || isPaid) && (
         <div className="space-y-4">
@@ -337,7 +333,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             </span>
             <Button 
               onClick={handleSubmit} 
-              disabled={isLoading || message.trim().length === 0}
+              disabled={isLoading || message.trim().length === 0 || (!isPaid && questionsAsked >= MAX_QUESTIONS)}
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
@@ -350,11 +346,78 @@ export function AiChat({ calculatorData }: AiChatProps) {
               )}
             </Button>
           </div>
+          {!isPaid && questionsAsked >= MAX_QUESTIONS && (
+            <p className="text-sm text-red-500">You've reached the question limit for this session. Please make a payment to continue.</p>
+          )}
+          {!isPaid && questionsAsked < MAX_QUESTIONS && (
+            <p className="text-sm text-muted-foreground">Questions Remaining: {MAX_QUESTIONS - questionsAsked}</p>
+          )}
+        </div>
+      )}
+
+      {messages.length > 0 && (
+        <div className="space-y-4 max-h-[500px] overflow-y-auto">
+          {messages.map((msg, index) => (
+            <div 
+              key={msg.timestamp} 
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div 
+                className={`max-w-[80%] ${
+                  msg.role === 'user' 
+                    ? 'bg-primary text-primary-foreground ml-4' 
+                    : 'bg-muted'
+                } p-4 rounded-lg`}
+              >
+                <p className="whitespace-pre-wrap">{msg.content}</p>
+                
+                {msg.role === 'assistant' && !msg.feedback && (
+                  <div className="flex items-center justify-center gap-4 mt-4">
+                    <span className="text-sm text-muted-foreground">Was this response helpful?</span>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleFeedback(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsUp className="h-4 w-4" /> Yes
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleFeedback(false)}
+                      className="flex items-center gap-2"
+                    >
+                      <ThumbsDown className="h-4 w-4" /> No
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isPaid && (
+        <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
+          <span className="text-sm text-muted-foreground">
+            Questions remaining: {MAX_QUESTIONS - questionsAsked}
+          </span>
+          {questionsAsked >= MAX_QUESTIONS && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handlePayment}
+              className="ml-2"
+            >
+              Buy More Questions
+            </Button>
+          )}
         </div>
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && (
+        {hasAskedQuestion && !isPaid && questionsAsked < MAX_QUESTIONS && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -371,7 +434,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               Want More Insights?
             </motion.h3>
             <p className="text-muted-foreground">
-              You've used your free question! Continue the conversation with unlimited follow-up questions 
+              You've used {questionsAsked} of your free {MAX_QUESTIONS} questions! Continue the conversation with 5 follow-up questions 
               to make the most informed decision about your home purchase.
             </p>
             <div className="space-y-2">
@@ -406,7 +469,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      Unlock Unlimited Questions for $2.99
+                      Unlock 5 Questions for $2.99
                     </motion.span>
                   )}
                 </Button>
