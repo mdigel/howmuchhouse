@@ -10,6 +10,14 @@ interface BasicInputsProps {
   form: ReturnType<typeof useForm<BasicInputType>>;
 }
 
+const US_STATE_CODES = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+];
+
 export const basicInputSchema = z.object({
   householdIncome: z.string()
     .min(1, "Income is required")
@@ -30,7 +38,11 @@ export const basicInputSchema = z.object({
   state: z.string()
     .min(1, "State is required")
     .regex(/^[A-Za-z]+$/, "Please enter letters only")
-    .length(2, "Please enter a valid 2-letter state code"),
+    .length(2, "Please enter a valid 2-letter state code")
+    .refine(
+      (val) => val === "" || US_STATE_CODES.includes(val.toUpperCase()),
+      "Please enter a valid US state code"
+    ),
   filingStatus: z.enum(["single", "married", "head"])
     .default("single")
 });
