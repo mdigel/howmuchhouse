@@ -336,7 +336,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
       {messages.length > 0 && (
         <div className="space-y-4">
-          <div className="max-h-[500px] overflow-y-auto mb-6">
+          <div className="max-h-[500px] overflow-y-auto mb-6" ref={(el) => {
+            if (el) {
+              el.scrollTop = el.scrollHeight;
+            }
+          }}>
             {messages.map((msg, index) => (
               <div 
                 key={msg.timestamp} 
@@ -397,10 +401,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
                 >
                   {isLoading ? (
                     <>
-                      <span className="opacity-0">Ask</span>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      </div>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Thinking...
                     </>
                   ) : (
                     'Ask Question'
@@ -446,21 +448,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
           )}
         </div>
       )}
-      {isPaid && (
+      {isPaid && questionsAsked >= PAID_QUESTIONS && (
         <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
           <span className="text-sm text-muted-foreground">
-            Questions remaining: {PAID_QUESTIONS - questionsAsked}
+            You've used all your questions
           </span>
-          {questionsAsked >= PAID_QUESTIONS && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handlePayment}
-              className="ml-2"
-            >
-              Buy More Questions
-            </Button>
-          )}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handlePayment}
+            className="ml-2"
+          >
+            Buy More Questions
+          </Button>
         </div>
       )}
 
@@ -479,10 +479,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
               transition={{ delay: 0.1 }}
               className="text-lg"
             >
-              You've used up your free question to ChatGPT 4o, OpenAI's top tier model ($20 per month). Continue the conversation...
+              Want More Insights?
             </motion.h3>
             <p className="text-muted-foreground">
-              Continue the conversation with {PAID_QUESTIONS} follow-up questions 
+              You've used up your free question to ChatGPT 4o OpenAI's top tier model. Continue the conversation with {PAID_QUESTIONS} follow-up questions 
               to make the most informed decision about your home purchase.
             </p>
             <div className="space-y-2">
