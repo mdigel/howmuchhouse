@@ -419,9 +419,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
       {isPaid && (
         <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
           <span className="text-sm text-muted-foreground">
-            Questions remaining: {MAX_QUESTIONS - questionsAsked}
+            Questions remaining: {PAID_QUESTIONS - questionsAsked}
           </span>
-          {questionsAsked >= MAX_QUESTIONS && (
+          {questionsAsked >= PAID_QUESTIONS && (
             <Button 
               variant="outline" 
               size="sm"
@@ -435,7 +435,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && questionsAsked < MAX_QUESTIONS && (
+        {hasAskedQuestion && !isPaid && questionsAsked < FREE_QUESTIONS && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -452,7 +452,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               Want More Insights?
             </motion.h3>
             <p className="text-muted-foreground">
-              You've used {questionsAsked} of your free {MAX_QUESTIONS} questions! Continue the conversation with 5 follow-up questions 
+              You've used {questionsAsked} of your free {FREE_QUESTIONS} questions! Continue the conversation with {PAID_QUESTIONS} follow-up questions 
               to make the most informed decision about your home purchase.
             </p>
             <div className="space-y-2">
