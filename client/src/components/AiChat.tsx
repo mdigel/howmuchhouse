@@ -67,14 +67,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
           if (chat) {
             console.log('Restoring chat state:', chat);
             if (chat.message) setMessage(chat.message);
-            if (chat.response) setResponse(chat.response);
+            if (chat.messages) setMessages(chat.messages);
             setHasAskedQuestion(true);
             
-            const chatHistory = {
-              firstQuestion: chat.message,
-              firstResponse: chat.response
-            };
-            sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            // Save chat history
+            sessionStorage.setItem('chatHistory', JSON.stringify({
+              messages: chat.messages
+            }));
           }
           
           // Then restore calculator data
@@ -109,7 +108,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         }
       }
     }
-  }, [calculatorData, toast, setMessage, setResponse]);
+  }, [calculatorData, toast]);
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
