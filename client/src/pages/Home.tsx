@@ -176,9 +176,11 @@ export default function Home() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
-          <div className="text-center lg:text-left space-y-4 mb-8">
-            <h1 className="text-4xl font-bold font-noto-sans">How Much Home Could I Afford.ai</h1>
-            <p className="text-muted-foreground"> AI for the biggest purchase of your life.</p>
+          <div className="text-left space-y-2 mb-8">
+            <div className="flex items-center gap-2">
+              <h1 className="text-[2rem] leading-8 tracking-tight font-bold font-noto-sans">How Much Home Could I Afford.ai</h1>
+            </div>
+            <p className="text-muted-foreground text-base">AI for the biggest purchase of your life.</p>
           </div>
 
           <Card className="p-6 space-y-6">
@@ -187,7 +189,7 @@ export default function Home() {
             <Button 
               onClick={handleCalculate}
               disabled={isCalculating}
-              className="w-full max-w-md bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
+              className="w-full max-w-md bg-[#006AFF] hover:bg-[#006AFF]/90 text-white font-semibold py-3 px-6 rounded transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
             >
               {isCalculating ? (
                 <>
