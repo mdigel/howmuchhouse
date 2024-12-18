@@ -41,6 +41,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
     const sessionId = params.get('session_id');
     
     if (isSuccess && sessionId) {
+      console.log('Payment successful, attempting to restore state');
       setIsPaid(true);
       setShowSuccessModal(true);
       
@@ -53,48 +54,42 @@ export function AiChat({ calculatorData }: AiChatProps) {
           const { calculator, chat, userInputs } = JSON.parse(savedState);
           console.log('Parsed state:', { calculator, chat, userInputs });
           
-          // Trigger event to restore form inputs in parent component
-          if (userInputs) {
-            const restoreEvent = new CustomEvent('restoreUserInputs', {
-              detail: { inputs: userInputs }
-            });
-            window.dispatchEvent(restoreEvent);
-            console.log('Dispatched restore event with inputs:', userInputs);
-            
-            // Save to session storage for persistence
-            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
-            sessionStorage.setItem('calculationComplete', 'true');
-            
-            // Trigger calculation after a short delay to ensure inputs are restored
-            setTimeout(() => {
-              const calculateEvent = new CustomEvent('triggerCalculation');
-              window.dispatchEvent(calculateEvent);
-              console.log('Triggered calculation');
-            }, 500);
-          }
-          
-          // Update calculator data
-          if (calculator) {
-            Object.assign(calculatorData, calculator);
-          }
-          
-          // Restore chat state and message history
+          // First restore chat state
           if (chat) {
+            console.log('Restoring chat state:', chat);
             if (chat.message) setMessage(chat.message);
             if (chat.response) setResponse(chat.response);
             setHasAskedQuestion(true);
             
-            // Save chat history
             const chatHistory = {
               firstQuestion: chat.message,
               firstResponse: chat.response
             };
-            console.log('Saving chat history:', chatHistory);
             sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+          }
+          
+          // Then restore calculator data
+          if (calculator) {
+            console.log('Restoring calculator data');
+            Object.assign(calculatorData, calculator);
+          }
+          
+          // Finally restore user inputs and trigger calculation
+          if (userInputs) {
+            console.log('Restoring user inputs:', userInputs);
+            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+            
+            // Dispatch event to restore form inputs
+            const restoreEvent = new CustomEvent('restoreUserInputs', {
+              detail: { inputs: userInputs }
+            });
+            window.dispatchEvent(restoreEvent);
           }
           
           // Clean up localStorage after successful restoration
           localStorage.removeItem('calculatorState');
+          console.log('State restoration complete');
+          
         } catch (error) {
           console.error('Failed to restore application state:', error);
           toast({
@@ -105,7 +100,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         }
       }
     }
-  }, [calculatorData, toast]);
+  }, [calculatorData, toast, setMessage, setResponse]);
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);

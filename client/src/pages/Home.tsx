@@ -49,37 +49,68 @@ export default function Home() {
 
   // Add event listeners for state restoration after payment
   useEffect(() => {
-    const handleRestoreInputs = (event: RestoreInputsEvent) => {
-      console.log('Restoring inputs:', event.detail.inputs);
-      const { basic, advanced } = event.detail.inputs;
-      
-      if (basic) {
-        Object.entries(basic).forEach(([key, value]) => {
-          basicForm.setValue(key as keyof BasicInputType, String(value));
-        });
+    const restoreAndCalculate = async () => {
+      const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
+        const { basic, advanced } = event.detail.inputs;
+        console.log('Restoring form inputs:', { basic, advanced });
+        
+        try {
+          if (basic) {
+            await Promise.all(
+              Object.entries(basic).map(async ([key, value]) => {
+                console.log(`Setting basic form value: ${key} = ${value}`);
+                await basicForm.setValue(key as keyof BasicInputType, String(value));
+              })
+            );
+          }
+          
+          if (advanced) {
+            await Promise.all(
+              Object.entries(advanced).map(async ([key, value]) => {
+                console.log(`Setting advanced form value: ${key} = ${value}`);
+                await advancedForm.setValue(key as keyof AdvancedInputType, value === null ? null : String(value));
+              })
+            );
+          }
+          
+          // Validate forms before calculation
+          const [basicValid, advancedValid] = await Promise.all([
+            basicForm.trigger(),
+            advancedForm.trigger()
+          ]);
+          
+          if (basicValid && advancedValid) {
+            console.log('Forms validated, triggering calculation');
+            await handleCalculate();
+          } else {
+            console.error('Form validation failed after restoration');
+          }
+        } catch (error) {
+          console.error('Error restoring form values:', error);
+        }
+      };
+
+      // Add event listener for restoring inputs
+      window.addEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+
+      // Check if we have stored inputs in session storage
+      const storedInputs = sessionStorage.getItem('userInputs');
+      if (storedInputs) {
+        try {
+          const inputs = JSON.parse(storedInputs);
+          console.log('Found stored inputs:', inputs);
+          await handleRestoreInputs(new CustomEvent('restoreUserInputs', { detail: { inputs } }));
+        } catch (error) {
+          console.error('Failed to parse stored inputs:', error);
+        }
       }
-      
-      if (advanced) {
-        Object.entries(advanced).forEach(([key, value]) => {
-          advancedForm.setValue(key as keyof AdvancedInputType, value === null ? null : String(value));
-        });
-      }
+
+      return () => {
+        window.removeEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
+      };
     };
 
-    const handleTriggerCalculation = () => {
-      console.log('Auto-triggering calculation');
-      handleCalculate();
-    };
-
-    // Add event listeners with type casting
-    window.addEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
-    window.addEventListener('triggerCalculation', handleTriggerCalculation);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('restoreUserInputs', handleRestoreInputs as EventListener);
-      window.removeEventListener('triggerCalculation', handleTriggerCalculation);
-    };
+    restoreAndCalculate();
   }, [basicForm, advancedForm]);
 
   const handleCalculate = async () => {
