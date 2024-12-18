@@ -465,19 +465,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && questionsAsked > 0 && (
+        {hasAskedQuestion && !isPaid && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-center space-y-4 bg-muted p-6 rounded-lg"
+            className="text-center space-y-4 bg-muted p-6 rounded-lg my-6"
           >
             <motion.h3
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="font-semibold text-lg"
+              className="text-lg"
             >
               You've used up your free question to ChatGPT 4o, OpenAI's top tier model ($20 per month). Continue the conversation...
             </motion.h3>
