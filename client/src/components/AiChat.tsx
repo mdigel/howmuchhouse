@@ -333,7 +333,86 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {(!hasAskedQuestion || isPaid) && (
+      {messages.length > 0 && (
+        <div className="space-y-4">
+          <div className="max-h-[500px] overflow-y-auto mb-6">
+            {messages.map((msg, index) => (
+              <div 
+                key={msg.timestamp} 
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
+              >
+                <div 
+                  className={`max-w-[80%] ${
+                    msg.role === 'user' 
+                      ? 'bg-primary text-primary-foreground ml-4' 
+                      : 'bg-muted'
+                  } p-4 rounded-lg`}
+                >
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                  
+                  {msg.role === 'assistant' && !msg.feedback && (
+                    <div className="flex items-center justify-center gap-4 mt-4">
+                      <span className="text-sm text-muted-foreground">Was this response helpful?</span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleFeedback(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <ThumbsUp className="h-4 w-4" /> Yes
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleFeedback(false)}
+                        className="flex items-center gap-2"
+                      >
+                        <ThumbsDown className="h-4 w-4" /> No
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {isPaid && questionsAsked < PAID_QUESTIONS && (
+            <div className="space-y-4">
+              <Textarea 
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Ask about your home affordability calculation..."
+                className="min-h-[100px]"
+                maxLength={3000}
+              />
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">
+                  {message.length}/3000 characters
+                </span>
+                <Button 
+                  onClick={handleSubmit} 
+                  disabled={isLoading || message.trim().length === 0}
+                  className="bg-gradient-to-r from-primary to-primary/90"
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="opacity-0">Ask</span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    </>
+                  ) : (
+                    'Ask Question'
+                  )}
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">Questions Remaining: {PAID_QUESTIONS - questionsAsked}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {(!hasAskedQuestion) && (
         <div className="space-y-4">
           <Textarea 
             value={message}
@@ -348,74 +427,26 @@ export function AiChat({ calculatorData }: AiChatProps) {
             </span>
             <Button 
               onClick={handleSubmit} 
-              disabled={isLoading || message.trim().length === 0 || questionsAsked >= (isPaid ? PAID_QUESTIONS : FREE_QUESTIONS)}
+              disabled={isLoading || message.trim().length === 0 || questionsAsked >= FREE_QUESTIONS}
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Thinking...
+                  <span className="opacity-0">Ask</span>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
                 </>
               ) : (
                 'Ask Question'
               )}
             </Button>
           </div>
-          {!isPaid && questionsAsked >= FREE_QUESTIONS && (
-            <p className="text-sm text-red-500">You've used your free question. Please make a payment to continue.</p>
-          )}
-          {!isPaid && questionsAsked < FREE_QUESTIONS && (
+          {questionsAsked < FREE_QUESTIONS && (
             <p className="text-sm text-muted-foreground">Questions Remaining: {FREE_QUESTIONS - questionsAsked}</p>
           )}
-          {isPaid && (
-            <p className="text-sm text-muted-foreground">Questions Remaining: {PAID_QUESTIONS - questionsAsked}</p>
-          )}
         </div>
       )}
-
-      {messages.length > 0 && (
-        <div className="space-y-4 max-h-[500px] overflow-y-auto">
-          {messages.map((msg, index) => (
-            <div 
-              key={msg.timestamp} 
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div 
-                className={`max-w-[80%] ${
-                  msg.role === 'user' 
-                    ? 'bg-primary text-primary-foreground ml-4' 
-                    : 'bg-muted'
-                } p-4 rounded-lg`}
-              >
-                <p className="whitespace-pre-wrap">{msg.content}</p>
-                
-                {msg.role === 'assistant' && !msg.feedback && (
-                  <div className="flex items-center justify-center gap-4 mt-4">
-                    <span className="text-sm text-muted-foreground">Was this response helpful?</span>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleFeedback(true)}
-                      className="flex items-center gap-2"
-                    >
-                      <ThumbsUp className="h-4 w-4" /> Yes
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleFeedback(false)}
-                      className="flex items-center gap-2"
-                    >
-                      <ThumbsDown className="h-4 w-4" /> No
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
       {isPaid && (
         <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
           <span className="text-sm text-muted-foreground">
@@ -435,7 +466,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && questionsAsked < FREE_QUESTIONS && (
+        {hasAskedQuestion && !isPaid && questionsAsked >= FREE_QUESTIONS && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -449,10 +480,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
               transition={{ delay: 0.1 }}
               className="font-semibold text-lg"
             >
-              Want More Insights?
+              You've used up your free question to ChatGPT 4o, OpenAI's top tier model ($20 per month). Continue the conversation...
             </motion.h3>
             <p className="text-muted-foreground">
-              You've used {questionsAsked} of your free {FREE_QUESTIONS} questions! Continue the conversation with {PAID_QUESTIONS} follow-up questions 
+              Continue the conversation with {PAID_QUESTIONS} follow-up questions 
               to make the most informed decision about your home purchase.
             </p>
             <div className="space-y-2">
