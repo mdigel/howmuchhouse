@@ -8,6 +8,7 @@ import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
+import { motion } from 'framer-motion'; // Added import for motion
 
 type RestoreInputsEventDetail = {
   inputs: {
@@ -105,33 +106,32 @@ export default function Home() {
       const advancedValid = await advancedForm.trigger();
 
       if (!basicValid || !advancedValid) {
+        console.log('Form validation failed');
         return;
       }
 
       const basicData = basicForm.getValues();
       const advancedData = advancedForm.getValues();
 
-      // Store form state
-      const userInputs = {
-        basic: basicData,
-        advanced: advancedData
-      };
-      sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+      console.log('Form data:', { basicData, advancedData });
 
       // Prepare API request data with proper number conversions
       const requestData = {
-        ...advancedData,
-        householdIncome: parseFloat(basicData.householdIncome as string),
-        downPayment: parseFloat(basicData.downPayment as string),
-        annualInterestRate: parseFloat(basicData.annualInterestRate as string),
+        householdIncome: parseFloat(basicData.householdIncome),
+        downPayment: parseFloat(basicData.downPayment),
+        annualInterestRate: parseFloat(basicData.annualInterestRate),
         loanTermYears: basicData.loanTermYears,
         state: basicData.state,
         filingStatus: basicData.filingStatus,
-        hoaFees: parseFloat(advancedData.hoaFees as string),
-        homeownersInsurance: parseFloat(advancedData.homeownersInsurance as string),
-        pretaxContributions: parseFloat(advancedData.pretaxContributions as string),
-        dependents: parseInt(advancedData.dependents as string, 10),
+        hoaFees: parseFloat(advancedData.hoaFees),
+        homeownersInsurance: parseFloat(advancedData.homeownersInsurance),
+        pmiInput: advancedData.pmiInput ? parseFloat(advancedData.pmiInput) : null,
+        propertyTaxInput: advancedData.propertyTaxInput ? parseFloat(advancedData.propertyTaxInput) : null,
+        pretaxContributions: parseFloat(advancedData.pretaxContributions),
+        dependents: parseInt(advancedData.dependents)
       };
+
+      console.log('Sending request with data:', requestData);
 
       const response = await fetch('/api/calculate', {
         method: 'POST',
@@ -146,6 +146,15 @@ export default function Home() {
       }
       
       const data = await response.json();
+      console.log('Received calculation results:', data);
+      
+      // Store form state after successful calculation
+      const userInputs = {
+        basic: basicData,
+        advanced: advancedData
+      };
+      sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
+      
       setResults(data);
     } catch (error) {
       console.error('Failed to calculate:', error);
@@ -189,12 +198,20 @@ export default function Home() {
 
         <div className="lg:pl-8">
           {results ? (
-            <div className="space-y-8">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }}
+              className="space-y-8"
+            >
               <AffordabilityResults results={results} />
               <AiChat calculatorData={results} />
-            </div>
+            </motion.div>
           ) : (
-            <div className="hidden lg:block p-8 bg-card rounded-lg border border-border/50 mt-[6.5rem]">
+            <motion.div 
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="hidden lg:block p-8 bg-card rounded-lg border border-border/50 mt-[6.5rem]"
+            >
               <div className="text-center space-y-2">
                 <h2 className="text-2xl font-semibold">Let's Find Your Dream Home 🏠</h2>
                 <p className="text-muted-foreground">
@@ -224,7 +241,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>
