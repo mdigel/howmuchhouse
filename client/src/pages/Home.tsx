@@ -26,10 +26,10 @@ export default function Home() {
   const basicForm = useForm<BasicInputType>({
     resolver: zodResolver(basicInputSchema),
     defaultValues: {
-      householdIncome: 0,
-      downPayment: 0,
-      annualInterestRate: 0,
-      loanTermYears: 30,
+      householdIncome: "",
+      downPayment: "",
+      annualInterestRate: "",
+      loanTermYears: "30",
       state: "",
       filingStatus: "single"
     }
@@ -212,36 +212,8 @@ export default function Home() {
               <AiChat calculatorData={results} />
             </div>
           ) : (
-            <div className="hidden lg:flex flex-col items-center justify-center h-full space-y-6 p-8 bg-card rounded-lg border border-border/50">
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-semibold">Let's Find Your Dream Home 🏠</h2>
-                <p className="text-muted-foreground">
-                  Fill in your details on the left to see:
-                </p>
-              </div>
-              <div className="space-y-4 text-left w-full max-w-md">
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">💰</span>
-                  <div>
-                    <h3 className="font-medium">Maximum Home Price</h3>
-                    <p className="text-sm text-muted-foreground">See the highest home price you can afford</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">📊</span>
-                  <div>
-                    <h3 className="font-medium">Budget Scenarios</h3>
-                    <p className="text-sm text-muted-foreground">Explore different saving and spending options</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">🤖</span>
-                  <div>
-                    <h3 className="font-medium">AI-Powered Insights</h3>
-                    <p className="text-sm text-muted-foreground">Get personalized recommendations and analysis</p>
-                  </div>
-                </div>
-              </div>
+            <div className="hidden lg:flex items-center justify-center h-full text-muted-foreground">
+              Enter your details and click Calculate to see results
             </div>
           )}
         </div>

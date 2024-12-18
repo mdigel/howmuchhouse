@@ -11,20 +11,22 @@ interface BasicInputsProps {
 }
 
 export const basicInputSchema = z.object({
-  householdIncome: z.number()
-    .min(0, "Income must be a positive number")
-    .default(0),
-  downPayment: z.number()
-    .min(0, "Down payment must be a positive number")
-    .default(0),
-  annualInterestRate: z.number()
-    .min(0, "Interest rate must be a positive number")
-    .max(100, "Interest rate must be less than 100")
-    .default(0),
-  loanTermYears: z.number()
-    .int()
-    .min(1, "Loan term must be at least 1 year")
-    .default(30),
+  householdIncome: z.string()
+    .min(1, "Income is required")
+    .regex(/^[0-9]*$/, "Please enter numbers only")
+    .refine((val) => val === "" || Number(val) > 0, "Please enter positive numbers only"),
+  downPayment: z.string()
+    .min(1, "Down payment is required")
+    .regex(/^[0-9]*$/, "Please enter numbers only")
+    .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
+  annualInterestRate: z.string()
+    .min(1, "Interest rate is required")
+    .regex(/^\d*\.?\d*$/, "Please enter a valid number")
+    .refine((val) => val === "" || (Number(val) > 0 && Number(val) < 100), "Please enter a valid interest rate between 0-100"),
+  loanTermYears: z.string()
+    .regex(/^[0-9]+$/, "Please enter a valid number")
+    .transform(val => val === "" ? "30" : val)
+    .default("30"),
   state: z.string()
     .min(1, "State is required")
     .regex(/^[A-Za-z]+$/, "Please enter letters only")
@@ -54,7 +56,6 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     step="1"
                     placeholder="Enter your annual income" 
                     {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
                     className="max-w-md"
                   />
                 </FormControl>
