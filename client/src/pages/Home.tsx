@@ -187,7 +187,7 @@ export default function Home() {
             <Button 
               onClick={handleCalculate}
               disabled={isCalculating}
-              className="w-full max-w-md bg-gradient-to-r from-primary to-primary/90 hover:to-primary relative"
+              className="w-full max-w-md bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
             >
               {isCalculating ? (
                 <>
