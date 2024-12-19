@@ -50,6 +50,46 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
     return <AffordabilitySkeleton />;
   }
 
+  const generateCsv = (data: any, isMaxPrice: boolean) => {
+    const scenario = isMaxPrice ? data.maxHomePrice : data;
+    const { mortgagePaymentStats, scenario: budgetScenario } = scenario;
+    
+    const headers = [
+      'Category', 'Amount', 'Details'
+    ].join(',');
+    
+    const rows = [
+      ['Purchase Price', mortgagePaymentStats.purchasePrice, 'Total home price'],
+      ['Loan Amount', mortgagePaymentStats.loanAmount, 'Amount borrowed'],
+      ['Down Payment', mortgagePaymentStats.downpayment, 'Initial payment'],
+      ['Total Monthly Payment', mortgagePaymentStats.totalPayment, 'Total housing payment'],
+      ['Mortgage Payment', mortgagePaymentStats.mortgagePayment, 'Principal and interest'],
+      ['Property Tax', mortgagePaymentStats.propertyTax, 'Monthly property tax'],
+      ['PMI', mortgagePaymentStats.pmi, 'Private Mortgage Insurance'],
+      ['Home Insurance', mortgagePaymentStats.homeownersInsurance, 'Monthly insurance premium'],
+      ['Monthly Net Income', results.incomeSummary.netIncome / 12, 'After-tax income'],
+      ['Mortgage Budget', budgetScenario.mortgage.amount, `${(budgetScenario.mortgage.percentage * 100).toFixed(0)}% of income`],
+      ['Remaining Needs', budgetScenario.remainingNeeds.amount, `${(budgetScenario.remainingNeeds.percentage * 100).toFixed(0)}% of income`],
+      ['Wants Budget', budgetScenario.wants.amount, `${(budgetScenario.wants.percentage * 100).toFixed(0)}% of income`],
+      ['Savings', budgetScenario.savings.amount, `${(budgetScenario.savings.percentage * 100).toFixed(0)}% of income`],
+    ].map(row => row.join(','));
+
+    return [headers, ...rows].join('\n');
+  };
+
+  const downloadCsv = (data: any, isMaxPrice: boolean) => {
+    const csv = generateCsv(data, isMaxPrice);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = isMaxPrice ? 'max-price-scenario.csv' : 'saving-scenario.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <Accordion type="single" collapsible className="w-full">
@@ -69,10 +109,16 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             </div>
           </AccordionTrigger>
           <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
-            <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
+            <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
               This scenario represents the maximum house price you can afford while maintaining a balanced budget. 
               It aims to keep your mortgage payment at a sustainable level while ensuring you have enough for other expenses and savings.
             </p>
+            <button
+              onClick={() => downloadCsv(results, true)}
+              className="mb-8 inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+            >
+              📊 Download Scenario Data
+            </button>
             <div className="space-y-8">
               {/* First row: Transaction and Mortgage Payment */}
               <div className="grid md:grid-cols-2 gap-8">
@@ -241,6 +287,12 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 This scenario shows what your budget would look like if you purchased a home for {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}.
                 By choosing a more affordable home, you can save {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
               </p>
+              <button
+                onClick={() => downloadCsv(scenario, false)}
+                className="mb-8 inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+              >
+                📊 Download Scenario Data
+              </button>
               <div className="space-y-8">
                 {/* First row: Transaction and Mortgage Payment */}
                 <div className="grid md:grid-cols-2 gap-8">
