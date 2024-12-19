@@ -67,20 +67,40 @@ export function registerRoutes(app: Express): Server {
         },
         savingScenarios: [
           {
-            description: "20% Saving Scenario",
+            description: "15% Saving Scenario",
             mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.5,
-              loanAmount: (Number(householdIncome) * 2.5) - Number(downPayment),
+              purchasePrice: Number(householdIncome) * 2.7,
+              loanAmount: (Number(householdIncome) * 2.7) - Number(downPayment),
               downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.5) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.5) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.5) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.5) * 0.2 ? 75 : 0,
+              totalPayment: ((Number(householdIncome) * 2.7) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 2.7) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 2.7) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 2.7) * 0.2 ? 75 : 0,
               homeownersInsurance: 159.58,
               hoa: 0
             },
             scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.5) * 0.06) / 12, percentage: 0.3 },
+              mortgage: { amount: ((Number(householdIncome) * 2.7) * 0.06) / 12, percentage: 0.35 },
+              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
+              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
+              savings: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 }
+            }
+          },
+          {
+            description: "20% Saving Scenario",
+            mortgagePaymentStats: {
+              purchasePrice: Number(householdIncome) * 2.4,
+              loanAmount: (Number(householdIncome) * 2.4) - Number(downPayment),
+              downpayment: Number(downPayment),
+              totalPayment: ((Number(householdIncome) * 2.4) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 2.4) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 2.4) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 2.4) * 0.2 ? 50 : 0,
+              homeownersInsurance: 159.58,
+              hoa: 0
+            },
+            scenario: {
+              mortgage: { amount: ((Number(householdIncome) * 2.4) * 0.06) / 12, percentage: 0.3 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
               remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
               savings: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 }
@@ -89,41 +109,21 @@ export function registerRoutes(app: Express): Server {
           {
             description: "25% Saving Scenario",
             mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.2,
-              loanAmount: (Number(householdIncome) * 2.2) - Number(downPayment),
+              purchasePrice: Number(householdIncome) * 2.1,
+              loanAmount: (Number(householdIncome) * 2.1) - Number(downPayment),
               downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.2) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.2) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.2) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.2) * 0.2 ? 50 : 0,
+              totalPayment: ((Number(householdIncome) * 2.1) * 0.06) / 12,
+              mortgagePayment: ((Number(householdIncome) * 2.1) * 0.048) / 12,
+              propertyTax: ((Number(householdIncome) * 2.1) * 0.01) / 12,
+              pmi: Number(downPayment) < (Number(householdIncome) * 2.1) * 0.2 ? 0 : 0,
               homeownersInsurance: 159.58,
               hoa: 0
             },
             scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.2) * 0.06) / 12, percentage: 0.25 },
+              mortgage: { amount: ((Number(householdIncome) * 2.1) * 0.06) / 12, percentage: 0.25 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
               remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
               savings: { amount: (Number(householdIncome) * 0.25) / 12, percentage: 0.25 }
-            }
-          },
-          {
-            description: "30% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 1.9,
-              loanAmount: (Number(householdIncome) * 1.9) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 1.9) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 1.9) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 1.9) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 1.9) * 0.2 ? 0 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 1.9) * 0.06) / 12, percentage: 0.2 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 }
             }
           }
         ]
