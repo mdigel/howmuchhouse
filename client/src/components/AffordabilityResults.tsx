@@ -115,9 +115,9 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             </p>
             <button
               onClick={() => downloadCsv(results, true)}
-              className="mb-8 inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+              className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
             >
-              📊 Download Scenario Data
+              Download CSV
             </button>
             <div className="space-y-8">
               {/* First row: Transaction and Mortgage Payment */}
@@ -289,9 +289,9 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
               </p>
               <button
                 onClick={() => downloadCsv(scenario, false)}
-                className="mb-8 inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+                className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
               >
-                📊 Download Scenario Data
+                Download CSV
               </button>
               <div className="space-y-8">
                 {/* First row: Transaction and Mortgage Payment */}
