@@ -124,7 +124,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     min="0"
                     max="100"
                     step="0.01"
-                    placeholder="Current mortgage rate" 
+                    placeholder="Enter your interest rate" 
                     {...field}
                     className="max-w-md"
                   />
@@ -144,7 +144,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   <Input 
                     type="text"
                     maxLength={2}
-                    placeholder="Your state (e.g., CA)" 
+                    placeholder="Enter your state code" 
                     {...field}
                     className="max-w-md uppercase"
                     onInput={(e) => {
