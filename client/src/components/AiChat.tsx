@@ -4,13 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, LightbulbIcon, Loader2, ThumbsUp, ThumbsDown } from "lucide-react";
+import {
+  MessageCircle,
+  LightbulbIcon,
+  Loader2,
+  ThumbsUp,
+  ThumbsDown,
+} from "lucide-react";
 import { loadStripe } from "@/lib/stripeClient";
 import { PaymentSuccessModal } from "@/components/ui/payment-success-modal";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: number;
   feedback?: boolean;
@@ -21,10 +27,11 @@ interface AiChatProps {
 }
 
 const EXAMPLE_QUESTIONS = [
-  "What's a good down payment amount for this house price?",
-  "How does my mortgage payment compare to recommended guidelines?",
-  "What are the pros and cons of this budget allocation?",
-  "Should I consider a shorter loan term?"
+  "I want a house around my 'Max House Price', why is this a bad idea?",
+  "Create a detailed monthly budget for the save 15% scenario.",
+  "How did you calculate my property taxes?",
+  "How do I know what my homeowners insurance will actually be?",
+  "Should I consider a shorter loan term?",
 ];
 
 const FREE_QUESTIONS = 1;
@@ -40,71 +47,76 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [questionsAsked, setQuestionsAsked] = useState(0);
   const { toast } = useToast();
-  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(null);
+  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(
+    null,
+  );
   const [calculationComplete, setCalculationComplete] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Check URL params for successful payment
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const isSuccess = params.get('success') === 'true';
-    const sessionId = params.get('session_id');
-    
+    const isSuccess = params.get("success") === "true";
+    const sessionId = params.get("session_id");
+
     if (isSuccess && sessionId) {
-      console.log('Payment successful, attempting to restore state');
+      console.log("Payment successful, attempting to restore state");
       setIsPaid(true);
       setShowSuccessModal(true);
-      
+
       // Restore all state after successful payment
-      const savedState = localStorage.getItem('calculatorState');
-      console.log('Retrieved saved state:', savedState);
-      
+      const savedState = localStorage.getItem("calculatorState");
+      console.log("Retrieved saved state:", savedState);
+
       if (savedState) {
         try {
           const { calculator, chat, userInputs } = JSON.parse(savedState);
-          console.log('Parsed state:', { calculator, chat, userInputs });
-          
+          console.log("Parsed state:", { calculator, chat, userInputs });
+
           // First restore chat state
           if (chat) {
-            console.log('Restoring chat state:', chat);
+            console.log("Restoring chat state:", chat);
             if (chat.message) setMessage(chat.message);
             if (chat.messages) setMessages(chat.messages);
             setHasAskedQuestion(true);
-            
+
             // Save chat history
-            sessionStorage.setItem('chatHistory', JSON.stringify({
-              messages: chat.messages
-            }));
+            sessionStorage.setItem(
+              "chatHistory",
+              JSON.stringify({
+                messages: chat.messages,
+              }),
+            );
           }
-          
+
           // Then restore calculator data
           if (calculator) {
-            console.log('Restoring calculator data');
+            console.log("Restoring calculator data");
             Object.assign(calculatorData, calculator);
           }
-          
+
           // Finally restore user inputs and trigger calculation
           if (userInputs) {
-            console.log('Restoring user inputs:', userInputs);
-            sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
-            
+            console.log("Restoring user inputs:", userInputs);
+            sessionStorage.setItem("userInputs", JSON.stringify(userInputs));
+
             // Dispatch event to restore form inputs
-            const restoreEvent = new CustomEvent('restoreUserInputs', {
-              detail: { inputs: userInputs }
+            const restoreEvent = new CustomEvent("restoreUserInputs", {
+              detail: { inputs: userInputs },
             });
             window.dispatchEvent(restoreEvent);
           }
-          
+
           // Clean up localStorage after successful restoration
-          localStorage.removeItem('calculatorState');
-          console.log('State restoration complete');
-          
+          localStorage.removeItem("calculatorState");
+          console.log("State restoration complete");
         } catch (error) {
-          console.error('Failed to restore application state:', error);
+          console.error("Failed to restore application state:", error);
           toast({
             title: "State Restoration Error",
-            description: "There was an issue restoring your previous session. Please try refreshing the page.",
-            variant: "destructive"
+            description:
+              "There was an issue restoring your previous session. Please try refreshing the page.",
+            variant: "destructive",
           });
         }
       }
@@ -119,8 +131,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
     if (message.length > 3000) {
       toast({
         title: "Message too long",
-        description: "Please keep your input under 3000 characters so you don't bankrupt us.",
-        variant: "destructive"
+        description:
+          "Please keep your input under 3000 characters so you don't bankrupt us.",
+        variant: "destructive",
       });
       return;
     }
@@ -129,10 +142,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
     if (questionsAsked >= maxQuestions) {
       toast({
         title: "Question limit reached",
-        description: isPaid 
+        description: isPaid
           ? "You've used all 5 questions in this session. To continue asking questions, you'll need to make another payment."
           : "You've used your free question. To continue asking questions, please make a payment.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -140,20 +153,20 @@ export function AiChat({ calculatorData }: AiChatProps) {
     setIsLoading(true);
     try {
       const headers: Record<string, string> = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       };
-      
+
       if (sessionId) {
         headers["X-Session-Id"] = sessionId;
       }
 
       // Add user message to chat and clear input
       const userMessage: Message = {
-        role: 'user',
+        role: "user",
         content: message,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      setMessages(prev => [...prev, userMessage]);
+      setMessages((prev) => [...prev, userMessage]);
       setMessage(""); // Clear input immediately
 
       const response = await fetch("/api/chat", {
@@ -162,43 +175,48 @@ export function AiChat({ calculatorData }: AiChatProps) {
         body: JSON.stringify({
           message,
           calculatorData,
-          isPaid
-        })
+          isPaid,
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Failed to get response" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Failed to get response" }));
         throw new Error(errorData.message || "An unexpected error occurred");
       }
-      
+
       const newSessionId = response.headers.get("X-Session-Id");
       if (newSessionId) {
         setSessionId(newSessionId);
       }
-      
+
       const data = await response.json();
-      
+
       // Add assistant message to chat
       const assistantMessage: Message = {
-        role: 'assistant',
+        role: "assistant",
         content: data.response,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      setMessages(prev => [...prev, assistantMessage]);
-      
+      setMessages((prev) => [...prev, assistantMessage]);
+
       setHasAskedQuestion(true);
       setMessage("");
       setFeedbackGiven(false);
-      
+
       if (isPaid) {
-        setQuestionsAsked(prev => prev + 1);
+        setQuestionsAsked((prev) => prev + 1);
       }
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error("Chat error:", error);
       toast({
         title: "Something went wrong",
-        description: error instanceof Error ? error.message : "Please try again. If the problem persists, the service might be temporarily unavailable.",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please try again. If the problem persists, the service might be temporarily unavailable.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -208,18 +226,18 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
-      
+
       // Save all necessary state before initiating checkout
       if (calculatorData) {
         // Get current form inputs and calculation state
-        const savedInputs = sessionStorage.getItem('userInputs');
+        const savedInputs = sessionStorage.getItem("userInputs");
         const currentInputs = savedInputs ? JSON.parse(savedInputs) : null;
-        
-        console.log('Saving state before payment:', {
+
+        console.log("Saving state before payment:", {
           calculatorData,
           message,
           messages,
-          currentInputs
+          currentInputs,
         });
 
         // Save complete state to localStorage
@@ -228,33 +246,35 @@ export function AiChat({ calculatorData }: AiChatProps) {
           chat: {
             message,
             messages,
-            hasAsked: true
+            hasAsked: true,
           },
-          userInputs: currentInputs
+          userInputs: currentInputs,
         };
-        
-        localStorage.setItem('calculatorState', JSON.stringify(stateToSave));
-        console.log('Saved state to localStorage:', stateToSave);
-        
+
+        localStorage.setItem("calculatorState", JSON.stringify(stateToSave));
+        console.log("Saved state to localStorage:", stateToSave);
+
         // Save initial chat interaction to session storage for backup
         if (message && messages.length > 0) {
           const chatHistory = {
             firstQuestion: message,
-            messages: messages
+            messages: messages,
           };
-          sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-          console.log('Saved chat history to sessionStorage:', chatHistory);
+          sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+          console.log("Saved chat history to sessionStorage:", chatHistory);
         }
       }
-      
+
       const checkoutResponse = await fetch("/api/create-checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!checkoutResponse.ok) {
         const errorData = await checkoutResponse.json();
-        throw new Error(errorData.message || "Failed to create checkout session");
+        throw new Error(
+          errorData.message || "Failed to create checkout session",
+        );
       }
 
       const data = await checkoutResponse.json();
@@ -264,13 +284,15 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
       // Navigate to Stripe checkout
       window.location.assign(data.url);
-      
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error("Payment error:", error);
       toast({
         title: "Payment Error",
-        description: error instanceof Error ? error.message : "Failed to start checkout. Please try again.",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to start checkout. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -279,29 +301,33 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
   const handleFeedback = async (isHelpful: boolean) => {
     if (!messages || messages.length === 0) return;
-    
+
     try {
-      const lastMessage = messages[messages.length -1];
+      const lastMessage = messages[messages.length - 1];
       await fetch("/api/feedback", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          ...(sessionId && { "X-Session-Id": sessionId })
+          ...(sessionId && { "X-Session-Id": sessionId }),
         },
-        body: JSON.stringify({ isHelpful, response: lastMessage.content })
+        body: JSON.stringify({ isHelpful, response: lastMessage.content }),
       });
-      setMessages(messages.map(msg => msg.role === 'assistant' ? {...msg, feedback: isHelpful} : msg));
+      setMessages(
+        messages.map((msg) =>
+          msg.role === "assistant" ? { ...msg, feedback: isHelpful } : msg,
+        ),
+      );
       setFeedbackGiven(true);
       toast({
         title: "Thank you for your feedback!",
         description: "Your input helps us improve our responses.",
       });
     } catch (error) {
-      console.error('Feedback error:', error);
+      console.error("Feedback error:", error);
       toast({
         title: "Feedback Error",
         description: "Unable to save your feedback. Please try again later.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -312,7 +338,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <MessageCircle className="h-6 w-6" />
         <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
       </div>
-      
+
       {!hasAskedQuestion && (
         <div className="bg-muted p-4 rounded-lg space-y-2">
           <div className="flex items-center gap-2">
@@ -321,13 +347,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
           </div>
           <ul className="space-y-1 text-sm text-muted-foreground">
             {EXAMPLE_QUESTIONS.map((q, i) => (
-              <li 
-                key={i} 
-                className="cursor-pointer hover:text-foreground transition-colors flex items-center gap-2" 
+              <li
+                key={i}
+                className="cursor-pointer hover:text-foreground transition-colors flex items-start gap-2"
                 onClick={() => setMessage(q)}
               >
-                <span>•</span>
-                <span className="flex-1">{q}</span>
+                <span className="leading-6">•</span>
+                <span>{q}</span>
               </li>
             ))}
           </ul>
@@ -336,39 +362,44 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
       {messages.length > 0 && (
         <div className="space-y-4">
-          <div className="max-h-[500px] overflow-y-auto mb-6" ref={(el) => {
-            if (el) {
-              el.scrollTop = el.scrollHeight;
-            }
-          }}>
+          <div
+            className="max-h-[500px] overflow-y-auto mb-6"
+            ref={(el) => {
+              if (el) {
+                el.scrollTop = el.scrollHeight;
+              }
+            }}
+          >
             {messages.map((msg, index) => (
-              <div 
-                key={msg.timestamp} 
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
+              <div
+                key={msg.timestamp}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} mb-4`}
               >
-                <div 
+                <div
                   className={`max-w-[80%] ${
-                    msg.role === 'user' 
-                      ? 'bg-primary text-primary-foreground ml-4' 
-                      : 'bg-muted'
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground ml-4"
+                      : "bg-muted"
                   } p-4 rounded-lg`}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>
-                  
-                  {msg.role === 'assistant' && !msg.feedback && (
+
+                  {msg.role === "assistant" && !msg.feedback && (
                     <div className="flex items-center justify-center gap-4 mt-4">
-                      <span className="text-sm text-muted-foreground">Was this response helpful?</span>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <span className="text-sm text-muted-foreground">
+                        Was this response helpful?
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleFeedback(true)}
                         className="flex items-center gap-2"
                       >
                         <ThumbsUp className="h-4 w-4" /> Yes
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleFeedback(false)}
                         className="flex items-center gap-2"
                       >
@@ -380,10 +411,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
               </div>
             ))}
           </div>
-          
+
           {isPaid && questionsAsked < PAID_QUESTIONS && (
             <div className="space-y-4">
-              <Textarea 
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Ask about your home affordability calculation..."
@@ -394,8 +425,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
                 <span className="text-sm text-muted-foreground">
                   {message.length}/3000 characters
                 </span>
-                <Button 
-                  onClick={handleSubmit} 
+                <Button
+                  onClick={handleSubmit}
                   disabled={isLoading || message.trim().length === 0}
                   className="bg-gradient-to-r from-primary to-primary/90"
                 >
@@ -405,19 +436,21 @@ export function AiChat({ calculatorData }: AiChatProps) {
                       Thinking...
                     </>
                   ) : (
-                    'Ask Question'
+                    "Ask Question"
                   )}
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">Questions Remaining: {PAID_QUESTIONS - questionsAsked}</p>
+              <p className="text-sm text-muted-foreground">
+                Questions Remaining: {PAID_QUESTIONS - questionsAsked}
+              </p>
             </div>
           )}
         </div>
       )}
 
-      {(!hasAskedQuestion) && (
+      {!hasAskedQuestion && (
         <div className="space-y-4">
-          <Textarea 
+          <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Ask about your home affordability calculation..."
@@ -428,9 +461,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
             <span className="text-sm text-muted-foreground">
               {message.length}/3000 characters
             </span>
-            <Button 
-              onClick={handleSubmit} 
-              disabled={isLoading || message.trim().length === 0 || questionsAsked >= FREE_QUESTIONS}
+            <Button
+              onClick={handleSubmit}
+              disabled={
+                isLoading ||
+                message.trim().length === 0 ||
+                questionsAsked >= FREE_QUESTIONS
+              }
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
@@ -439,12 +476,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
                   Thinking...
                 </>
               ) : (
-                'Ask Question'
+                "Ask Question"
               )}
             </Button>
           </div>
           {questionsAsked < FREE_QUESTIONS && (
-            <p className="text-sm text-muted-foreground">Questions Remaining: {FREE_QUESTIONS - questionsAsked}</p>
+            <p className="text-sm text-muted-foreground">
+              Questions Remaining: {FREE_QUESTIONS - questionsAsked}
+            </p>
           )}
         </div>
       )}
@@ -453,8 +492,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
           <span className="text-sm text-muted-foreground">
             You've used all your questions
           </span>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={handlePayment}
             className="ml-2"
@@ -482,8 +521,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
               Want More Insights?
             </motion.h3>
             <p className="text-muted-foreground">
-              You've used up your free question to ChatGPT 4o OpenAI's top tier model. Continue the conversation with {PAID_QUESTIONS} follow-up questions 
-              to make the most informed decision about your home purchase.
+              You've used up your free question to ChatGPT 4o OpenAI's top tier
+              model. Continue the conversation with {PAID_QUESTIONS} follow-up
+              questions to make the most informed decision about your home
+              purchase.
             </p>
             <div className="space-y-2">
               <motion.div
@@ -492,13 +533,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
                 transition={{ duration: 0.3 }}
                 className="w-full max-w-xs mx-auto"
               >
-                <Button 
-                  onClick={handlePayment} 
+                <Button
+                  onClick={handlePayment}
                   disabled={isLoading}
                   className={`
                     w-full bg-gradient-to-r from-primary to-primary/90 
                     hover:to-primary hover:scale-105 transition-all duration-200
-                    ${isLoading ? 'animate-pulse' : ''}
+                    ${isLoading ? "animate-pulse" : ""}
                   `}
                 >
                   {isLoading ? (
@@ -529,9 +570,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      <PaymentSuccessModal 
-        isOpen={showSuccessModal} 
-        onClose={handleSuccessModalClose} 
+      <PaymentSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessModalClose}
       />
     </Card>
   );
