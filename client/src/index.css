@@ -10,7 +10,7 @@
 
 
   input::placeholder {
-    @apply text-base md:text-lg;
+    @apply text-sm md:text-base;
   }
 
 @layer base {
