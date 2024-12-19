@@ -173,18 +173,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
+    <div className="min-h-screen bg-background p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
           <div className="text-left space-y-2 mb-8">
             <div className="flex items-center gap-2">
-              <h1 className="text-[2rem] leading-8 tracking-tight font-bold font-noto-sans">
+              <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
                 How Much <span className="relative">
                   Home
-                  <span className="absolute inset-0 bg-[#006AFF]/10 -rotate-1"></span>
+                  <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
                 </span> Could I <span className="relative">
                   Afford.ai
-                  <span className="absolute inset-0 bg-[#006AFF]/10 rotate-1"></span>
+                  <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
                 </span>
               </h1>
             </div>
@@ -241,8 +241,8 @@ export default function Home() {
                 <div className="flex items-center gap-3">
                   <span className="text-xl">🤖</span>
                   <div>
-                    <h3 className="font-medium">AI-Powered Insights</h3>
-                    <p className="text-sm text-muted-foreground">Get personalized recommendations and analysis</p>
+                    <h3 className="font-medium">AI Personalized Advisor</h3>
+                    <p className="text-sm text-muted-foreground">Get recommendations and analysis for your exact situation</p>
                   </div>
                 </div>
               </div>

@@ -57,9 +57,9 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="householdIncome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-2">
-                  Household Income
-                  <span className="text-sm text-muted-foreground">(per year)</span>
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span>Household Income</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">(per year)</span>
                 </FormLabel>
                 <FormControl>
                   <Input 
@@ -81,9 +81,9 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="downPayment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-2">
-                  Down Payment
-                  <span className="text-sm text-muted-foreground">(available for down payment)</span>
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span>Down Payment</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
                 </FormLabel>
                 <FormControl>
                   <Input 

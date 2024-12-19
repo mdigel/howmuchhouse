@@ -7,6 +7,22 @@
     @apply border-border;
   }
 
+
+@layer base {
+  input[type="number"] {
+    @apply text-base md:text-lg;
+  }
+  
+  .form-label {
+    @apply text-sm md:text-base;
+  }
+  
+  /* Improve tap targets on mobile */
+  button, input, select {
+    @apply min-h-[44px] md:min-h-[36px];
+  }
+}
+
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
