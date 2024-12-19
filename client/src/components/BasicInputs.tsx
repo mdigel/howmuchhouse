@@ -126,7 +126,8 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     step="0.01"
                     placeholder="Enter your interest rate" 
                     {...field}
-                    className="max-w-md text-base md:text-lg"
+                    className="max-w-md text-sm"
+                    style={{ fontSize: '14px' }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -146,7 +147,8 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     maxLength={2}
                     placeholder="Enter your state code" 
                     {...field}
-                    className="max-w-md uppercase text-base md:text-lg"
+                    className="max-w-md uppercase text-sm"
+                    style={{ fontSize: '14px' }}
                     onInput={(e) => {
                       const input = e.currentTarget;
                       input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
