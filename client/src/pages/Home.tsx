@@ -250,7 +250,7 @@ export default function Home() {
           )}
         </div>
       </div>
-      <footer className="mt-12 pb-6 text-center space-y-4">
+      <footer className="mt-36 md:mt-48 pb-6 text-center space-y-4">
         <div className="w-full max-w-2xl mx-auto border-t border-border pt-6" />
         <div className="space-y-4">
           <a 
