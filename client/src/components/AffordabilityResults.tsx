@@ -113,12 +113,14 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
               This scenario represents the maximum house price you can afford while maintaining a balanced budget. 
               It aims to keep your mortgage payment at a sustainable level while ensuring you have enough for other expenses and savings.
             </p>
-            <button
-              onClick={() => downloadCsv(results, true)}
-              className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
-            >
-              Download CSV
-            </button>
+            <div className="hidden md:block">
+              <button
+                onClick={() => downloadCsv(results, true)}
+                className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
+              >
+                Download CSV
+              </button>
+            </div>
             <div className="space-y-8">
               {/* First row: Transaction and Mortgage Payment */}
               <div className="grid md:grid-cols-2 gap-8">
@@ -287,12 +289,14 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 This scenario shows what your budget would look like if you purchased a home for {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}.
                 By choosing a more affordable home, you can save {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
               </p>
-              <button
-                onClick={() => downloadCsv(scenario, false)}
-                className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
-              >
-                Download CSV
-              </button>
+              <div className="hidden md:block">
+                <button
+                  onClick={() => downloadCsv(scenario, false)}
+                  className="mb-8 inline-flex items-center px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 text-muted-foreground rounded transition-colors"
+                >
+                  Download CSV
+                </button>
+              </div>
               <div className="space-y-8">
                 {/* First row: Transaction and Mortgage Payment */}
                 <div className="grid md:grid-cols-2 gap-8">
