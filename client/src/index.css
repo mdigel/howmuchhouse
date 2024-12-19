@@ -8,6 +8,11 @@
   }
 
 
+
+  input::placeholder {
+    @apply text-base md:text-lg;
+  }
+
 @layer base {
   input[type="number"] {
     @apply text-base md:text-lg;
