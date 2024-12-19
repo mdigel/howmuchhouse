@@ -69,39 +69,6 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             </div>
           </AccordionTrigger>
           <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
-            <div className="flex justify-end mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const csvContent = [
-                    ['Category', 'Amount'],
-                    ['Purchase Price', results.maxHomePrice.mortgagePaymentStats.purchasePrice],
-                    ['Loan Amount', results.maxHomePrice.mortgagePaymentStats.loanAmount],
-                    ['Down Payment', results.maxHomePrice.mortgagePaymentStats.downpayment],
-                    ['Monthly Payment', results.maxHomePrice.mortgagePaymentStats.totalPayment],
-                    ['Mortgage Payment', results.maxHomePrice.mortgagePaymentStats.mortgagePayment],
-                    ['Property Tax', results.maxHomePrice.mortgagePaymentStats.propertyTax],
-                    ['PMI', results.maxHomePrice.mortgagePaymentStats.pmi],
-                    ['Home Insurance', results.maxHomePrice.mortgagePaymentStats.homeownersInsurance],
-                    ['HOA', results.maxHomePrice.mortgagePaymentStats.hoa],
-                    ['Monthly Net Income', results.maxHomePrice.scenario.monthlyNetIncome],
-                    ['Monthly Mortgage', results.maxHomePrice.scenario.mortgage.amount],
-                    ['Monthly Wants', results.maxHomePrice.scenario.wants.amount],
-                    ['Monthly Needs', results.maxHomePrice.scenario.remainingNeeds.amount],
-                    ['Monthly Savings', results.maxHomePrice.scenario.savings.amount],
-                  ].map(row => row.join(',')).join('\n');
-                  
-                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.download = 'max_price_scenario.csv';
-                  link.click();
-                }}
-              >
-                Download CSV
-              </Button>
-            </div>
             <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
               This scenario represents the maximum house price you can afford while maintaining a balanced budget. 
               It aims to keep your mortgage payment at a sustainable level while ensuring you have enough for other expenses and savings.
@@ -270,39 +237,6 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
-              <div className="flex justify-end mb-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const csvContent = [
-                      ['Category', 'Amount'],
-                      ['Purchase Price', scenario.mortgagePaymentStats.purchasePrice],
-                      ['Loan Amount', scenario.mortgagePaymentStats.loanAmount],
-                      ['Down Payment', scenario.mortgagePaymentStats.downpayment],
-                      ['Monthly Payment', scenario.mortgagePaymentStats.totalPayment],
-                      ['Mortgage Payment', scenario.mortgagePaymentStats.mortgagePayment],
-                      ['Property Tax', scenario.mortgagePaymentStats.propertyTax],
-                      ['PMI', scenario.mortgagePaymentStats.pmi],
-                      ['Home Insurance', scenario.mortgagePaymentStats.homeownersInsurance],
-                      ['HOA', scenario.mortgagePaymentStats.hoa],
-                      ['Monthly Net Income', results.incomeSummary.netIncome / 12],
-                      ['Monthly Mortgage', scenario.scenario.mortgage.amount],
-                      ['Monthly Wants', scenario.scenario.wants.amount],
-                      ['Monthly Needs', scenario.scenario.remainingNeeds.amount],
-                      ['Monthly Savings', scenario.scenario.savings.amount],
-                    ].map(row => row.join(',')).join('\n');
-                    
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `saving_scenario_${index + 1}.csv`;
-                    link.click();
-                  }}
-                >
-                  Download CSV
-                </Button>
-              </div>
               <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
                 This scenario shows what your budget would look like if you purchased a home for {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}.
                 By choosing a more affordable home, you can save {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
