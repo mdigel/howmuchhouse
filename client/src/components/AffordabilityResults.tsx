@@ -227,14 +227,9 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 <span className="text-[2rem] font-bold text-primary">
                   {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                 </span>
-                <div className="flex flex-col">
-                  <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
-                    Lower Price Option
-                  </span>
-                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                    Save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
-                  </span>
-                </div>
+                <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
+                  and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
+                </span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
