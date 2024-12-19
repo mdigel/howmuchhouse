@@ -56,11 +56,13 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
         {/* Max Price Result */}
         <AccordionItem value="item-0">
           <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
-            <div className="flex items-center gap-4 w-full">
-              <span className="text-2xl">🥵</span>
-              <span className="text-[2rem] font-bold text-primary">
-                {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
-              </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🥵</span>
+                <span className="text-[2rem] font-bold text-primary">
+                  {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                </span>
+              </div>
               <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
                 Max Price You Can Afford
               </span>
@@ -222,11 +224,13 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
         {results.savingScenarios.map((scenario, index) => (
           <AccordionItem key={index} value={`item-${index + 1}`}>
             <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
-              <div className="flex items-center gap-4 w-full">
-                <span className="text-2xl">🙂</span>
-                <span className="text-[2rem] font-bold text-primary">
-                  {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
-                </span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🙂</span>
+                  <span className="text-[2rem] font-bold text-primary">
+                    {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                  </span>
+                </div>
                 <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
                   and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
                 </span>
