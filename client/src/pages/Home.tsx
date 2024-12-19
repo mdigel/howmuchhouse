@@ -173,7 +173,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-[calc(100vh+200px)] bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
           <div className="text-left space-y-2 mb-8">
