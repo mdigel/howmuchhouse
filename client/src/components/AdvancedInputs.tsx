@@ -66,13 +66,20 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>HOA Fees</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Monthly HOA fees" 
-                            {...field}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                            <Input 
+                              type="text"
+                              placeholder="Monthly HOA fees" 
+                              {...field}
+                              className="pl-7"
+                              value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                                field.onChange(value);
+                              }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -86,13 +93,20 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>Homeowners Insurance</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Annual insurance cost" 
-                            {...field}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                            <Input 
+                              type="text"
+                              placeholder="Annual insurance cost" 
+                              {...field}
+                              className="pl-7"
+                              value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                                field.onChange(value);
+                              }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -106,14 +120,20 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>PMI (Optional)</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Annual PMI" 
-                            {...field}
-                            value={field.value ?? ''}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                            <Input 
+                              type="text"
+                              placeholder="Annual PMI" 
+                              {...field}
+                              className="pl-7"
+                              value={field.value ? field.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                                field.onChange(value === '' ? null : value);
+                              }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -127,14 +147,20 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>Property Tax (Optional)</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Annual property tax" 
-                            {...field}
-                            value={field.value ?? ''}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                            <Input 
+                              type="text"
+                              placeholder="Annual property tax" 
+                              {...field}
+                              className="pl-7"
+                              value={field.value ? field.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                                field.onChange(value === '' ? null : value);
+                              }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

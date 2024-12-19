@@ -62,14 +62,20 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   <span className="text-xs sm:text-sm text-muted-foreground">(per year)</span>
                 </FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="Enter your annual income" 
-                    {...field}
-                    className="max-w-md"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input 
+                      type="text"
+                      placeholder="Enter your annual income" 
+                      {...field}
+                      className="max-w-md pl-7"
+                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        field.onChange(value);
+                      }}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,14 +92,20 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
                 </FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="Enter your down payment amount" 
-                    {...field}
-                    className="max-w-md"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input 
+                      type="text"
+                      placeholder="Enter your down payment amount" 
+                      {...field}
+                      className="max-w-md pl-7"
+                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        field.onChange(value);
+                      }}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
