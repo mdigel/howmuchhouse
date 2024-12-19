@@ -67,11 +67,14 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                         <FormLabel>HOA Fees</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="text"
                             placeholder="Monthly HOA fees" 
                             {...field}
+                            value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -87,11 +90,14 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                         <FormLabel>Homeowners Insurance</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="text"
                             placeholder="Annual insurance cost" 
                             {...field}
+                            value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -107,12 +113,14 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                         <FormLabel>PMI (Optional)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="text"
                             placeholder="Annual PMI" 
                             {...field}
-                            value={field.value ?? ''}
+                            value={field.value ? field.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                              field.onChange(value === '' ? null : value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -128,12 +136,14 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                         <FormLabel>Property Tax (Optional)</FormLabel>
                         <FormControl>
                           <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="text"
                             placeholder="Annual property tax" 
                             {...field}
-                            value={field.value ?? ''}
+                            value={field.value ? field.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                              field.onChange(value === '' ? null : value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
