@@ -180,6 +180,8 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             step="0.01"
                             placeholder="Annual pre-tax contributions" 
                             {...field}
+                            className="text-sm"
+                            style={{ fontSize: '14px' }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -200,6 +202,8 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             step="1"
                             placeholder="Number of dependents"
                             {...field}
+                            className="text-sm"
+                            style={{ fontSize: '14px' }}
                           />
                         </FormControl>
                         <FormMessage />
