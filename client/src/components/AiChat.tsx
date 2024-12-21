@@ -77,19 +77,12 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
 
-  // Load initial state from localStorage and sessionStorage
+  // Load initial state from localStorage
   useEffect(() => {
     const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
     if (hasUsedFreeQuestion) {
       setHasAskedQuestion(true);
       setQuestionsAsked(1);
-
-      // Restore chat history from sessionStorage
-      const chatHistory = sessionStorage.getItem("chatHistory");
-      if (chatHistory) {
-        const { messages: savedMessages } = JSON.parse(chatHistory);
-        setMessages(savedMessages);
-      }
     }
   }, []);
 
@@ -293,13 +286,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
       // Store the fact that user has used their free question
       if (!isPaid) {
         localStorage.setItem("hasUsedFreeQuestion", "true");
-        // Save chat history to sessionStorage
-        sessionStorage.setItem(
-          "chatHistory",
-          JSON.stringify({
-            messages: [...messages, userMessage, assistantMessage],
-          }),
-        );
       }
 
       if (isPaid) {
@@ -324,14 +310,42 @@ export function AiChat({ calculatorData }: AiChatProps) {
     try {
       setIsLoading(true);
 
-      // Save initial chat interaction to session storage
-      if (message && messages.length > 0) {
-        const chatHistory = {
-          firstQuestion: message,
-          messages: messages,
+      // Save all necessary state before initiating checkout
+      if (calculatorData) {
+        // Get current form inputs and calculation state
+        const savedInputs = sessionStorage.getItem("userInputs");
+        const currentInputs = savedInputs ? JSON.parse(savedInputs) : null;
+
+        console.log("Saving state before payment:", {
+          calculatorData,
+          message,
+          messages,
+          currentInputs,
+        });
+
+        // Save complete state to localStorage
+        const stateToSave = {
+          calculator: calculatorData,
+          chat: {
+            message,
+            messages,
+            hasAsked: true,
+          },
+          userInputs: currentInputs,
         };
-        sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-        console.log("Saved chat history to sessionStorage:", chatHistory);
+
+        localStorage.setItem("calculatorState", JSON.stringify(stateToSave));
+        console.log("Saved state to localStorage:", stateToSave);
+
+        // Save initial chat interaction to session storage for backup
+        if (message && messages.length > 0) {
+          const chatHistory = {
+            firstQuestion: message,
+            messages: messages,
+          };
+          sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+          console.log("Saved chat history to sessionStorage:", chatHistory);
+        }
       }
 
       const checkoutResponse = await fetch("/api/create-checkout", {
