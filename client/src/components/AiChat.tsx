@@ -77,6 +77,15 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
 
+  // Load initial state from localStorage
+  useEffect(() => {
+    const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
+    if (hasUsedFreeQuestion) {
+      setHasAskedQuestion(true);
+      setQuestionsAsked(1);
+    }
+  }, []);
+
   // Check browser compatibility on mount
   useEffect(() => {
     const compatible = isBrowserCompatible();
@@ -185,6 +194,17 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
+    // Check if user has already used their free question
+    const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
+    if (!isPaid && hasUsedFreeQuestion) {
+      toast({
+        title: "Free question already used",
+        description: "Please purchase additional questions to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (message.length > 3000) {
       toast({
         title: "Message too long",
@@ -262,6 +282,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
       setHasAskedQuestion(true);
       setFeedbackGiven(false);
+
+      // Store the fact that user has used their free question
+      if (!isPaid) {
+        localStorage.setItem("hasUsedFreeQuestion", "true");
+      }
 
       if (isPaid) {
         setQuestionsAsked((prev) => prev + 1);
