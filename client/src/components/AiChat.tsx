@@ -14,6 +14,7 @@ import {
 import { loadStripe } from "@/lib/stripeClient";
 import { PaymentSuccessModal } from "@/components/ui/payment-success-modal";
 import type { CalculatorResults } from "@/lib/calculatorTypes";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 interface Message {
   role: "user" | "assistant";
@@ -36,6 +37,14 @@ const EXAMPLE_QUESTIONS = [
 
 const FREE_QUESTIONS = 1;
 const PAID_QUESTIONS = 5;
+
+export function AiChatWithErrorBoundary(props: AiChatProps) {
+  return (
+    <ErrorBoundary>
+      <AiChat {...props} />
+    </ErrorBoundary>
+  );
+}
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
@@ -128,11 +137,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
   };
 
   const handleSubmit = async () => {
+    if (!calculatorData) {
+      toast({
+        title: "Missing Data",
+        description: "Please complete the calculator form first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (message.length > 3000) {
       toast({
         title: "Message too long",
-        description:
-          "Please keep your input under 3000 characters so you don't bankrupt us.",
+        description: "Please keep your input under 3000 characters.",
         variant: "destructive",
       });
       return;
@@ -143,8 +160,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
       toast({
         title: "Question limit reached",
         description: isPaid
-          ? "You've used all 5 questions in this session. To continue asking questions, you'll need to make another payment."
-          : "You've used your free question. To continue asking questions, please make a payment.",
+          ? "You've used all 5 questions in this session."
+          : "You've used your free question.",
         variant: "destructive",
       });
       return;
@@ -152,14 +169,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
     setIsLoading(true);
     try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-
-      if (sessionId) {
-        headers["X-Session-Id"] = sessionId;
-      }
-
       // Add user message to chat and clear input
       const userMessage: Message = {
         role: "user",
@@ -168,6 +177,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
       };
       setMessages((prev) => [...prev, userMessage]);
       setMessage(""); // Clear input immediately
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (sessionId) {
+        headers["X-Session-Id"] = sessionId;
+      }
 
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -180,10 +197,9 @@ export function AiChat({ calculatorData }: AiChatProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "Failed to get response" }));
-        throw new Error(errorData.message || "An unexpected error occurred");
+        throw new Error(
+          `Failed to get response: ${response.status} ${response.statusText}`,
+        );
       }
 
       const newSessionId = response.headers.get("X-Session-Id");
@@ -192,6 +208,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
       }
 
       const data = await response.json();
+
+      if (!data || !data.response) {
+        throw new Error("Invalid response from server");
+      }
 
       // Add assistant message to chat
       const assistantMessage: Message = {
@@ -202,7 +222,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
       setMessages((prev) => [...prev, assistantMessage]);
 
       setHasAskedQuestion(true);
-      setMessage("");
       setFeedbackGiven(false);
 
       if (isPaid) {
@@ -212,12 +231,12 @@ export function AiChat({ calculatorData }: AiChatProps) {
       console.error("Chat error:", error);
       toast({
         title: "Something went wrong",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please try again. If the problem persists, the service might be temporarily unavailable.",
+        description: error instanceof Error ? error.message : "Please try again later.",
         variant: "destructive",
       });
+
+      // Restore the message if it failed
+      setMessage(message);
     } finally {
       setIsLoading(false);
     }
