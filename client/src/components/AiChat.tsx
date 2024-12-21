@@ -344,7 +344,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </p>
         <div className="flex items-center justify-center gap-8 py-2">
           <img src="/assets/Reddit.png" alt="r/personal-finance" className="h-8 object-contain" />
-          <img src="/assets/nerdwallet.png" alt="Nerdwallet" className="h-8 object-contain" />
+          <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-8 object-contain" />
           <img src="/assets/moneyunder30.png" alt="Money Under 30" className="h-8 object-contain" />
           <img src="/assets/Reddit.png" alt="r/FirstTimeHomeBuyer" className="h-8 object-contain" />
         </div>
