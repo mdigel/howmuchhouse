@@ -342,11 +342,23 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <p className="text-muted-foreground text-sm">
           Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet to deliver personalized answers tailored to your unique financial situation.
         </p>
-        <div className="flex items-center justify-center gap-8 py-2">
-          <img src="/assets/Reddit.png" alt="r/personal-finance" className="h-8 object-contain" />
-          <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-8 object-contain" />
-          <img src="/assets/moneyunder30.png" alt="Money Under 30" className="h-8 object-contain" />
-          <img src="/assets/Reddit.png" alt="r/FirstTimeHomeBuyer" className="h-8 object-contain" />
+        <div className="flex flex-col items-start gap-4 py-2">
+          <div className="flex items-center gap-3">
+            <img src="/assets/Reddit.png" alt="r/personal-finance" className="h-8 object-contain" />
+            <span className="text-sm text-muted-foreground">r/personal-finance</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="/assets/Nerdwallet.png" alt="NerdWallet" className="h-8 object-contain" />
+            <span className="text-sm text-muted-foreground">NerdWallet</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="/assets/moneyunder30.png" alt="MoneyUnder30" className="h-8 object-contain" />
+            <span className="text-sm text-muted-foreground">MoneyUnder30</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="/assets/Reddit.png" alt="r/FirstTimeBuyer" className="h-8 object-contain" />
+            <span className="text-sm text-muted-foreground">r/FirstTimeBuyer</span>
+          </div>
         </div>
       </div>
 
