@@ -77,12 +77,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
 
-  // Load initial state from localStorage
+  // Load initial state from localStorage and sessionStorage
   useEffect(() => {
     const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
     if (hasUsedFreeQuestion) {
       setHasAskedQuestion(true);
       setQuestionsAsked(1);
+
+      // Restore chat history from sessionStorage
+      const chatHistory = sessionStorage.getItem("chatHistory");
+      if (chatHistory) {
+        const { messages: savedMessages } = JSON.parse(chatHistory);
+        setMessages(savedMessages);
+      }
     }
   }, []);
 
@@ -286,6 +293,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
       // Store the fact that user has used their free question
       if (!isPaid) {
         localStorage.setItem("hasUsedFreeQuestion", "true");
+        // Save chat history to sessionStorage
+        sessionStorage.setItem(
+          "chatHistory",
+          JSON.stringify({
+            messages: [...messages, userMessage, assistantMessage],
+          }),
+        );
       }
 
       if (isPaid) {
