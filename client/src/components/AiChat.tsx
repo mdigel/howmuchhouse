@@ -38,6 +38,24 @@ const EXAMPLE_QUESTIONS = [
 const FREE_QUESTIONS = 1;
 const PAID_QUESTIONS = 5;
 
+// Browser compatibility check
+const isBrowserCompatible = () => {
+  try {
+    // Check for necessary browser features
+    const features = [
+      typeof window !== 'undefined',
+      typeof fetch === 'function',
+      typeof Promise === 'function',
+      typeof WebSocket === 'function',
+      'CSS' in window && 'supports' in CSS,
+    ];
+    return features.every(Boolean);
+  } catch (e) {
+    console.warn('Browser compatibility check failed:', e);
+    return false;
+  }
+};
+
 export function AiChatWithErrorBoundary(props: AiChatProps) {
   return (
     <ErrorBoundary>
@@ -55,80 +73,92 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [questionsAsked, setQuestionsAsked] = useState(0);
-  const { toast } = useToast();
-  const [userInputs, setUserInputs] = useState<Record<string, any> | null>(
-    null,
-  );
-  const [calculationComplete, setCalculationComplete] = useState(false);
+  const [isCompatible, setIsCompatible] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const { toast } = useToast();
+
+  // Check browser compatibility on mount
+  useEffect(() => {
+    const compatible = isBrowserCompatible();
+    setIsCompatible(compatible);
+
+    if (!compatible) {
+      toast({
+        title: "Browser Compatibility Notice",
+        description: "Some features might not work correctly in your browser. For the best experience, please use Chrome, Firefox, or Safari.",
+        variant: "warning",
+      });
+    }
+  }, [toast]);
 
   // Check URL params for successful payment
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const isSuccess = params.get("success") === "true";
-    const sessionId = params.get("session_id");
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const isSuccess = params.get("success") === "true";
+      const sessionId = params.get("session_id");
 
-    if (isSuccess && sessionId) {
-      console.log("Payment successful, attempting to restore state");
-      setIsPaid(true);
-      setShowSuccessModal(true);
+      if (isSuccess && sessionId) {
+        console.log("Payment successful, attempting to restore state");
+        setIsPaid(true);
+        setShowSuccessModal(true);
 
-      // Restore all state after successful payment
-      const savedState = localStorage.getItem("calculatorState");
-      console.log("Retrieved saved state:", savedState);
+        // Restore all state after successful payment
+        const savedState = localStorage.getItem("calculatorState");
+        console.log("Retrieved saved state:", savedState);
 
-      if (savedState) {
-        try {
-          const { calculator, chat, userInputs } = JSON.parse(savedState);
-          console.log("Parsed state:", { calculator, chat, userInputs });
+        if (savedState) {
+          try {
+            const { calculator, chat, userInputs } = JSON.parse(savedState);
+            console.log("Parsed state:", { calculator, chat, userInputs });
 
-          // First restore chat state
-          if (chat) {
-            console.log("Restoring chat state:", chat);
-            if (chat.message) setMessage(chat.message);
-            if (chat.messages) setMessages(chat.messages);
-            setHasAskedQuestion(true);
+            // First restore chat state
+            if (chat) {
+              if (chat.message) setMessage(chat.message);
+              if (chat.messages) setMessages(chat.messages);
+              setHasAskedQuestion(true);
 
-            // Save chat history
-            sessionStorage.setItem(
-              "chatHistory",
-              JSON.stringify({
-                messages: chat.messages,
-              }),
-            );
-          }
+              // Save chat history
+              sessionStorage.setItem(
+                "chatHistory",
+                JSON.stringify({
+                  messages: chat.messages,
+                }),
+              );
+            }
 
-          // Then restore calculator data
-          if (calculator) {
-            console.log("Restoring calculator data");
-            Object.assign(calculatorData, calculator);
-          }
+            // Then restore calculator data
+            if (calculator) {
+              Object.assign(calculatorData, calculator);
+            }
 
-          // Finally restore user inputs and trigger calculation
-          if (userInputs) {
-            console.log("Restoring user inputs:", userInputs);
-            sessionStorage.setItem("userInputs", JSON.stringify(userInputs));
+            // Finally restore user inputs and trigger calculation
+            if (userInputs) {
+              sessionStorage.setItem("userInputs", JSON.stringify(userInputs));
 
-            // Dispatch event to restore form inputs
-            const restoreEvent = new CustomEvent("restoreUserInputs", {
-              detail: { inputs: userInputs },
+              // Dispatch event to restore form inputs
+              const restoreEvent = new CustomEvent("restoreUserInputs", {
+                detail: { inputs: userInputs },
+              });
+              window.dispatchEvent(restoreEvent);
+            }
+
+            // Clean up localStorage after successful restoration
+            localStorage.removeItem("calculatorState");
+            console.log("State restoration complete");
+          } catch (error) {
+            console.error("Failed to restore application state:", error);
+            toast({
+              title: "State Restoration Error",
+              description:
+                "There was an issue restoring your previous session. Please try refreshing the page.",
+              variant: "destructive",
             });
-            window.dispatchEvent(restoreEvent);
           }
-
-          // Clean up localStorage after successful restoration
-          localStorage.removeItem("calculatorState");
-          console.log("State restoration complete");
-        } catch (error) {
-          console.error("Failed to restore application state:", error);
-          toast({
-            title: "State Restoration Error",
-            description:
-              "There was an issue restoring your previous session. Please try refreshing the page.",
-            variant: "destructive",
-          });
         }
       }
+    } catch (error) {
+      console.error("Error in payment success handler:", error);
     }
   }, [calculatorData, toast]);
 
@@ -142,6 +172,15 @@ export function AiChat({ calculatorData }: AiChatProps) {
         title: "Missing Data",
         description: "Please complete the calculator form first.",
         variant: "destructive",
+      });
+      return;
+    }
+
+    if (!isCompatible) {
+      toast({
+        title: "Browser Compatibility Issue",
+        description: "Please use a different browser for full functionality.",
+        variant: "warning",
       });
       return;
     }
