@@ -1,10 +1,13 @@
-window.viteConfig = {
-  server: {
-    hmr: {
-      overlay: false
+// Only configure Vite development features in development mode
+if (import.meta.env.DEV) {
+  window.viteConfig = {
+    server: {
+      hmr: {
+        overlay: false
+      }
     }
-  }
-};
+  };
+}
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
