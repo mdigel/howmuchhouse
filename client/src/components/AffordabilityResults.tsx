@@ -104,7 +104,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 </span>
               </div>
               <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
-                Max Price You Can Afford
+                Max Price The Bank Will Allow
               </span>
             </div>
           </AccordionTrigger>

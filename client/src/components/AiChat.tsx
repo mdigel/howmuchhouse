@@ -336,7 +336,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
     <Card className="p-6 space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <MessageCircle className="h-6 w-6" />
-        <h2 className="text-2xl font-semibold">Ask AI Assistant</h2>
+        <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
       </div>
 
       {!hasAskedQuestion && (
@@ -518,7 +518,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               transition={{ delay: 0.1 }}
               className="text-lg"
             >
-              Want More Insights?
+              Have More Questions?
             </motion.h3>
             <p className="text-muted-foreground">
               You've used up your free question to ChatGPT 4o OpenAI's top tier

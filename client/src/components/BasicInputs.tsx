@@ -147,7 +147,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     maxLength={2}
                     placeholder="Enter your state code" 
                     {...field}
-                    className="max-w-md uppercase text-sm"
+                    className="max-w-md text-sm"
                     style={{ fontSize: '14px' }}
                     onInput={(e) => {
                       const input = e.currentTarget;
