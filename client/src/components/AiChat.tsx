@@ -30,8 +30,6 @@ const EXAMPLE_QUESTIONS = [
   "I want a house around my 'Max House Price', why is this a bad idea?",
   "Create a detailed monthly budget for the save 15% scenario.",
   "How did you calculate my property taxes?",
-  "How do I know what my homeowners insurance will actually be?",
-  "Should I consider a shorter loan term?",
 ];
 
 const FREE_QUESTIONS = 1;
@@ -335,21 +333,26 @@ export function AiChat({ calculatorData }: AiChatProps) {
   return (
     <Card className="p-6 space-y-4">
       <div className="space-y-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-6 w-6" />
-              <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <img src="/assets/Reddit.png" alt="r/personal-finance" className="h-6 w-6 object-contain" />
-              <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-6 w-6 object-contain" />
-              <img src="/assets/moneyunder30.png" alt="Money Under 30" className="h-6 w-6 object-contain" />
-            </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageCircle className="h-6 w-6" />
+            <h2 className="text-2xl font-semibold">
+              Follow Up Questions? Ask Homi.
+            </h2>
           </div>
-          <p className="text-muted-foreground text-sm">
-            Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet (r/personal-finance, r/FirstTimeBuyer, NerdWallet, MoneyUnder30) to deliver personalized answers tailored to your unique financial situation.
-          </p>
+          <div className="flex items-center gap-4">
+            <img src="/Reddit.png" alt="r/personal-finance" className="h-6 w-6 object-contain" />
+            <img src="/Nerdwallet.png" alt="Nerdwallet" className="h-6 w-6 object-contain" />
+            <img src="/moneyunder30.png" alt="Money Under 30" className="h-6 w-6 object-contain" />
+          </div>
         </div>
+        <p className="text-muted-foreground text-sm">
+          Homi is an Ai Advisor that analyzes your inputs and leverages insights
+          from trusted sources across the internet (r/personal-finance,
+          r/FirstTimeBuyer, NerdWallet, MoneyUnder30) to deliver personalized
+          answers tailored to your unique financial situation.
+        </p>
+      </div>
 
       {!hasAskedQuestion && (
         <div className="bg-muted p-4 rounded-lg space-y-2">
