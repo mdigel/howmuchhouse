@@ -350,7 +350,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               <p>r/FirstTimeHomeBuyer</p>
             </div>
           </div>
-          <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-12 object-contain" />
+          <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-16 object-contain" />
           <img src="/assets/moneyunder30.png" alt="Money Under 30" className="h-12 object-contain" />
         </div>
       </div>
