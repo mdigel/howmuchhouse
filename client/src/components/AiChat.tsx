@@ -324,42 +324,14 @@ export function AiChat({ calculatorData }: AiChatProps) {
     try {
       setIsLoading(true);
 
-      // Save all necessary state before initiating checkout
-      if (calculatorData) {
-        // Get current form inputs and calculation state
-        const savedInputs = sessionStorage.getItem("userInputs");
-        const currentInputs = savedInputs ? JSON.parse(savedInputs) : null;
-
-        console.log("Saving state before payment:", {
-          calculatorData,
-          message,
-          messages,
-          currentInputs,
-        });
-
-        // Save complete state to localStorage
-        const stateToSave = {
-          calculator: calculatorData,
-          chat: {
-            message,
-            messages,
-            hasAsked: true,
-          },
-          userInputs: currentInputs,
+      // Save initial chat interaction to session storage
+      if (message && messages.length > 0) {
+        const chatHistory = {
+          firstQuestion: message,
+          messages: messages,
         };
-
-        localStorage.setItem("calculatorState", JSON.stringify(stateToSave));
-        console.log("Saved state to localStorage:", stateToSave);
-
-        // Save initial chat interaction to session storage for backup
-        if (message && messages.length > 0) {
-          const chatHistory = {
-            firstQuestion: message,
-            messages: messages,
-          };
-          sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-          console.log("Saved chat history to sessionStorage:", chatHistory);
-        }
+        sessionStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+        console.log("Saved chat history to sessionStorage:", chatHistory);
       }
 
       const checkoutResponse = await fetch("/api/create-checkout", {
