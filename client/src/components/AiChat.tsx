@@ -343,10 +343,10 @@ export function AiChat({ calculatorData }: AiChatProps) {
           Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet to deliver personalized answers tailored to your unique financial situation.
         </p>
         <div className="flex items-center justify-center gap-8 py-2">
-          <img src="/Reddit.png" alt="r/personal-finance" className="h-8" />
-          <img src="/Nerdwallet.png" alt="Nerdwallet" className="h-8" />
-          <img src="/moneyunder30.png" alt="Money Under 30" className="h-8" />
-          <img src="/Reddit.png" alt="r/FirstTimeHomeBuyer" className="h-8" />
+          <img src="/images/Reddit.png" alt="r/personal-finance" className="h-8" />
+          <img src="/images/Nerdwallet.png" alt="Nerdwallet" className="h-8" />
+          <img src="/images/moneyunder30.png" alt="Money Under 30" className="h-8" />
+          <img src="/images/Reddit.png" alt="r/FirstTimeHomeBuyer" className="h-8" />
         </div>
       </div>
 
