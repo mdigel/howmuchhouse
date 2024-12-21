@@ -334,9 +334,20 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
   return (
     <Card className="p-6 space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <MessageCircle className="h-6 w-6" />
-        <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
+      <div className="space-y-4 mb-6">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="h-6 w-6" />
+          <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
+        </div>
+        <p className="text-muted-foreground">
+          Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet to deliver personalized answers tailored to your unique financial situation.
+        </p>
+        <div className="flex items-center justify-center gap-8 py-2">
+          <img src="/Reddit.png" alt="r/personal-finance" className="h-8" />
+          <img src="/Nerdwallet.png" alt="Nerdwallet" className="h-8" />
+          <img src="/moneyunder30.png" alt="Money Under 30" className="h-8" />
+          <img src="/Reddit.png" alt="r/FirstTimeHomeBuyer" className="h-8" />
+        </div>
       </div>
 
       {!hasAskedQuestion && (
