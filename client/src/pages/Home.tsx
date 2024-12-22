@@ -22,7 +22,7 @@ interface RestoreInputsEvent extends CustomEvent {
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  
+
   const basicForm = useForm<BasicInputType>({
     resolver: zodResolver(basicInputSchema),
     defaultValues: {
@@ -53,7 +53,7 @@ export default function Home() {
       const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
         const { basic, advanced } = event.detail.inputs;
         console.log('Restoring form inputs:', { basic, advanced });
-        
+
         try {
           if (basic) {
             await Promise.all(
@@ -63,7 +63,7 @@ export default function Home() {
               })
             );
           }
-          
+
           if (advanced) {
             await Promise.all(
               Object.entries(advanced).map(async ([key, value]) => {
@@ -72,13 +72,13 @@ export default function Home() {
               })
             );
           }
-          
+
           // Validate forms before calculation
           const [basicValid, advancedValid] = await Promise.all([
             basicForm.trigger(),
             advancedForm.trigger()
           ]);
-          
+
           if (basicValid && advancedValid) {
             console.log('Forms validated, triggering calculation');
             await handleCalculate();
@@ -143,7 +143,7 @@ export default function Home() {
       const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           ...basicData,
           ...advancedData,
           // Ensure numbers are properly parsed
@@ -153,13 +153,13 @@ export default function Home() {
           loanTermYears: Number(basicData.loanTermYears),
         })
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error:', errorText);
         throw new Error(`Calculation failed: ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('Received calculation results:', data);
       setResults(data);
@@ -176,25 +176,10 @@ export default function Home() {
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
-          <div className="text-left space-y-2 mb-8">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
-                How Much <span className="relative">
-                  Home
-                  <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
-                </span> Could I <span className="relative">
-                  Afford.ai
-                  <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
-                </span>
-              </h1>
-            </div>
-            <p className="text-muted-foreground text-base">AI for the biggest purchase of your life.</p>
-          </div>
-
           <Card className="p-6 space-y-6">
             <BasicInputs form={basicForm} />
             <AdvancedInputs form={advancedForm} />
-            <Button 
+            <Button
               onClick={handleCalculate}
               disabled={isCalculating}
               className="w-full max-w-md bg-[#006AFF] hover:bg-[#006AFF]/90 text-white font-semibold py-3 px-6 rounded transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
@@ -253,14 +238,14 @@ export default function Home() {
       <footer className="mt-36 md:mt-48 pb-6 text-center space-y-4">
         <div className="w-full max-w-2xl mx-auto border-t border-border pt-6" />
         <div className="space-y-4">
-          <a 
-            href="https://x.com/Elder_Deagle" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://x.com/Elder_Deagle"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex flex-col items-center gap-2 text-foreground hover:text-muted-foreground transition-colors"
           >
             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
             </svg>
             <span className="text-base">ideas, feedback, bugs</span>
           </a>
