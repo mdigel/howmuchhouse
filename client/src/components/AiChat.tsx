@@ -79,12 +79,30 @@ export function AiChat({ calculatorData }: AiChatProps) {
 
   // Load initial state from localStorage
   useEffect(() => {
-    const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
-    if (hasUsedFreeQuestion) {
-      setHasAskedQuestion(true);
-      setQuestionsAsked(1);
+    // Persist state across page reloads and navigation
+    const storedQuestionState = localStorage.getItem("questionState");
+    if (storedQuestionState) {
+      const state = JSON.parse(storedQuestionState);
+      setHasAskedQuestion(state.hasAsked);
+      setQuestionsAsked(state.count);
+
+      // If they've asked a question but aren't paid, ensure they can't ask more
+      if (state.hasAsked && !isPaid) {
+        setQuestionsAsked(FREE_QUESTIONS);
+      }
     }
-  }, []);
+  }, [isPaid]);
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    if (hasAskedQuestion) {
+      localStorage.setItem("questionState", JSON.stringify({
+        hasAsked: hasAskedQuestion,
+        count: questionsAsked,
+        timestamp: Date.now() // Add timestamp for potential expiry checking
+      }));
+    }
+  }, [hasAskedQuestion, questionsAsked]);
 
   // Check browser compatibility on mount
   useEffect(() => {
@@ -185,6 +203,19 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
+    const storedQuestionState = localStorage.getItem("questionState");
+    if (!isPaid && storedQuestionState) {
+      const state = JSON.parse(storedQuestionState);
+      if (state.hasAsked) {
+        toast({
+          title: "Free question already used",
+          description: "Please purchase additional questions to continue.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     if (!isCompatible) {
       toast({
         title: "Browser Compatibility Issue",
@@ -194,16 +225,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
-    // Check if user has already used their free question
-    const hasUsedFreeQuestion = localStorage.getItem("hasUsedFreeQuestion") === "true";
-    if (!isPaid && hasUsedFreeQuestion) {
-      toast({
-        title: "Free question already used",
-        description: "Please purchase additional questions to continue.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     if (message.length > 3000) {
       toast({
@@ -235,7 +256,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, userMessage]);
-      setMessage(""); // Clear input immediately
+      setMessage("");
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -283,10 +304,12 @@ export function AiChat({ calculatorData }: AiChatProps) {
       setHasAskedQuestion(true);
       setFeedbackGiven(false);
 
-      // Store the fact that user has used their free question
-      if (!isPaid) {
-        localStorage.setItem("hasUsedFreeQuestion", "true");
-      }
+      // Update localStorage immediately after asking question
+      localStorage.setItem("questionState", JSON.stringify({
+        hasAsked: true,
+        count: isPaid ? questionsAsked + 1 : FREE_QUESTIONS,
+        timestamp: Date.now()
+      }));
 
       if (isPaid) {
         setQuestionsAsked((prev) => prev + 1);

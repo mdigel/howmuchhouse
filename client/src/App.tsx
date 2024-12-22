@@ -1,23 +1,23 @@
 import { Switch, Route } from "wouter";
 import Home from "./pages/Home";
-import "@fontsource/noto-sans/700.css"; // Import Noto Sans Bold weight
+import "@fontsource/noto-sans/700.css";
 
-// Check if we're in production mode
-const isProduction = import.meta.env.PROD;
+// Disable HMR overlay globally
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  window.viteConfig = {
+    server: {
+      hmr: {
+        overlay: false,
+        // Additional HMR settings to ensure overlay is disabled
+        clientPort: 5000,
+        timeout: 30000
+      }
+    }
+  };
+}
 
 function App() {
-  // Disable HMR overlay in production
-  if (isProduction && typeof window !== 'undefined') {
-    // @ts-ignore
-    window.viteConfig = {
-      server: {
-        hmr: {
-          overlay: false
-        }
-      }
-    };
-  }
-
   return (
     <Switch>
       <Route path="/" component={Home} />
