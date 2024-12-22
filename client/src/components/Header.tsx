@@ -7,10 +7,10 @@ export function Header() {
         <div className="text-left space-y-2 mb-8">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
-              How Much <span className="relative">
+              How Much <span className="relative inline-block">
                 Home
                 <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
-              </span> Could I <span className="relative">
+              </span> Could I <span className="relative inline-block">
                 Afford.ai
                 <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
               </span>

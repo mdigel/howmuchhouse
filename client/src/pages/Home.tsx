@@ -9,16 +9,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
 
-// Define custom event types
-interface RestoreInputsEvent extends CustomEvent {
-  detail: {
-    inputs: {
-      basic?: Record<string, string | number>;
-      advanced?: Record<string, string | number | null>;
-    };
-  };
-}
-
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
