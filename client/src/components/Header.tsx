@@ -2,9 +2,9 @@ import React from 'react';
 
 export function Header() {
   return (
-    <header className="w-full py-6">
+    <header className="w-full py-6 border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="text-left space-y-2 mb-8">
+        <div className="text-left space-y-2">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
               How Much <span className="relative inline-block">
