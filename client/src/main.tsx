@@ -1,9 +1,12 @@
 // Only configure Vite development features in development mode
 if (import.meta.env.DEV) {
+  // @ts-ignore
   window.viteConfig = {
     server: {
       hmr: {
-        overlay: false
+        overlay: false,
+        host: '0.0.0.0',
+        port: 5000
       }
     }
   };

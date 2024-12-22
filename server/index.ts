@@ -4,7 +4,10 @@ import { setupVite, serveStatic, log } from "./vite";
 
 // Force production mode when deployed
 const isProduction = process.env.NODE_ENV === "production" || process.env.REPL_ID != null;
-if (isProduction) {
+// Override production mode for testing
+if (process.env.NODE_ENV === "development") {
+  process.env.NODE_ENV = "development";
+} else if (isProduction) {
   process.env.NODE_ENV = "production";
 }
 
@@ -56,6 +59,7 @@ app.use((req, res, next) => {
   // Only setup vite in development
   if (!isProduction) {
     await setupVite(app, server);
+    log("Running in development mode");
   } else {
     // In production, serve static files
     serveStatic(app);
