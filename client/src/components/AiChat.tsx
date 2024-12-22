@@ -398,11 +398,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
             <MessageCircle className="h-6 w-6" />
             <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
           </div>
-          <div className="flex items-center gap-4">
-            <img src="/assets/Reddit.png" alt="r/personal-finance" className="h-6 w-6 object-contain" />
-            <img src="/assets/Nerdwallet.png" alt="Nerdwallet" className="h-6 w-6 object-contain" />
-            <img src="/assets/moneyunder30.png" alt="Money Under 30" className="h-6 w-6 object-contain" />
-          </div>
         </div>
         <p className="text-muted-foreground text-sm">
           Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet (r/personal-finance, r/FirstTimeBuyer, NerdWallet, MoneyUnder30) to deliver personalized answers tailored to your unique financial situation.
