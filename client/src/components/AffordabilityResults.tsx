@@ -283,7 +283,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 </span>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">🙂</span>
+                    <span className="text-[2rem]">🙂</span>
                     <span className="text-[2rem] font-bold text-primary">
                       {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                     </span>
