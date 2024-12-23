@@ -100,11 +100,16 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
               <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2 text-left w-full">
                 Max Price The Bank Will Allow
               </span>
-              <div className="flex flex-col">
-                <span className="text-[2rem] font-bold text-destructive">
-                  {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🥵</span>
+                  <span className="text-[2rem] font-bold text-destructive">
+                    {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                  </span>
+                </div>
+                <span className="px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
+                  Not Recommended
                 </span>
-                <span className="text-2xl">🥵</span>
               </div>
             </div>
           </AccordionTrigger>
@@ -276,11 +281,11 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2 text-left w-full">
                   Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
                 </span>
-                <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🙂</span>
                   <span className="text-[2rem] font-bold text-primary">
                     {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                   </span>
-                  <span className="text-2xl">🙂</span>
                 </div>
               </div>
             </AccordionTrigger>
