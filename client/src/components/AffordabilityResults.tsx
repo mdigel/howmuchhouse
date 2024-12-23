@@ -103,11 +103,11 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3">
+              <div className="flex flex-col gap-1">
                 <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
                   Max Price The Bank Will Allow
                 </span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-destructive/15 text-destructive rounded-md border border-destructive/30">
+                <span className="px-2 py-0.5 text-xs w-fit font-medium bg-destructive/15 text-destructive rounded-md border border-destructive/30">
                   Not Recommended
                 </span>
               </div>
