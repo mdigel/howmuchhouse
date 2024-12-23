@@ -96,18 +96,18 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
         {/* Max Price Result */}
         <AccordionItem value="item-0">
           <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
-            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4 w-full">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🥵</span>
-                <span className="text-[2rem] font-bold text-destructive">
-                  {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-lg text-foreground group-hover:text-foreground transition-colors">
-                  Max Price The Bank Will Allow
-                </span>
-                <span className="px-2 py-0.5 text-xs w-fit font-medium bg-destructive/15 text-destructive rounded-md border border-destructive/30">
+            <div className="flex flex-col w-full">
+              <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2">
+                Max Price The Bank Will Allow
+              </span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🥵</span>
+                  <span className="text-[2rem] font-bold text-destructive">
+                    {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                  </span>
+                </div>
+                <span className="px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
                   Not Recommended
                 </span>
               </div>
@@ -277,16 +277,16 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
         {results.savingScenarios.map((scenario, index) => (
           <AccordionItem key={index} value={`item-${index + 1}`}>
             <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+              <div className="flex flex-col w-full">
+                <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2">
+                  Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
+                </span>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🙂</span>
                   <span className="text-[2rem] font-bold text-primary">
                     {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                   </span>
                 </div>
-                <span className="text-lg text-foreground group-hover:text-foreground transition-colors">
-                  and save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income
-                </span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
