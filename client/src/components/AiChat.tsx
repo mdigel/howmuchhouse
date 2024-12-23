@@ -67,10 +67,24 @@ export function AiChatWithErrorBoundary(props: AiChatProps) {
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>(() => {
-    const chatHistory = sessionStorage.getItem("chatHistory");
-    if (chatHistory) {
-      const { messages: savedMessages } = JSON.parse(chatHistory);
-      return savedMessages;
+    try {
+      // First check localStorage for pending chat state
+      const savedState = localStorage.getItem("calculatorState");
+      if (savedState) {
+        const { chat } = JSON.parse(savedState);
+        if (chat?.messages?.length > 0) {
+          return chat.messages;
+        }
+      }
+
+      // Fallback to sessionStorage
+      const chatHistory = sessionStorage.getItem("chatHistory");
+      if (chatHistory) {
+        const { messages: savedMessages } = JSON.parse(chatHistory);
+        return savedMessages;
+      }
+    } catch (error) {
+      console.error("Error restoring chat history:", error);
     }
     return [];
   });
