@@ -96,7 +96,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
         {/* Max Price Result */}
         <AccordionItem value="item-0">
           <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4 w-full">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥵</span>
                 <span className="text-[2rem] font-bold text-destructive">
