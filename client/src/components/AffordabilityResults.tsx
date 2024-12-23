@@ -285,7 +285,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   </span>
                 </div>
                 <span className="text-lg text-foreground group-hover:text-foreground transition-colors">
-                  and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
+                  and save <span className="text-primary">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income
                 </span>
               </div>
             </AccordionTrigger>
