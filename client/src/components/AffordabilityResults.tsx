@@ -103,8 +103,8 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
                 </span>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-lg text-foreground group-hover:text-foreground transition-colors">
                   Max Price The Bank Will Allow
                 </span>
                 <span className="px-2 py-0.5 text-xs w-fit font-medium bg-destructive/15 text-destructive rounded-md border border-destructive/30">
@@ -284,7 +284,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                   </span>
                 </div>
-                <span className="text-lg text-muted-foreground group-hover:text-foreground transition-colors">
+                <span className="text-lg text-foreground group-hover:text-foreground transition-colors">
                   and save {formatPercentage(scenario.scenario.savings.percentage)} of your Net Income
                 </span>
               </div>
