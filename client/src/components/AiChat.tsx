@@ -66,7 +66,14 @@ export function AiChatWithErrorBoundary(props: AiChatProps) {
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const chatHistory = sessionStorage.getItem("chatHistory");
+    if (chatHistory) {
+      const { messages: savedMessages } = JSON.parse(chatHistory);
+      return savedMessages;
+    }
+    return [];
+  });
   const [hasAskedQuestion, setHasAskedQuestion] = useState(() => {
     const stored = localStorage.getItem("hasAskedFirstQuestion");
     return stored === "true";
