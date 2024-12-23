@@ -278,16 +278,19 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
           <AccordionItem key={index} value={`item-${index + 1}`}>
             <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
               <div className="flex flex-col w-full">
-                <div className="space-y-2">
-                  <span className="text-lg text-foreground group-hover:text-foreground transition-colors text-left w-full">
-                    Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
-                  </span>
-                  <div className="flex items-center gap-4">
-                    <span className="text-4xl">🙂</span>
-                    <span className="text-[2.5rem] font-bold text-primary">
+                <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2 text-left w-full">
+                  Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
+                </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🙂</span>
+                    <span className="text-[2rem] font-bold text-primary">
                       {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                     </span>
                   </div>
+                  <span className="px-3 py-1 text-sm font-medium bg-[#22C55E]/15 text-[#22C55E] rounded-lg border border-[#22C55E]/30">
+                    Recommended
+                  </span>
                 </div>
               </div>
             </AccordionTrigger>
