@@ -281,11 +281,11 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 <span className="text-lg text-foreground group-hover:text-foreground transition-colors mb-2 text-left w-full">
                   Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🙂</span>
-                  <span className="text-[2rem] font-bold text-primary">
+                <div>
+                  <div className="text-[2rem] font-bold text-primary">
                     {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
-                  </span>
+                  </div>
+                  <div className="text-2xl">🙂</div>
                 </div>
               </div>
             </AccordionTrigger>
