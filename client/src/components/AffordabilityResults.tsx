@@ -108,7 +108,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   </span>
                 </div>
                 <span className="px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
-                  Not Preferred
+                  Not Recommended
                 </span>
               </div>
             </div>
@@ -289,7 +289,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     </span>
                   </div>
                   <span className="px-3 py-1 text-sm font-medium bg-[#22C55E]/15 text-[#22C55E] rounded-lg border border-[#22C55E]/30">
-                    Preferred
+                    Recommended
                   </span>
                 </div>
               </div>
