@@ -67,7 +67,10 @@ export function AiChatWithErrorBoundary(props: AiChatProps) {
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [hasAskedQuestion, setHasAskedQuestion] = useState(false);
+  const [hasAskedQuestion, setHasAskedQuestion] = useState(() => {
+    const stored = localStorage.getItem("hasAskedFirstQuestion");
+    return stored === "true";
+  });
   const [isPaid, setIsPaid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
@@ -260,7 +263,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
       };
       setMessages((prev) => [...prev, assistantMessage]);
 
+      const firstQuestion = !hasAskedQuestion;
       setHasAskedQuestion(true);
+      if (firstQuestion) {
+        localStorage.setItem("hasAskedFirstQuestion", "true");
+      }
       setFeedbackGiven(false);
 
       if (isPaid) {
