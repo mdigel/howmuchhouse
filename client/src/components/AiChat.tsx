@@ -431,23 +431,25 @@ export function AiChat({ calculatorData }: AiChatProps) {
       </div>
 
       {!hasAskedQuestion && (
-        <div className="bg-muted p-4 rounded-lg space-y-2">
-          <div className="flex items-center gap-2">
+        <div className="bg-muted p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
             <LightbulbIcon className="h-4 w-4" />
             <p className="font-medium">Example questions:</p>
           </div>
-          <ul className="space-y-1 text-sm text-muted-foreground">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
             {EXAMPLE_QUESTIONS.map((q, i) => (
-              <li
+              <div
                 key={i}
-                className="cursor-pointer hover:text-foreground transition-colors flex items-start gap-2"
+                className="cursor-pointer bg-background/50 hover:bg-background transition-colors p-3 rounded-md flex items-start gap-2"
                 onClick={() => setMessage(q)}
               >
-                <span className="leading-6">•</span>
-                <span>{q}</span>
-              </li>
+                <span className="bg-primary/10 text-primary rounded-full w-5 h-5 flex items-center justify-center text-sm flex-shrink-0">
+                  {i + 1}
+                </span>
+                <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">{q}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 
