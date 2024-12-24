@@ -190,9 +190,8 @@ export default function Home() {
 
         <div className="lg:pl-8">
           {results ? (
-            <div className="space-y-8">
+            <div>
               <AffordabilityResults results={results} />
-              
             </div>
           ) : (
             <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
@@ -223,12 +222,12 @@ export default function Home() {
               </div>
             </div>
           )}
-          {results && (
-            <div className="mt-8 w-full">
-              <AiChat calculatorData={results} />
-            </div>
-          )}
-        </div>
+          </div>
+        {results && (
+          <div className="col-span-2 mt-8">
+            <AiChat calculatorData={results} />
+          </div>
+        )}
       </div>
       <footer className="mt-36 md:mt-48 pb-6 text-center space-y-4">
         <div className="w-full max-w-2xl mx-auto border-t border-border pt-6" />
