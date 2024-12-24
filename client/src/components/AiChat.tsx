@@ -508,7 +508,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask about your home affordability calculation..."
+                placeholder="Message Homi."
                 className="min-h-[100px]"
                 maxLength={3000}
               />
