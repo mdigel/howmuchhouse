@@ -195,28 +195,28 @@ export default function Home() {
             </div>
           ) : (
             <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
-              <h2 className="text-2xl font-semibold">Let's Find Your Dream Home 🏡</h2>
-              <p className="text-muted-foreground mb-6">Fill in your details on the left to see:</p>
+              <h2 className="text-2xl font-semibold">Let’s Find What You Can Afford 🏡</h2>
+              {/* <p className="text-muted-foreground mb-6">Fill in your details on the left to see:</p> */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <span className="text-xl">💰</span>
                   <div>
                     <h3 className="font-medium">Maximum Home Price</h3>
-                    <p className="text-sm text-muted-foreground">See the highest home price you can afford</p>
+                    <p className="text-sm text-muted-foreground">See the highest price the bank will likely allow</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xl">📊</span>
                   <div>
-                    <h3 className="font-medium">Budget Scenarios</h3>
-                    <p className="text-sm text-muted-foreground">Explore different saving and spending options</p>
+                    <h3 className="font-medium">Comfortable Home Prices</h3>
+                    <p className="text-sm text-muted-foreground">House prices that you can comfortably afford</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xl">🤖</span>
                   <div>
                     <h3 className="font-medium">AI Personalized Advisor</h3>
-                    <p className="text-sm text-muted-foreground">Get recommendations and analysis for your exact situation</p>
+                    <p className="text-sm text-muted-foreground">Get analysis for your exact situation</p>
                   </div>
                 </div>
               </div>
