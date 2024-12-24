@@ -192,7 +192,7 @@ export default function Home() {
           {results ? (
             <div className="space-y-8">
               <AffordabilityResults results={results} />
-              <AiChat calculatorData={results} />
+              
             </div>
           ) : (
             <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
@@ -221,6 +221,11 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+          {results && (
+            <div className="mt-8 w-full">
+              <AiChat calculatorData={results} />
             </div>
           )}
         </div>
