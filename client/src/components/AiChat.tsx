@@ -422,7 +422,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <MessageCircle className="h-6 w-6" />
-            <h2 className="text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
+            <h2 className="text-lg md:text-2xl font-semibold">Follow Up Questions? Ask Homi.</h2>
           </div>
         </div>
         <p className="text-muted-foreground text-sm">
