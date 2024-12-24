@@ -288,9 +288,6 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                       {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
                     </span>
                   </div>
-                  <span className="self-start px-3 py-1 text-sm font-medium bg-[#22C55E]/15 text-[#22C55E] rounded-lg border border-[#22C55E]/30">
-                    Preferred
-                  </span>
                 </div>
               </div>
             </AccordionTrigger>
