@@ -28,11 +28,9 @@ interface AiChatProps {
 }
 
 const EXAMPLE_QUESTIONS = [
-  "I want a house around my 'Max House Price', why is this a bad idea?",
+  "What I want to spend my 'Max House Price'?",
   "Create a detailed monthly budget for the save 15% scenario.",
   "How did you calculate my property taxes?",
-  "How do I know what my homeowners insurance will actually be?",
-  "Should I consider a shorter loan term?",
 ];
 
 const FREE_QUESTIONS = 1;
@@ -428,7 +426,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
           </div>
         </div>
         <p className="text-muted-foreground text-sm">
-          Homi is an Ai Advisor that analyzes your inputs and leverages insights from trusted sources across the internet (r/FirstTimeBuyer, NerdWallet, MoneyUnder30) to deliver personalized answers tailored to your unique financial situation.
+          Homi is an Ai Advisor that analyzes your inputs and leverages trusted sources (r/FirstTimeBuyer, NerdWallet, MoneyUnder30) to deliver personalized answers tailored to your unique financial situation.
         </p>
       </div>
 
@@ -436,7 +434,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         <div className="bg-muted p-4 rounded-lg space-y-2">
           <div className="flex items-center gap-2">
             <LightbulbIcon className="h-4 w-4" />
-            <p className="font-medium">Example questions you can ask:</p>
+            <p className="font-medium">Example questions:</p>
           </div>
           <ul className="space-y-1 text-sm text-muted-foreground">
             {EXAMPLE_QUESTIONS.map((q, i) => (

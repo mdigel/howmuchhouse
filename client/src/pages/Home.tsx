@@ -223,12 +223,12 @@ export default function Home() {
             </div>
           )}
           </div>
-        {results && (
-          <div className="col-span-2 mt-8">
-            <AiChat calculatorData={results} />
-          </div>
-        )}
       </div>
+      {results && (
+        <div className="col-span-2 mt-8">
+          <AiChat calculatorData={results} />
+        </div>
+      )}
       <footer className="mt-36 md:mt-48 pb-6 text-center space-y-4">
         <div className="w-full max-w-2xl mx-auto border-t border-border pt-6" />
         <div className="space-y-4">
