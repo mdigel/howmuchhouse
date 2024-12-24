@@ -440,7 +440,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             {EXAMPLE_QUESTIONS.map((q, i) => (
               <div
                 key={i}
-                className="cursor-pointer bg-background/50 hover:bg-background transition-colors p-3 rounded-md flex items-start gap-2"
+                className="cursor-pointer bg-background hover:bg-accent transition-colors p-3 rounded-md flex items-start gap-2 border shadow-sm"
                 onClick={() => setMessage(q)}
               >
                 <span className="bg-primary/10 text-primary rounded-full w-5 h-5 flex items-center justify-center text-sm flex-shrink-0">
