@@ -420,6 +420,17 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         {formatCurrency(results.incomeSummary.netIncome / 12)}
                       </span>
                     </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground flex items-center">
+                        Mortgage
+                        <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
+                      </span>
+                      <div className="text-right">
+                        <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>
+                        <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.mortgage.percentage)}</span>
+                      </div>
+                    </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground flex items-center">
                         Monthly Debt
@@ -430,16 +441,6 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <span className="text-muted-foreground ml-2">
                           {formatPercentage(results.monthlyDebt / (results.incomeSummary.netIncome / 12))}
                         </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground flex items-center">
-                        Mortgage
-                        <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
-                      </span>
-                      <div className="text-right">
-                        <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>
-                        <span className="text-muted-foreground ml-2">{formatPercentage(scenario.scenario.mortgage.percentage)}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
