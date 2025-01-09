@@ -1,8 +1,9 @@
 export interface BasicInputType {
-  householdIncome: number;
-  downPayment: number;
-  annualInterestRate: number;
-  loanTermYears: number;
+  householdIncome: string;
+  downPayment: string;
+  monthlyDebt: string;
+  annualInterestRate: string;
+  loanTermYears: string;
   state: string;
   filingStatus: string;
 }
@@ -64,4 +65,5 @@ export interface CalculatorResults {
   incomeSummary: IncomeSummary;
   maxHomePrice: HomePrice;
   savingScenarios: HomePrice[];
+  monthlyDebt: number;
 }

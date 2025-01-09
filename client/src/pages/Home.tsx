@@ -18,6 +18,7 @@ export default function Home() {
     defaultValues: {
       householdIncome: "",
       downPayment: "",
+      monthlyDebt: "",
       annualInterestRate: "",
       loanTermYears: "30",
       state: "",
@@ -139,6 +140,7 @@ export default function Home() {
           // Ensure numbers are properly parsed
           householdIncome: Number(basicData.householdIncome),
           downPayment: Number(basicData.downPayment),
+          monthlyDebt: Number(basicData.monthlyDebt),
           annualInterestRate: Number(basicData.annualInterestRate),
           loanTermYears: Number(basicData.loanTermYears),
         })
@@ -222,7 +224,7 @@ export default function Home() {
               </div>
             </div>
           )}
-          </div>
+        </div>
       </div>
       {results && (
         <div className="col-span-2 mt-8">

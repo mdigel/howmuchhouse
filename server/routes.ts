@@ -20,8 +20,8 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/calculate", async (req, res) => {
     try {
       // This would call your existing calculator function
-      const { householdIncome, downPayment } = req.body;
-      
+      const { householdIncome, downPayment, monthlyDebt } = req.body;
+
       // Mock calculation based on input
       const mockResults = {
         incomeSummary: {
@@ -41,6 +41,7 @@ export function registerRoutes(app: Express): Server {
             return this.grossIncome - this.totalTax;
           }
         },
+        monthlyDebt: Number(monthlyDebt),
         maxHomePrice: {
           description: "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
           mortgagePaymentStats: {
@@ -154,7 +155,7 @@ export function registerRoutes(app: Express): Server {
       const chat = await db.insert(aiChats).values({
         sessionId,
         message,
-        response: '', // Will be updated after AI response
+        response: '', 
         characterCount: message.length,
         hasPaid: isPaid,
       }).returning();

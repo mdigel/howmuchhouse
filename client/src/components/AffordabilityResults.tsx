@@ -40,11 +40,11 @@ function InfoTooltip({ text }: InfoTooltipProps) {
 import { AffordabilitySkeleton } from "@/components/ui/affordability-skeleton";
 
 export function AffordabilityResults({ results, isLoading = false }: AffordabilityResultsProps) {
-  const formatCurrency = (amount: number) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
   const formatPercentage = (decimal: number) =>
-    new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 0 }).format(decimal);
+    new Intl.NumberFormat("en-US", { style: "percent", minimumFractionDigits: 0 }).format(decimal);
 
   if (isLoading) {
     return <AffordabilitySkeleton />;
@@ -53,37 +53,35 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
   const generateCsv = (data: any, isMaxPrice: boolean) => {
     const scenario = isMaxPrice ? data.maxHomePrice : data;
     const { mortgagePaymentStats, scenario: budgetScenario } = scenario;
-    
-    const headers = [
-      'Category', 'Amount', 'Details'
-    ].join(',');
-    
-    const rows = [
-      ['Purchase Price', mortgagePaymentStats.purchasePrice, 'Total home price'],
-      ['Loan Amount', mortgagePaymentStats.loanAmount, 'Amount borrowed'],
-      ['Down Payment', mortgagePaymentStats.downpayment, 'Initial payment'],
-      ['Total Monthly Payment', mortgagePaymentStats.totalPayment, 'Total housing payment'],
-      ['Mortgage Payment', mortgagePaymentStats.mortgagePayment, 'Principal and interest'],
-      ['Property Tax', mortgagePaymentStats.propertyTax, 'Monthly property tax'],
-      ['PMI', mortgagePaymentStats.pmi, 'Private Mortgage Insurance'],
-      ['Home Insurance', mortgagePaymentStats.homeownersInsurance, 'Monthly insurance premium'],
-      ['Monthly Net Income', results.incomeSummary.netIncome / 12, 'After-tax income'],
-      ['Mortgage Budget', budgetScenario.mortgage.amount, `${(budgetScenario.mortgage.percentage * 100).toFixed(0)}% of income`],
-      ['Remaining Needs', budgetScenario.remainingNeeds.amount, `${(budgetScenario.remainingNeeds.percentage * 100).toFixed(0)}% of income`],
-      ['Wants Budget', budgetScenario.wants.amount, `${(budgetScenario.wants.percentage * 100).toFixed(0)}% of income`],
-      ['Savings', budgetScenario.savings.amount, `${(budgetScenario.savings.percentage * 100).toFixed(0)}% of income`],
-    ].map(row => row.join(','));
 
-    return [headers, ...rows].join('\n');
+    const headers = ["Category", "Amount", "Details"].join(",");
+
+    const rows = [
+      ["Purchase Price", mortgagePaymentStats.purchasePrice, "Total home price"],
+      ["Loan Amount", mortgagePaymentStats.loanAmount, "Amount borrowed"],
+      ["Down Payment", mortgagePaymentStats.downpayment, "Initial payment"],
+      ["Total Monthly Payment", mortgagePaymentStats.totalPayment, "Total housing payment"],
+      ["Mortgage Payment", mortgagePaymentStats.mortgagePayment, "Principal and interest"],
+      ["Property Tax", mortgagePaymentStats.propertyTax, "Monthly property tax"],
+      ["PMI", mortgagePaymentStats.pmi, "Private Mortgage Insurance"],
+      ["Home Insurance", mortgagePaymentStats.homeownersInsurance, "Monthly insurance premium"],
+      ["Monthly Net Income", results.incomeSummary.netIncome / 12, "After-tax income"],
+      ["Mortgage Budget", budgetScenario.mortgage.amount, `${(budgetScenario.mortgage.percentage * 100).toFixed(0)}% of income`],
+      ["Remaining Needs", budgetScenario.remainingNeeds.amount, `${(budgetScenario.remainingNeeds.percentage * 100).toFixed(0)}% of income`],
+      ["Wants Budget", budgetScenario.wants.amount, `${(budgetScenario.wants.percentage * 100).toFixed(0)}% of income`],
+      ["Savings", budgetScenario.savings.amount, `${(budgetScenario.savings.percentage * 100).toFixed(0)}% of income`],
+    ].map((row) => row.join(","));
+
+    return [headers, ...rows].join("\n");
   };
 
   const downloadCsv = (data: any, isMaxPrice: boolean) => {
     const csv = generateCsv(data, isMaxPrice);
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = isMaxPrice ? 'max-price-scenario.csv' : 'saving-scenario.csv';
+    a.download = isMaxPrice ? "max-price-scenario.csv" : "saving-scenario.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -104,7 +102,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🥵</span>
                   <span className="text-[2rem] font-bold text-destructive">
-                    {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                    {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split(".")[0]}
                   </span>
                 </div>
                 <span className="self-start px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
@@ -115,7 +113,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
           </AccordionTrigger>
           <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
             <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-              This scenario represents the maximum house price you can afford while maintaining a balanced budget. 
+              This scenario represents the maximum house price you can afford while maintaining a balanced budget.
               It aims to keep your mortgage payment at a sustainable level while ensuring you have enough for other expenses and savings.
             </p>
             <div className="hidden md:block">
@@ -139,7 +137,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="The total price of the home you can purchase in this scenario" />
                       </span>
                       <span className="text-lg font-semibold text-primary">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -148,7 +146,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="The amount you'll need to borrow from the lender after your down payment" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.loanAmount).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.loanAmount).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -157,7 +155,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="The initial payment you'll make upfront to purchase the home" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.downpayment).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.downpayment).split(".")[0]}
                       </span>
                     </div>
                   </div>
@@ -173,7 +171,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" />
                       </span>
                       <span className="text-lg font-semibold text-primary">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.totalPayment).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.totalPayment).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -182,7 +180,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="Your base monthly payment towards the principal and interest of your loan" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.mortgagePayment).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.mortgagePayment).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -191,7 +189,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="Annual property taxes divided into monthly payments" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.propertyTax).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.propertyTax).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -200,7 +198,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="Private Mortgage Insurance required when down payment is less than 20%" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi).split(".")[0]}
                       </span>
                     </div>
                     <div className="flex flex-col">
@@ -209,7 +207,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                         <InfoTooltip text="Required insurance to protect your home and its contents" />
                       </span>
                       <span className="text-lg">
-                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.homeownersInsurance).split('.')[0]}
+                        {formatCurrency(results.maxHomePrice.mortgagePaymentStats.homeownersInsurance).split(".")[0]}
                       </span>
                     </div>
                   </div>
@@ -226,6 +224,15 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                       <InfoTooltip text="Your monthly income after taxes and deductions" />
                     </span>
                     <span className="text-lg">{formatCurrency(results.incomeSummary.netIncome / 12)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground flex items-center">
+                      Monthly Debt
+                      <InfoTooltip text="Your current monthly debt payments including car loans, student loans, credit cards, etc." />
+                    </span>
+                    <div className="text-right">
+                      <span className="text-lg">{formatCurrency(results.monthlyDebt)}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground flex items-center">
@@ -279,13 +286,14 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             <AccordionTrigger className="text-2xl font-semibold py-6 px-6 bg-card rounded-lg hover:no-underline hover:bg-accent group">
               <div className="flex flex-col w-full">
                 <span className="text-sm md:text-lg text-foreground group-hover:text-foreground transition-colors mb-2 text-left w-full">
-                  Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span> of your Net Income each month
+                  Save <span className="text-[#22C55E]">{formatPercentage(scenario.scenario.savings.percentage)}</span>{" "}
+                  of your Net Income each month
                 </span>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[2rem]">🙂</span>
                     <span className="text-[2rem] font-bold text-primary">
-                      {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                      {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split(".")[0]}
                     </span>
                   </div>
                 </div>
@@ -293,8 +301,10 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
               <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                This scenario shows what your budget would look like if you purchased a home for {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}.
-                By choosing a more affordable home, you can save {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
+                This scenario shows what your budget would look like if you purchased a home for{" "}
+                {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split(".")[0]}.
+                By choosing a more affordable home, you can save{" "}
+                {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
               </p>
               <div className="hidden md:block">
                 <button
@@ -317,7 +327,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="The total price of the home you can purchase in this scenario" />
                         </span>
                         <span className="text-lg font-semibold text-primary">
-                          {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -326,7 +336,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="The amount you'll need to borrow from the lender after your down payment" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.loanAmount).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.loanAmount).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -335,7 +345,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="The initial payment you'll make upfront to purchase the home" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.downpayment).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.downpayment).split(".")[0]}
                         </span>
                       </div>
                     </div>
@@ -351,7 +361,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" />
                         </span>
                         <span className="text-lg font-semibold text-primary">
-                          {formatCurrency(scenario.mortgagePaymentStats.totalPayment).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.totalPayment).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -360,7 +370,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="Your base monthly payment towards the principal and interest of your loan" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.mortgagePayment).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.mortgagePayment).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -369,7 +379,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="Annual property taxes divided into monthly payments" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.propertyTax).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.propertyTax).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -378,7 +388,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="Private Mortgage Insurance required when down payment is less than 20%" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.pmi).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.pmi).split(".")[0]}
                         </span>
                       </div>
                       <div className="flex flex-col">
@@ -387,7 +397,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                           <InfoTooltip text="Required insurance to protect your home and its contents" />
                         </span>
                         <span className="text-lg">
-                          {formatCurrency(scenario.mortgagePaymentStats.homeownersInsurance).split('.')[0]}
+                          {formatCurrency(scenario.mortgagePaymentStats.homeownersInsurance).split(".")[0]}
                         </span>
                       </div>
                     </div>
@@ -406,6 +416,15 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                       <span className="text-lg">
                         {formatCurrency(results.incomeSummary.netIncome / 12)}
                       </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground flex items-center">
+                        Monthly Debt
+                        <InfoTooltip text="Your current monthly debt payments including car loans, student loans, credit cards, etc." />
+                      </span>
+                      <div className="text-right">
+                        <span className="text-lg">{formatCurrency(results.monthlyDebt)}</span>
+                      </div>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground flex items-center">

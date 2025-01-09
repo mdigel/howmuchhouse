@@ -27,6 +27,10 @@ export const basicInputSchema = z.object({
     .min(1, "Down payment is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
     .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
+  monthlyDebt: z.string()
+    .min(1, "Monthly debt is required")
+    .regex(/^[0-9]*$/, "Please enter numbers only")
+    .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
   annualInterestRate: z.string()
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
@@ -81,7 +85,37 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-          
+
+          <FormField
+            control={form.control}
+            name="monthlyDebt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span>Monthly Debt</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">(current monthly payments)</span>
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input 
+                      type="text"
+                      placeholder="Enter your total monthly debt" 
+                      {...field}
+                      className="max-w-md pl-7"
+                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        field.onChange(value);
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="downPayment"
