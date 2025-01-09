@@ -209,7 +209,7 @@ export default function Home() {
                   <span className="text-xl">📊</span>
                   <div>
                     <h3 className="font-medium">Comfortable Home Prices</h3>
-                    <p className="text-sm text-muted-foreground">House prices that you can comfortably afford</p>
+                    <p className="text-sm text-muted-foreground">Purchase & save a significant portion of your income</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
