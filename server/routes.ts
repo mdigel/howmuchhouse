@@ -11,10 +11,7 @@ if (!process.env.STRIPE_TEST_SECRET_KEY) {
   throw new Error("Missing Stripe test secret key - Please check environment variables");
 }
 
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-  typescript: true
-});
+const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY);
 
 export function registerRoutes(app: Express): Server {
   app.post("/api/calculate", async (req, res) => {
@@ -151,7 +148,7 @@ export function registerRoutes(app: Express): Server {
       };
 
       res.json(mockResults);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Calculation error:', error);
       res.status(500).json({ error: "Calculation failed", details: error.message });
     }
@@ -299,7 +296,7 @@ export function registerRoutes(app: Express): Server {
       }
 
       res.status(200).json({ url: session.url });
-    } catch (error) {
+    } catch (error:any) {
       console.error('Stripe checkout error:', error);
       res.status(500).json({ 
         error: 'Failed to create checkout session',
