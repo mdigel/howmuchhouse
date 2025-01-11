@@ -24,34 +24,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Production Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Build"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Production"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Development Server"
-
-[[workflows.workflow]]
-name = "Production Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run build && NODE_ENV=production node dist/index.js"
-waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Build"
@@ -68,21 +45,6 @@ task = "shell.exec"
 args = "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
 
 [[workflows.workflow]]
-name = "Production"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "NODE_ENV=production node dist/index.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
 name = "Development Server"
 author = "agent"
 
@@ -94,5 +56,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx tsx server/index.ts"
+args = "tsx server/index.ts"
 waitForPort = 5000
