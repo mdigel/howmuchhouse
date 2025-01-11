@@ -17,122 +17,116 @@ const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
 });
 
 export function registerRoutes(app: Express): Server {
+  console.log("Starting to register routes...");
+
+  // Basic health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
+
+  // Convert the JavaScript calculator to TypeScript endpoint
   app.post("/api/calculate", async (req, res) => {
     try {
-      // This would call your existing calculator function
-      const { householdIncome, downPayment, monthlyDebt } = req.body;
+      console.log("Received calculate request:", req.body);
+      const { 
+        householdIncome, 
+        downPayment, 
+        monthlyDebt,
+        annualInterestRate = 6.375,
+        loanTermYears = 30,
+        state = 'NJ',
+        filingStatus = 'married',
+        hoaFees = 0,
+        homeownersInsurance = 1915,
+        pretaxContributions = 0,
+        dependents = 0
+      } = req.body;
 
-      // Mock calculation based on input
-      const mockResults = {
-        incomeSummary: {
-          grossIncome: Number(householdIncome),
-          adjustedGrossIncome: Number(householdIncome),
-          federalTax: Number(householdIncome) * 0.22,
-          stateTax: Number(householdIncome) * 0.08,
-          socialSecurityTax: Math.min(Number(householdIncome) * 0.062, 9932.4),
-          medicareTax: Number(householdIncome) * 0.0145,
-          additionalMedicareTax: Number(householdIncome) > 200000 ? (Number(householdIncome) - 200000) * 0.009 : 0,
-          childTaxCredit: 0,
-          get totalTax() {
-            return this.federalTax + this.stateTax + this.socialSecurityTax + 
-                   this.medicareTax + this.additionalMedicareTax - this.childTaxCredit;
-          },
-          get netIncome() {
-            return this.grossIncome - this.totalTax;
-          }
-        },
+      // Input validation
+      if (!householdIncome || !downPayment || monthlyDebt === undefined) {
+        return res.status(400).json({ 
+          error: "Missing required fields",
+          message: "Please provide householdIncome, downPayment, and monthlyDebt"
+        });
+      }
+
+      // Type conversion and validation
+      const numericInputs = {
+        householdIncome: Number(householdIncome),
+        downPayment: Number(downPayment),
         monthlyDebt: Number(monthlyDebt),
-        maxHomePrice: {
-          description: "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
-          mortgagePaymentStats: {
-            purchasePrice: Number(householdIncome) * 3.5,
-            loanAmount: (Number(householdIncome) * 3.5) - Number(downPayment),
-            downpayment: Number(downPayment),
-            totalPayment: ((Number(householdIncome) * 3.5) * 0.06) / 12,
-            mortgagePayment: ((Number(householdIncome) * 3.5) * 0.048) / 12,
-            propertyTax: ((Number(householdIncome) * 3.5) * 0.01) / 12,
-            pmi: Number(downPayment) < (Number(householdIncome) * 3.5) * 0.2 ? 100 : 0,
-            homeownersInsurance: 159.58,
-            hoa: 0
-          },
-          scenario: {
-            monthlyNetIncome: (Number(householdIncome) - (Number(householdIncome) * 0.3)) / 12,
-            mortgage: { 
-              amount: ((Number(householdIncome) * 3.5) * 0.06) / 12,
-              percentage: 0.42 
-            },
-            wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-            remainingNeeds: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 },
-            savings: { amount: (Number(householdIncome) * 0.13) / 12, percentage: 0.13 }
-          }
-        },
-        savingScenarios: [
-          {
-            description: "15% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.7,
-              loanAmount: (Number(householdIncome) * 2.7) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.7) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.7) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.7) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.7) * 0.2 ? 75 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.7) * 0.06) / 12, percentage: 0.35 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 }
-            }
-          },
-          {
-            description: "20% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.4,
-              loanAmount: (Number(householdIncome) * 2.4) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.4) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.4) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.4) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.4) * 0.2 ? 50 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.4) * 0.06) / 12, percentage: 0.3 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 }
-            }
-          },
-          {
-            description: "25% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.1,
-              loanAmount: (Number(householdIncome) * 2.1) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.1) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.1) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.1) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.1) * 0.2 ? 0 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.1) * 0.06) / 12, percentage: 0.25 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.25) / 12, percentage: 0.25 }
-            }
-          }
-        ]
+        annualInterestRate: Number(annualInterestRate),
+        loanTermYears: Number(loanTermYears),
+        hoaFees: Number(hoaFees),
+        homeownersInsurance: Number(homeownersInsurance),
+        pretaxContributions: Number(pretaxContributions),
+        dependents: Number(dependents)
       };
 
-      res.json(mockResults);
+      // Validate numeric inputs
+      for (const [key, value] of Object.entries(numericInputs)) {
+        if (isNaN(value)) {
+          return res.status(400).json({
+            error: "Invalid input",
+            message: `${key} must be a valid number`
+          });
+        }
+      }
+
+      // Import calculator functions
+      const { debtCheck } = require('../attached_assets/Step 0.1 - DebtCheck.js');
+      const { calculateMaxMortgagePayment } = require('../attached_assets/Step 1 - MaxMortgagePayment.js');
+      const { calculateLoanAmountFromMonthlyPayment } = require('../attached_assets/Step 2 - LoanAmountFromMonthlyPayment.js');
+      const { calculateNetIncome } = require('../attached_assets/Step 3 - NetIncome');
+      const { calculateSimpleMonthlyBudget } = require('../attached_assets/Step 4 - SimpleMonthlyBudgetR.js');
+      const { calculateComplexBudgetMortgagePayment } = require('../attached_assets/Step 5.1 - ComplexBudgetMortgagePayment.js');
+      const { calculateComplexBudgetsForSavingsPercentages } = require('../attached_assets/Step 5 - ComplexBudgetsForSavingsPercentages.js');
+      const { calculateMortgageForEachSavingScenario } = require('../attached_assets/Step 6 - MortgageForEachSavingScenario.js');
+
+      // Calculate results using the orchestrator
+      const calculationResult = {
+        householdIncome: numericInputs.householdIncome,
+        downPayment: numericInputs.downPayment,
+        annualInterestRate: numericInputs.annualInterestRate,
+        loanTermYears: numericInputs.loanTermYears,
+        state,
+        filingStatus,
+        hoaFees: numericInputs.hoaFees,
+        homeownersInsurance: numericInputs.homeownersInsurance,
+        pretaxContributions: numericInputs.pretaxContributions,
+        dependents: numericInputs.dependents,
+        monthlyDebt: numericInputs.monthlyDebt
+      };
+
+      console.log("Calculating with inputs:", calculationResult);
+
+      // Round all numeric outputs to integers
+      const roundResults = (obj: any): any => {
+        if (typeof obj !== 'object' || obj === null) return obj;
+
+        return Object.fromEntries(
+          Object.entries(obj).map(([key, value]) => {
+            if (typeof value === 'number') {
+              return [key, Math.round(value)];
+            }
+            if (typeof value === 'object') {
+              return [key, roundResults(value)];
+            }
+            return [key, value];
+          })
+        );
+      };
+
+      const results = roundResults(require('../attached_assets/Orchestrator.js').calculateAllScenarios(calculationResult));
+
+      console.log("Sending calculate response");
+      res.json(results);
     } catch (error) {
-      res.status(500).json({ error: "Calculation failed" });
+      console.error("Calculate endpoint error:", error);
+      res.status(500).json({ 
+        error: "Calculation failed",
+        message: error instanceof Error ? error.message : "An unexpected error occurred"
+      });
     }
   });
 
@@ -140,6 +134,7 @@ export function registerRoutes(app: Express): Server {
     const { message, calculatorData, isPaid } = req.body;
 
     try {
+      console.log("Received chat request:", { message, calculatorData, isPaid }); // Added logging
       // Validate message length
       if (message.length > 3000) {
         return res.status(400).json({ 
@@ -203,6 +198,7 @@ export function registerRoutes(app: Express): Server {
 
   app.post("/api/create-checkout", async (req, res) => {
     try {
+      console.log("Received create-checkout request"); // Added logging
       const origin = `${req.protocol}://${req.get('host')}`;
       console.log('Creating checkout session with origin:', origin);
 
@@ -249,6 +245,7 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/feedback", async (req, res) => {
     const { isHelpful, response } = req.body;
     try {
+      console.log("Received feedback request:", {isHelpful, response}); //Added logging
       // Here you would store the feedback in your database
       // For now, just log it
       console.log("AI Response Feedback:", { isHelpful, response });
@@ -260,5 +257,6 @@ export function registerRoutes(app: Express): Server {
   });
 
   const httpServer = createServer(app);
+  console.log("Routes registered successfully");
   return httpServer;
 }
