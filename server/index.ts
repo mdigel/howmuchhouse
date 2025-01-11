@@ -1,40 +1,79 @@
-import express from "express";
+import express, { type Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes";
 import { createServer } from "http";
+import { setupVite, serveStatic } from "./vite";
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Basic health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy' });
+// Add request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  console.log(`${req.method} ${req.url} - Started`);
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`);
+  });
+
+  next();
 });
 
-// Global error handler (from original code)
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+const httpServer = createServer(app);
+
+// Register API routes first
+registerRoutes(app);
+
+// Global error handler
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Server error:', err);
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
-
   res.status(status).json({ message });
 });
 
+async function startServer() {
+  try {
+    console.log('Starting server initialization...');
+    console.log('Current NODE_ENV:', process.env.NODE_ENV);
+    const PORT = 5000;
 
-try {
-  console.log('Starting server initialization...');
+    if (process.env.NODE_ENV === 'production') {
+      // In production, serve the built files
+      serveStatic(app);
+      console.log('Running in production mode');
+    } else {
+      // In development, set up Vite's dev server
+      console.log('Running in development mode');
+      await setupVite(app, httpServer);
+    }
 
-  const httpServer = createServer(app);
-  const PORT = 5000;
+    // Add specific error handling for server startup
+    httpServer.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server is running on port ${PORT}`);
+      console.log('API routes registered and ready');
+      console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+    });
 
-  httpServer.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server is now listening on port ${PORT}`);
-  });
+    httpServer.on('error', (error: Error & { code?: string }) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Please free up the port or use a different one.`);
+      } else {
+        console.error('Server failed to start:', error);
+      }
+      process.exit(1);
+    });
 
-  httpServer.on('error', (error: Error) => {
-    console.error('Server failed to start:', error);
+  } catch (error) {
+    console.error('Fatal server error during startup:', error);
     process.exit(1);
-  });
-
-} catch (error) {
-  console.error('Fatal server error during startup:', error);
-  process.exit(1);
+  }
 }
+
+startServer().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
+
+export default httpServer;
