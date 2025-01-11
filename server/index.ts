@@ -1,12 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import path from "path";
-import { fileURLToPath } from "url";
-
-// Get dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Force production mode when deployed
 const isProduction = process.env.NODE_ENV === "production" || process.env.REPL_ID != null;
@@ -63,19 +57,8 @@ app.use((req, res, next) => {
   if (!isProduction) {
     await setupVite(app, server);
   } else {
-    // In production, serve static files from dist/public
-    const distPath = path.resolve(__dirname, "..", "dist", "public");
-    app.use(express.static(distPath));
-
-    // Serve index.html for all routes except /api
-    app.use("*", (req, res, next) => {
-      if (req.originalUrl.startsWith("/api")) {
-        next();
-      } else {
-        res.sendFile(path.join(distPath, "index.html"));
-      }
-    });
-
+    // In production, serve static files
+    serveStatic(app);
     log("Running in production mode");
   }
 
