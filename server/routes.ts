@@ -19,20 +19,35 @@ const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
 export function registerRoutes(app: Express): Server {
   app.post("/api/calculate", async (req, res) => {
     try {
-      // This would call your existing calculator function
-      const { householdIncome, downPayment, monthlyDebt } = req.body;
+      const { 
+        // Basic inputs
+        householdIncome,
+        downPayment,
+        monthlyDebt,
+        annualInterestRate,
+        loanTermYears,
+        state,
+        filingStatus,
+        // Advanced inputs
+        hoaFees,
+        homeownersInsurance,
+        pmiInput,
+        propertyTaxInput,
+        pretaxContributions,
+        dependents
+      } = req.body;
 
       // Mock calculation based on input
       const mockResults = {
         incomeSummary: {
           grossIncome: Number(householdIncome),
-          adjustedGrossIncome: Number(householdIncome),
+          adjustedGrossIncome: Number(householdIncome) - Number(pretaxContributions),
           federalTax: Number(householdIncome) * 0.22,
           stateTax: Number(householdIncome) * 0.08,
           socialSecurityTax: Math.min(Number(householdIncome) * 0.062, 9932.4),
           medicareTax: Number(householdIncome) * 0.0145,
           additionalMedicareTax: Number(householdIncome) > 200000 ? (Number(householdIncome) - 200000) * 0.009 : 0,
-          childTaxCredit: 0,
+          childTaxCredit: Number(dependents) * 2000,
           get totalTax() {
             return this.federalTax + this.stateTax + this.socialSecurityTax + 
                    this.medicareTax + this.additionalMedicareTax - this.childTaxCredit;
@@ -48,17 +63,31 @@ export function registerRoutes(app: Express): Server {
             purchasePrice: Number(householdIncome) * 3.5,
             loanAmount: (Number(householdIncome) * 3.5) - Number(downPayment),
             downpayment: Number(downPayment),
-            totalPayment: ((Number(householdIncome) * 3.5) * 0.06) / 12,
-            mortgagePayment: ((Number(householdIncome) * 3.5) * 0.048) / 12,
-            propertyTax: ((Number(householdIncome) * 3.5) * 0.01) / 12,
-            pmi: Number(downPayment) < (Number(householdIncome) * 3.5) * 0.2 ? 100 : 0,
-            homeownersInsurance: 159.58,
-            hoa: 0
+            totalPayment: calculateMonthlyMortgage(
+              (Number(householdIncome) * 3.5) - Number(downPayment),
+              Number(annualInterestRate),
+              Number(loanTermYears)
+            ) + Number(hoaFees) + (Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12) 
+              + (Number(pmiInput) || 0) + Number(homeownersInsurance) / 12,
+            mortgagePayment: calculateMonthlyMortgage(
+              (Number(householdIncome) * 3.5) - Number(downPayment),
+              Number(annualInterestRate),
+              Number(loanTermYears)
+            ),
+            propertyTax: Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12,
+            pmi: Number(pmiInput) || (Number(downPayment) < (Number(householdIncome) * 3.5) * 0.2 ? 100 : 0),
+            homeownersInsurance: Number(homeownersInsurance) / 12,
+            hoa: Number(hoaFees)
           },
           scenario: {
             monthlyNetIncome: (Number(householdIncome) - (Number(householdIncome) * 0.3)) / 12,
             mortgage: { 
-              amount: ((Number(householdIncome) * 3.5) * 0.06) / 12,
+              amount: calculateMonthlyMortgage(
+                (Number(householdIncome) * 3.5) - Number(downPayment),
+                Number(annualInterestRate),
+                Number(loanTermYears)
+              ) + Number(hoaFees) + (Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12) 
+                + (Number(pmiInput) || 0) + Number(homeownersInsurance) / 12,
               percentage: 0.42 
             },
             wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
@@ -69,17 +98,14 @@ export function registerRoutes(app: Express): Server {
         savingScenarios: [
           {
             description: "15% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.7,
-              loanAmount: (Number(householdIncome) * 2.7) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.7) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.7) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.7) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.7) * 0.2 ? 75 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
+            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.7, {
+              annualInterestRate,
+              loanTermYears,
+              hoaFees,
+              homeownersInsurance,
+              pmiInput,
+              propertyTaxInput
+            }),
             scenario: {
               mortgage: { amount: ((Number(householdIncome) * 2.7) * 0.06) / 12, percentage: 0.35 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
@@ -89,17 +115,14 @@ export function registerRoutes(app: Express): Server {
           },
           {
             description: "20% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.4,
-              loanAmount: (Number(householdIncome) * 2.4) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.4) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.4) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.4) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.4) * 0.2 ? 50 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
+            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.4, {
+              annualInterestRate,
+              loanTermYears,
+              hoaFees,
+              homeownersInsurance,
+              pmiInput,
+              propertyTaxInput
+            }),
             scenario: {
               mortgage: { amount: ((Number(householdIncome) * 2.4) * 0.06) / 12, percentage: 0.3 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
@@ -109,17 +132,14 @@ export function registerRoutes(app: Express): Server {
           },
           {
             description: "25% Saving Scenario",
-            mortgagePaymentStats: {
-              purchasePrice: Number(householdIncome) * 2.1,
-              loanAmount: (Number(householdIncome) * 2.1) - Number(downPayment),
-              downpayment: Number(downPayment),
-              totalPayment: ((Number(householdIncome) * 2.1) * 0.06) / 12,
-              mortgagePayment: ((Number(householdIncome) * 2.1) * 0.048) / 12,
-              propertyTax: ((Number(householdIncome) * 2.1) * 0.01) / 12,
-              pmi: Number(downPayment) < (Number(householdIncome) * 2.1) * 0.2 ? 0 : 0,
-              homeownersInsurance: 159.58,
-              hoa: 0
-            },
+            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.1, {
+              annualInterestRate,
+              loanTermYears,
+              hoaFees,
+              homeownersInsurance,
+              pmiInput,
+              propertyTaxInput
+            }),
             scenario: {
               mortgage: { amount: ((Number(householdIncome) * 2.1) * 0.06) / 12, percentage: 0.25 },
               wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
@@ -132,9 +152,51 @@ export function registerRoutes(app: Express): Server {
 
       res.json(mockResults);
     } catch (error) {
-      res.status(500).json({ error: "Calculation failed" });
+      console.error('Calculation error:', error);
+      res.status(500).json({ error: "Calculation failed", details: error.message });
     }
   });
+
+  // Helper function to calculate monthly mortgage payment
+  function calculateMonthlyMortgage(principal: number, annualRate: number, years: number): number {
+    const monthlyRate = (annualRate / 100) / 12;
+    const numberOfPayments = years * 12;
+    return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+  }
+
+  // Helper function to calculate mortgage scenario
+  function calculateMortgageScenario(
+    householdIncome: number | string,
+    downPayment: number | string,
+    multiplier: number,
+    options: {
+      annualInterestRate: number | string,
+      loanTermYears: number | string,
+      hoaFees: number | string,
+      homeownersInsurance: number | string,
+      pmiInput: number | null | string,
+      propertyTaxInput: number | null | string
+    }
+  ) {
+    const purchasePrice = Number(householdIncome) * multiplier;
+    const loanAmount = purchasePrice - Number(downPayment);
+
+    return {
+      purchasePrice,
+      loanAmount,
+      downpayment: Number(downPayment),
+      totalPayment: calculateMonthlyMortgage(loanAmount, Number(options.annualInterestRate), Number(options.loanTermYears))
+        + Number(options.hoaFees)
+        + (Number(options.propertyTaxInput) || (purchasePrice * 0.01) / 12)
+        + (Number(options.pmiInput) || (Number(downPayment) < purchasePrice * 0.2 ? 75 : 0))
+        + Number(options.homeownersInsurance) / 12,
+      mortgagePayment: calculateMonthlyMortgage(loanAmount, Number(options.annualInterestRate), Number(options.loanTermYears)),
+      propertyTax: Number(options.propertyTaxInput) || (purchasePrice * 0.01) / 12,
+      pmi: Number(options.pmiInput) || (Number(downPayment) < purchasePrice * 0.2 ? 75 : 0),
+      homeownersInsurance: Number(options.homeownersInsurance) / 12,
+      hoa: Number(options.hoaFees)
+    };
+  }
 
   app.post("/api/chat", async (req, res) => {
     const { message, calculatorData, isPaid } = req.body;

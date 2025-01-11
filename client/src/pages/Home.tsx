@@ -135,14 +135,21 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...basicData,
-          ...advancedData,
-          // Ensure numbers are properly parsed
+          // Basic inputs
           householdIncome: Number(basicData.householdIncome),
           downPayment: Number(basicData.downPayment),
           monthlyDebt: Number(basicData.monthlyDebt),
           annualInterestRate: Number(basicData.annualInterestRate),
           loanTermYears: Number(basicData.loanTermYears),
+          state: basicData.state,
+          filingStatus: basicData.filingStatus,
+          // Advanced inputs
+          hoaFees: Number(advancedData.hoaFees),
+          homeownersInsurance: Number(advancedData.homeownersInsurance),
+          pmiInput: advancedData.pmiInput === null ? null : Number(advancedData.pmiInput),
+          propertyTaxInput: advancedData.propertyTaxInput === null ? null : Number(advancedData.propertyTaxInput),
+          pretaxContributions: Number(advancedData.pretaxContributions),
+          dependents: Number(advancedData.dependents)
         })
       });
 
