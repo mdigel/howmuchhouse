@@ -1,70 +1,72 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite";
+import path from "path";
 
-// Force production mode when deployed
 const isProduction = process.env.NODE_ENV === "production" || process.env.REPL_ID != null;
 if (isProduction) {
   process.env.NODE_ENV = "production";
 }
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// Enable more detailed logging
+const startServer = async () => {
+  try {
+    console.log("Starting server initialization...");
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
 
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
+    // Request logging middleware
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+      next();
+    });
 
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
+    // Register routes
+    console.log("Registering routes...");
+    const server = registerRoutes(app);
 
-      log(logLine);
+    // Error handling middleware
+    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      console.error('Server Error:', err);
+      res.status(500).json({ error: err.message || "Internal Server Error" });
+    });
+
+    // Setup Vite or static files
+    if (!isProduction) {
+      console.log("Setting up Vite for development...");
+      await setupVite(app, server);
+    } else {
+      console.log("Setting up static file serving for production...");
+      // Ensure the dist directory exists before serving
+      const distPath = path.join(__dirname, '../dist');
+      app.use(express.static(distPath));
+
+      // Serve index.html for all non-API routes
+      app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+          return next();
+        }
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
     }
-  });
 
-  next();
-});
+    // Start the server
+    const PORT = Number(process.env.PORT) || 5000;
+    server.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on port ${PORT} in ${isProduction ? 'production' : 'development'} mode`);
+    });
 
-(async () => {
-  const server = registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // Only setup vite in development
-  if (!isProduction) {
-    await setupVite(app, server);
-  } else {
-    // In production, serve static files
-    serveStatic(app);
-    log("Running in production mode");
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
   }
+};
 
-  // ALWAYS serve the app on port 5000
-  const PORT = 5000;
-  server.listen(PORT, "0.0.0.0", () => {
-    log(`serving on port ${PORT} in ${isProduction ? 'production' : 'development'} mode`);
-  });
-})();
+// Start the server
+startServer().catch((error) => {
+  console.error("Unhandled server startup error:", error);
+  process.exit(1);
+});
