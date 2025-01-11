@@ -1,79 +1,70 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { createServer } from "http";
-import { setupVite, serveStatic } from "./vite";
+import { setupVite, serveStatic, log } from "./vite";
+
+// Force production mode when deployed
+const isProduction = process.env.NODE_ENV === "production" || process.env.REPL_ID != null;
+if (isProduction) {
+  process.env.NODE_ENV = "production";
+}
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
-// Add request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  console.log(`${req.method} ${req.url} - Started`);
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
-  res.on('finish', () => {
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+
+  res.on("finish", () => {
     const duration = Date.now() - start;
-    console.log(`${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`);
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+
+      log(logLine);
+    }
   });
 
   next();
 });
 
-const httpServer = createServer(app);
+(async () => {
+  const server = registerRoutes(app);
 
-// Register API routes first
-registerRoutes(app);
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
 
-// Global error handler
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Server error:', err);
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(status).json({ message });
-});
+    res.status(status).json({ message });
+    throw err;
+  });
 
-async function startServer() {
-  try {
-    console.log('Starting server initialization...');
-    console.log('Current NODE_ENV:', process.env.NODE_ENV);
-    const PORT = 5000;
-
-    if (process.env.NODE_ENV === 'production') {
-      // In production, serve the built files
-      serveStatic(app);
-      console.log('Running in production mode');
-    } else {
-      // In development, set up Vite's dev server
-      console.log('Running in development mode');
-      await setupVite(app, httpServer);
-    }
-
-    // Add specific error handling for server startup
-    httpServer.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log('API routes registered and ready');
-      console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
-    });
-
-    httpServer.on('error', (error: Error & { code?: string }) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use. Please free up the port or use a different one.`);
-      } else {
-        console.error('Server failed to start:', error);
-      }
-      process.exit(1);
-    });
-
-  } catch (error) {
-    console.error('Fatal server error during startup:', error);
-    process.exit(1);
+  // Only setup vite in development
+  if (!isProduction) {
+    await setupVite(app, server);
+  } else {
+    // In production, serve static files
+    serveStatic(app);
+    log("Running in production mode");
   }
-}
 
-startServer().catch(error => {
-  console.error('Failed to start server:', error);
-  process.exit(1);
-});
-
-export default httpServer;
+  // ALWAYS serve the app on port 5000
+  const PORT = 5000;
+  server.listen(PORT, "0.0.0.0", () => {
+    log(`serving on port ${PORT} in ${isProduction ? 'production' : 'development'} mode`);
+  });
+})();
