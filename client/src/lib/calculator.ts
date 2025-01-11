@@ -8,11 +8,23 @@ import type {
 } from './calculatorTypes';
 
 function debtCheck(grossIncome: number, monthlyDebt: number): { below6: boolean; debtPercentage: number } {
+  // Validate inputs
+  if (typeof grossIncome !== 'number' || typeof monthlyDebt !== 'number') {
+    throw new Error('Both grossIncome and monthlyDebt must be numbers.');
+  }
+  if (grossIncome <= 0) {
+    throw new Error('Annual income must be a positive number.');
+  }
+  if (monthlyDebt < 0) {
+    throw new Error('Monthly debt cannot be negative.');
+  }
+
   const monthlyGrossIncome = grossIncome / 12;
   const debtPercentage = monthlyDebt / monthlyGrossIncome;
+
   return {
-    below6: debtPercentage < 0.06,
-    debtPercentage
+    below6: debtPercentage <= 0.08, // Updated threshold to match original implementation
+    debtPercentage: Math.round(debtPercentage * 100) / 100 // Round to 2 decimal places
   };
 }
 
@@ -77,7 +89,7 @@ function calculateNetIncome(
   // Calculate federal tax
   const brackets = federalTaxBrackets[filingStatus as keyof typeof federalTaxBrackets];
   let federalTax = 0;
-  
+
   for (let i = brackets.length - 1; i >= 0; i--) {
     if (taxableIncome > brackets[i].threshold) {
       federalTax += (taxableIncome - brackets[i].threshold) * brackets[i].rate;
@@ -233,7 +245,7 @@ export function calculateAffordability(basicInputs: BasicInputType, advancedInpu
 
   // Step 2: Check debt ratio
   const debtCheckResult = debtCheck(householdIncome, monthlyDebt);
-  
+
   // Step 3: Calculate max mortgage payment
   const allowedDIR = debtCheckResult.below6 ? 0.28 : (0.36 - debtCheckResult.debtPercentage);
   const maxMonthlyMortgagePayment = calculateMaxMortgagePayment(householdIncome, allowedDIR);
@@ -256,7 +268,7 @@ export function calculateAffordability(basicInputs: BasicInputType, advancedInpu
 
   for (const savingsPercentage of savingPercentages) {
     const mortgagePayment = (incomeSummary.netIncome / 12) * (1 - savingsPercentage - 0.30 - 0.15);
-    
+
     try {
       const mortgageStats = calculateLoanAmountFromMonthlyPayment({
         desiredMonthlyPayment: mortgagePayment,
