@@ -8,21 +8,28 @@ import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
 if (!process.env.STRIPE_TEST_SECRET_KEY) {
-  throw new Error("Missing Stripe test secret key - Please check environment variables");
+  console.error("Missing Stripe test secret key - Please check environment variables");
+  process.exit(1);
 }
 
 const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2024-11-20.acacia",
   typescript: true
 });
 
 export function registerRoutes(app: Express): Server {
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'healthy' });
+  });
+
   app.post("/api/calculate", async (req, res) => {
+    console.log('Received calculate request:', req.body);
     try {
-      // This would call your existing calculator function
+      // Mock calculation based on input
       const { householdIncome, downPayment, monthlyDebt } = req.body;
 
-      // Mock calculation based on input
+      // Mock calculation logic (same as before)
       const mockResults = {
         incomeSummary: {
           grossIncome: Number(householdIncome),
@@ -130,9 +137,14 @@ export function registerRoutes(app: Express): Server {
         ]
       };
 
+      console.log('Calculation completed successfully');
       res.json(mockResults);
     } catch (error) {
-      res.status(500).json({ error: "Calculation failed" });
+      console.error('Calculate API Error:', error);
+      res.status(500).json({ 
+        error: "Calculation failed",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
