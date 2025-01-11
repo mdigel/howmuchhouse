@@ -1,0 +1,136 @@
+I haven written my own calculator logic in javascript and I’ve attached files with this code. The primary calculation logic resides in the Orchestrator.js file, specifically in a function called calculateAllScenarios which calls functions that are created in other files.
+
+**Task:** 
+
+1. **Link the Function to the UI**: 
+- Ensure the calculateAllScenarios function in the Orchestrator.js file is triggered when the user presses the “Calculate” button.
+- Maintain the math logic in the uploaded javascript files.
+
+1. **Scope of Changes**:
+- Focus only on the routes.ts file for your modifications.
+- Avoid altering the AiChat, BasicInputs, AffordabilityResults UI elements or styling.
+
+1. **Code Conversion:** 
+- Convery my uploaded Javascript to Typescript.
+- Align with TypeScript best practices, including strict type definitions.
+
+1. **Output Rules**:
+- All numeric outputs must be rounded to the nearest integer.
+
+1. **Error Reporting:**
+- If “calculateAllScenarios” function errors, send a warning back to the frontend.
+- Edge Case Handling: If extremely large or small numeric values are sent as inputs send back an error message to the UI.
+
+1. **Documentation**:
+- Add robust, clear comments to explain your changes.
+- Ensure all changes are easily auditable and traceable.
+
+**Example Output Currently:** 
+
+Example output from the “calculateAllScenarios” function looks like in the Orchestrator.js file currently.
+
+```yaml
+
+{
+  incomeSummary: {
+    grossIncome: 368000,
+    adjustedGrossIncome: 368000,
+    federalTax: 68472,
+    stateTax: 39560,
+    socialSecurityTax: 9932.4,
+    medicareTax: 5336,
+    additionalMedicareTax: 1062,
+    totalTax: 124362.4,
+    childTaxCredit: 0,
+    netIncome: 243637.6
+  },
+  debtCheck: { debCheckOutcome: false, debtCheckPercent: 0.1 },
+  maxMortgageStats: {
+    description: 'Max Mortgage Scenario with as close to 50/30/20 budget as possible',
+    mortgagePaymentStats: {
+      purchasePrice: 1181666.5,
+      loanAmount: 1031666.5,
+      downpayment: 150000,
+      totalPayment: 7976.03,
+      mortgagePayment: 6436.26,
+      propertyTax: 984.72,
+      pmi: 395.47,
+      homeownersInsurance: 159.58,
+      hoa: 0
+    },
+    scenario: {
+      monthlyNetIncome: 20303.13,
+      mortgage: { mortgagePayment: 7973.33, mortgagePercentage: 0.39 },
+      debt: { amount: 3000, percentage: 0.15 },
+      remainingNeeds: { amount: 3045.47, percentage: 0.15 },
+      wants: { amount: 6090.94, percentage: 0.3 },
+      savings: { amount: 193.39, percentage: 0.01 }
+    }
+  },
+  allSavingsScenarios: [
+    {
+      description: '15% Saving Scenario',
+      mortgagePaymentStats: {
+        purchasePrice: 799062.5,
+        loanAmount: 649062.5,
+        downpayment: 150000,
+        totalPayment: 5123.58,
+        mortgagePayment: 4049.31,
+        propertyTax: 665.89,
+        pmi: 248.81,
+        homeownersInsurance: 159.58,
+        hoa: 0
+      },
+      scenario: {
+        mortgage: { mortgagePayment: 5121.25, mortgagePercentage: 0.25 },
+        debt: { debtPayment: 3000, debtPercentage: 0.15 },
+        remainingNeeds: { amount: 3045.47, percentage: 0.15 },
+        wants: { amount: 6090.94, percentage: 0.3 },
+        savings: { amount: 3045.47, percentage: 0.15 }
+      }
+    },
+    {
+      description: '20% Saving Scenario',
+      mortgagePaymentStats: {
+        purchasePrice: 691305,
+        loanAmount: 541305,
+        downpayment: 150000,
+        totalPayment: 4112.71,
+        mortgagePayment: 3377.04,
+        propertyTax: 576.09,
+        pmi: 0,
+        homeownersInsurance: 159.58,
+        hoa: 0
+      },
+      scenario: {
+        mortgage: { mortgagePayment: 4106.1, mortgagePercentage: 0.2 },
+        debt: { debtPayment: 3000, debtPercentage: 0.15 },
+        remainingNeeds: { amount: 3045.47, percentage: 0.15 },
+        wants: { amount: 6090.94, percentage: 0.3 },
+        savings: { amount: 4060.63, percentage: 0.2 }
+      }
+    },
+    {
+      description: '25% Saving Scenario',
+      mortgagePaymentStats: {
+        purchasePrice: 547547,
+        loanAmount: 397547,
+        downpayment: 150000,
+        totalPayment: 3096.05,
+        mortgagePayment: 2480.18,
+        propertyTax: 456.29,
+        pmi: 0,
+        homeownersInsurance: 159.58,
+        hoa: 0
+      },
+      scenario: {
+        mortgage: { mortgagePayment: 3090.94, mortgagePercentage: 0.15 },
+        debt: { debtPayment: 3000, debtPercentage: 0.15 },
+        remainingNeeds: { amount: 3045.47, percentage: 0.15 },
+        wants: { amount: 6090.94, percentage: 0.3 },
+        savings: { amount: 5075.78, percentage: 0.25 }
+      }
+    }
+  ]
+}
+```
