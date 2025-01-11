@@ -3,8 +3,8 @@
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "target": "ES2020",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -21,6 +21,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "incremental": true,
-    "noEmit": false
+    "noEmit": true
   }
 }
