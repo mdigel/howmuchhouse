@@ -7,31 +7,28 @@ import { aiChats } from "../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 
-if (!process.env.STRIPE_TEST_SECRET_KEY) {
-  throw new Error("Missing Stripe test secret key - Please check environment variables");
-}
-
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY);
-
 export function registerRoutes(app: Express): Server {
+  // Basic health check route
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
   app.post("/api/calculate", async (req, res) => {
     try {
       const { 
-        // Basic inputs
         householdIncome,
         downPayment,
         monthlyDebt,
-        annualInterestRate,
-        loanTermYears,
-        state,
-        filingStatus,
-        // Advanced inputs
-        hoaFees,
-        homeownersInsurance,
-        pmiInput,
-        propertyTaxInput,
-        pretaxContributions,
-        dependents
+        annualInterestRate = 7.5,
+        loanTermYears = 30,
+        state = "CA",
+        filingStatus = "single",
+        hoaFees = 0,
+        homeownersInsurance = 1200,
+        pmiInput = null,
+        propertyTaxInput = null,
+        pretaxContributions = 0,
+        dependents = 0
       } = req.body;
 
       // Mock calculation based on input
@@ -54,97 +51,14 @@ export function registerRoutes(app: Express): Server {
           }
         },
         monthlyDebt: Number(monthlyDebt),
-        maxHomePrice: {
-          description: "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
-          mortgagePaymentStats: {
-            purchasePrice: Number(householdIncome) * 3.5,
-            loanAmount: (Number(householdIncome) * 3.5) - Number(downPayment),
-            downpayment: Number(downPayment),
-            totalPayment: calculateMonthlyMortgage(
-              (Number(householdIncome) * 3.5) - Number(downPayment),
-              Number(annualInterestRate),
-              Number(loanTermYears)
-            ) + Number(hoaFees) + (Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12) 
-              + (Number(pmiInput) || 0) + Number(homeownersInsurance) / 12,
-            mortgagePayment: calculateMonthlyMortgage(
-              (Number(householdIncome) * 3.5) - Number(downPayment),
-              Number(annualInterestRate),
-              Number(loanTermYears)
-            ),
-            propertyTax: Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12,
-            pmi: Number(pmiInput) || (Number(downPayment) < (Number(householdIncome) * 3.5) * 0.2 ? 100 : 0),
-            homeownersInsurance: Number(homeownersInsurance) / 12,
-            hoa: Number(hoaFees)
-          },
-          scenario: {
-            monthlyNetIncome: (Number(householdIncome) - (Number(householdIncome) * 0.3)) / 12,
-            mortgage: { 
-              amount: calculateMonthlyMortgage(
-                (Number(householdIncome) * 3.5) - Number(downPayment),
-                Number(annualInterestRate),
-                Number(loanTermYears)
-              ) + Number(hoaFees) + (Number(propertyTaxInput) || ((Number(householdIncome) * 3.5) * 0.01) / 12) 
-                + (Number(pmiInput) || 0) + Number(homeownersInsurance) / 12,
-              percentage: 0.42 
-            },
-            wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-            remainingNeeds: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 },
-            savings: { amount: (Number(householdIncome) * 0.13) / 12, percentage: 0.13 }
-          }
-        },
-        savingScenarios: [
-          {
-            description: "15% Saving Scenario",
-            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.7, {
-              annualInterestRate,
-              loanTermYears,
-              hoaFees,
-              homeownersInsurance,
-              pmiInput,
-              propertyTaxInput
-            }),
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.7) * 0.06) / 12, percentage: 0.35 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.15) / 12, percentage: 0.15 }
-            }
-          },
-          {
-            description: "20% Saving Scenario",
-            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.4, {
-              annualInterestRate,
-              loanTermYears,
-              hoaFees,
-              homeownersInsurance,
-              pmiInput,
-              propertyTaxInput
-            }),
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.4) * 0.06) / 12, percentage: 0.3 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 }
-            }
-          },
-          {
-            description: "25% Saving Scenario",
-            mortgagePaymentStats: calculateMortgageScenario(householdIncome, downPayment, 2.1, {
-              annualInterestRate,
-              loanTermYears,
-              hoaFees,
-              homeownersInsurance,
-              pmiInput,
-              propertyTaxInput
-            }),
-            scenario: {
-              mortgage: { amount: ((Number(householdIncome) * 2.1) * 0.06) / 12, percentage: 0.25 },
-              wants: { amount: (Number(householdIncome) * 0.3) / 12, percentage: 0.3 },
-              remainingNeeds: { amount: (Number(householdIncome) * 0.2) / 12, percentage: 0.2 },
-              savings: { amount: (Number(householdIncome) * 0.25) / 12, percentage: 0.25 }
-            }
-          }
-        ]
+        maxHomePrice: calculateMaxHomePrice(householdIncome, downPayment, monthlyDebt, {
+          annualInterestRate,
+          loanTermYears,
+          hoaFees,
+          homeownersInsurance,
+          pmiInput,
+          propertyTaxInput
+        })
       };
 
       res.json(mockResults);
@@ -161,11 +75,11 @@ export function registerRoutes(app: Express): Server {
     return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
   }
 
-  // Helper function to calculate mortgage scenario
-  function calculateMortgageScenario(
+  // Helper function to calculate max home price and scenarios
+  function calculateMaxHomePrice(
     householdIncome: number | string,
     downPayment: number | string,
-    multiplier: number,
+    monthlyDebt: number | string,
     options: {
       annualInterestRate: number | string,
       loanTermYears: number | string,
@@ -175,23 +89,25 @@ export function registerRoutes(app: Express): Server {
       propertyTaxInput: number | null | string
     }
   ) {
-    const purchasePrice = Number(householdIncome) * multiplier;
+    const purchasePrice = Number(householdIncome) * 3.5;
     const loanAmount = purchasePrice - Number(downPayment);
 
     return {
-      purchasePrice,
-      loanAmount,
-      downpayment: Number(downPayment),
-      totalPayment: calculateMonthlyMortgage(loanAmount, Number(options.annualInterestRate), Number(options.loanTermYears))
-        + Number(options.hoaFees)
-        + (Number(options.propertyTaxInput) || (purchasePrice * 0.01) / 12)
-        + (Number(options.pmiInput) || (Number(downPayment) < purchasePrice * 0.2 ? 75 : 0))
-        + Number(options.homeownersInsurance) / 12,
-      mortgagePayment: calculateMonthlyMortgage(loanAmount, Number(options.annualInterestRate), Number(options.loanTermYears)),
-      propertyTax: Number(options.propertyTaxInput) || (purchasePrice * 0.01) / 12,
-      pmi: Number(options.pmiInput) || (Number(downPayment) < purchasePrice * 0.2 ? 75 : 0),
-      homeownersInsurance: Number(options.homeownersInsurance) / 12,
-      hoa: Number(options.hoaFees)
+      description: "Max Mortgage Scenario",
+      mortgagePaymentStats: {
+        purchasePrice,
+        loanAmount,
+        downpayment: Number(downPayment),
+        totalPayment: calculateMonthlyMortgage(
+          loanAmount,
+          Number(options.annualInterestRate),
+          Number(options.loanTermYears)
+        ),
+        propertyTax: Number(options.propertyTaxInput) || (purchasePrice * 0.01) / 12,
+        pmi: Number(options.pmiInput) || (Number(downPayment) < purchasePrice * 0.2 ? 75 : 0),
+        homeownersInsurance: Number(options.homeownersInsurance) / 12,
+        hoa: Number(options.hoaFees)
+      }
     };
   }
 
