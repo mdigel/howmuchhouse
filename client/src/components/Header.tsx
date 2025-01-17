@@ -10,13 +10,13 @@ export function Header() {
               How Much <span className="relative inline-block">
                 Home
                 <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
-              </span> Could I <span className="relative inline-block">
+              </span> Can I <span className="relative inline-block">
                 Afford.ai
                 <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
               </span>
             </h1>
           </div>
-          <p className="text-muted-foreground text-base">AI for the biggest purchase of your life.</p>
+          <p className="text-muted-foreground text-base">Not just a simple mortgage calculator.</p>
         </div>
       </div>
     </header>
