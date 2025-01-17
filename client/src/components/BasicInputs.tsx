@@ -209,7 +209,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Filing Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} defaultValue="single">
                   <FormControl>
                     <SelectTrigger className="max-w-md text-sm">
                       <SelectValue placeholder="Select filing status" />
