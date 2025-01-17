@@ -180,7 +180,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     <div className="flex flex-col">
                       <span className="text-muted-foreground flex items-center text-sm">
                         Estimated Closing Costs
-                        <InfoTooltip text="Additional costs associated with completing your real estate transaction, including lender fees, title insurance, and other expenses" />
+                        <InfoTooltip text="Additional costs associated with completing your real estate transaction, including lender fees, title insurance, first mortgage payment, and other expenses" />
                       </span>
                       <span className="text-lg">
                         {formatCurrency(calculateClosingCosts(results.maxHomePrice.mortgagePaymentStats.loanAmount).min).split(".")[0]} - {" "}
@@ -224,7 +224,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     <div className="flex flex-col">
                       <span className="text-muted-foreground flex items-center text-sm">
                         PMI
-                        <InfoTooltip text="Private Mortgage Insurance required when down payment is less than 20%" />
+                        <InfoTooltip text="Private Mortgage Insurance typically required when down payment is less than 20%" />
                       </span>
                       <span className="text-lg">
                         {formatCurrency(results.maxHomePrice.mortgagePaymentStats.pmi).split(".")[0]}
@@ -250,14 +250,14 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   <div className="flex flex-col">
                     <span className="text-muted-foreground flex items-center">
                       Net Income
-                      <InfoTooltip text="Your monthly income after taxes and deductions" />
+                      <InfoTooltip text="Your monthly income after taxes and deductions, State specific" />
                     </span>
                     <span className="text-lg">{formatCurrency(results.incomeSummary.netIncome / 12)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground flex items-center">
                       Mortgage
-                      <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
+                      <InfoTooltip text="Portion of your monthly income allocated to your mortgage payment" />
                     </span>
                     <div className="text-right">
                       <span className="text-lg">{formatCurrency(results.maxHomePrice.scenario.mortgage.amount)}</span>
@@ -383,7 +383,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                       <div className="flex flex-col">
                         <span className="text-muted-foreground flex items-center text-sm">
                           Estimated Closing Costs
-                          <InfoTooltip text="Additional costs associated with completing your real estate transaction, including lender fees, title insurance, and other expenses" />
+                          <InfoTooltip text="Additional costs associated with completing your real estate transaction, including lender fees, title insurance, first mortgage payment, and other expenses" />
                         </span>
                         <span className="text-lg">
                           {formatCurrency(calculateClosingCosts(scenario.mortgagePaymentStats.loanAmount).min).split(".")[0]} - {" "}
@@ -427,7 +427,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                       <div className="flex flex-col">
                         <span className="text-muted-foreground flex items-center text-sm">
                           PMI
-                          <InfoTooltip text="Private Mortgage Insurance required when down payment is less than 20%" />
+                          <InfoTooltip text="Private Mortgage Insurance typically required when down payment is less than 20%" />
                         </span>
                         <span className="text-lg">
                           {formatCurrency(scenario.mortgagePaymentStats.pmi).split(".")[0]}
@@ -453,7 +453,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     <div className="flex flex-col">
                       <span className="text-muted-foreground flex items-center">
                         Net Income
-                        <InfoTooltip text="Your monthly income after taxes and deductions" />
+                        <InfoTooltip text="Your monthly income after taxes and deductions, State specific" />
                       </span>
                       <span className="text-lg">
                         {formatCurrency(results.incomeSummary.netIncome / 12)}
@@ -462,7 +462,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground flex items-center">
                         Mortgage
-                        <InfoTooltip text="Portion of your monthly income allocated to housing expenses" />
+                        <InfoTooltip text="Portion of your monthly income allocated to your mortgage payment" />
                       </span>
                       <div className="text-right">
                         <span className="text-lg">{formatCurrency(scenario.scenario.mortgage.amount)}</span>

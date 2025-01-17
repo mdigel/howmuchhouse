@@ -117,7 +117,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel className="flex items-center">
                           Homeowners Insurance
-                          <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss" />
+                          <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912" />
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -177,7 +177,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel className="flex items-center">
                           Property Tax (Optional)
-                          <InfoTooltip text="Annual tax assessed by local government based on your property's value" />
+                          <InfoTooltip text="Annual tax assessed by local government based on your property's value. Can change every few years." />
                         </FormLabel>
                         <FormControl>
                           <div className="relative">

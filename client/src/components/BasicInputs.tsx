@@ -119,7 +119,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                   <span className="flex items-center">
                     Monthly Debt
-                    <InfoTooltip text="Total monthly payments for credit cards, car loans, student loans, and other debts" />
+                    <InfoTooltip text="Total monthly payments for car loans, student loans, and other debts. Don't include credit card debt if you pay it off each month." />
                   </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">(current monthly payments)</span>
                 </FormLabel>
@@ -152,7 +152,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                   <span className="flex items-center">
                     Down Payment
-                    <InfoTooltip text="Amount of money you can put towards the purchase of your home" />
+                    <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
                   </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
                 </FormLabel>
@@ -184,7 +184,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
               <FormItem>
                 <FormLabel className="flex items-center">
                   Interest Rate (%)
-                  <InfoTooltip text="Annual interest rate for your mortgage loan" />
+                  <InfoTooltip text="Annual interest rate on the mortgage loan" />
                 </FormLabel>
                 <FormControl>
                   <Input 
