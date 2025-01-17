@@ -66,12 +66,12 @@ export function registerRoutes(app: Express): Server {
           state,
           filingStatus,
           // Advanced inputs
-          hoaFees = 0,
-          homeownersInsurance = 1915,
+          hoaFees,
+          homeownersInsurance,
           pmiInput = null,
           propertyTaxInput = null,
-          pretaxContributions = 0,
-          dependents = 0,
+          pretaxContributions,
+          dependents,
         } = req.body;
 
         console.log("Processing calculator inputs:", {
