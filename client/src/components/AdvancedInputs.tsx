@@ -174,15 +174,20 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>Pre-tax Contributions</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Annual pre-tax contributions" 
-                            {...field}
-                            className="text-sm"
-                            style={{ fontSize: '14px' }}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                            <Input 
+                              type="text"
+                              placeholder="Annual pre-tax contributions" 
+                              {...field}
+                              className="pl-7"
+                              value={field.value ? field.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                                field.onChange(value);
+                              }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
