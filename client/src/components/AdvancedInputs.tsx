@@ -10,7 +10,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import type { AdvancedInputType } from "@/lib/calculatorTypes";
+
+interface InfoTooltipProps {
+  text: string;
+}
+
+function InfoTooltip({ text }: InfoTooltipProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+        </TooltipTrigger>
+        <TooltipContent side="right" align="start" className="max-w-[280px]">
+          <p className="text-sm">{text}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 export const advancedInputSchema = z.object({
   hoaFees: z.string()
