@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { BasicInputType } from "@/lib/calculatorTypes";
 
 interface BasicInputsProps {
@@ -208,9 +209,17 @@ export function BasicInputs({ form }: BasicInputsProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Filing Status</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="Enter your filing status" {...field} className="max-w-md text-sm" style={{ fontSize: '14px' }} />
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="max-w-md text-sm">
+                      <SelectValue placeholder="Select filing status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="single">Single</SelectItem>
+                    <SelectItem value="married">Married</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
