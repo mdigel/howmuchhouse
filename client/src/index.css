@@ -7,10 +7,6 @@
     @apply border-border;
   }
 
-  .space-y-2 {
-    @apply bg-slate-50/50 p-4 rounded-lg;
-  }
-
 
 
   input::placeholder {
