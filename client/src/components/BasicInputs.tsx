@@ -47,7 +47,7 @@ export const basicInputSchema = z.object({
       (val) => val === "" || US_STATE_CODES.includes(val.toUpperCase()),
       "Please enter a valid US state code"
     ),
-  filingStatus: z.enum(["single", "married", "head"])
+  filingStatus: z.enum(["single", "married"])
     .default("single")
 });
 
@@ -197,6 +197,19 @@ export function BasicInputs({ form }: BasicInputsProps) {
                       }
                     }}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="filingStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Filing Status</FormLabel>
+                <FormControl>
+                  <Input type="text" placeholder="Enter your filing status" {...field} className="max-w-md text-sm" style={{ fontSize: '14px' }} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
