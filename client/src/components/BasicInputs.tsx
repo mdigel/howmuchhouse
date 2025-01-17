@@ -5,7 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import type { BasicInputType } from "@/lib/calculatorTypes";
+
+interface InfoTooltipProps {
+  text: string;
+}
+
+function InfoTooltip({ text }: InfoTooltipProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Info className="h-4 w-4 inline-block ml-2 text-muted-foreground" />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{text}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 interface BasicInputsProps {
   form: ReturnType<typeof useForm<BasicInputType>>;
@@ -63,7 +84,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span>Household Income</span>
+                  <span className="flex items-center">
+                    Household Income
+                    <InfoTooltip text="Total annual income before taxes from all sources in your household" />
+                  </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">(per year)</span>
                 </FormLabel>
                 <FormControl>
@@ -93,7 +117,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span>Monthly Debt</span>
+                  <span className="flex items-center">
+                    Monthly Debt
+                    <InfoTooltip text="Total monthly payments for credit cards, car loans, student loans, and other debts" />
+                  </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">(current monthly payments)</span>
                 </FormLabel>
                 <FormControl>
@@ -123,7 +150,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span>Down Payment</span>
+                  <span className="flex items-center">
+                    Down Payment
+                    <InfoTooltip text="Amount of money you can put towards the purchase of your home" />
+                  </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
                 </FormLabel>
                 <FormControl>
@@ -152,7 +182,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="annualInterestRate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Interest Rate (%)</FormLabel>
+                <FormLabel className="flex items-center">
+                  Interest Rate (%)
+                  <InfoTooltip text="Annual interest rate for your mortgage loan" />
+                </FormLabel>
                 <FormControl>
                   <Input 
                     type="number"
@@ -175,7 +208,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>State</FormLabel>
+                <FormLabel className="flex items-center">
+                  State
+                  <InfoTooltip text="Your state of residence (2-letter code)" />
+                </FormLabel>
                 <FormControl>
                   <Input 
                     type="text"
@@ -208,7 +244,10 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="filingStatus"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Filing Status</FormLabel>
+                <FormLabel className="flex items-center">
+                  Filing Status
+                  <InfoTooltip text="Your tax filing status (single or married filing jointly)" />
+                </FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} defaultValue="single">
                   <FormControl>
                     <SelectTrigger className="max-w-md text-sm">
