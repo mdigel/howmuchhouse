@@ -1,0 +1,46 @@
+From BasicInputs.tsx:
+
+1. "Total annual income before taxes from all sources in your household" (Household Income)
+2. "Total monthly payments for car loans, student loans, and other debts. Don’t include credit card debt if you pay it off each month." (Monthly Debt)
+3. "Amount of money you can put towards the purchase of your home. This does not include closing costs." (Down Payment)
+4. "Annual interest rate on the mortgage loan" (Interest Rate)
+5. "Your state of residence (2-letter code)" (State)
+6. "Your tax filing status (single or married filing jointly)" (Filing Status)
+
+From AffordabilityResults.tsx:
+
+1. "The total price of the home you can purchase in this scenario" (Purchase Price)
+2. "The amount you'll need to borrow from the lender after your down payment" (Loan Amount)
+3. "The initial payment you'll make upfront to purchase the home" (Downpayment)
+4. "Additional costs associated with completing your real estate transaction, including lender fees, title insurance, first mortgage payment, and other expenses" (Estimated Closing Costs)
+5. "Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" (Total Monthly Payment)
+6. "Your base monthly payment towards the principal and interest of your loan" (Mortgage)
+7. "Annual property taxes divided into monthly payments" (Property Tax)
+8. "Private Mortgage Insurance typically required when down payment is less than 20%" (PMI)
+9. "Required insurance to protect your home and its contents" (Home Owners Insurance)
+10. "Your monthly income after taxes and deductions, State specific" (Net Income)
+11. "Portion of your monthly income allocated to your mortgage payment" (Mortgage in budget section)
+12. "Your current monthly debt payments including car loans, student loans, etc." (Monthly Debt in budget)
+13. "Essential expenses like utilities, groceries, and healthcare" (Remaining Needs)
+14. "Discretionary spending on entertainment, dining out, and hobbies" (Wants)
+15. "Money set aside for future goals, emergencies, and investments" (Saving)
+
+from advanced inputs:
+
+HOA Fees:
+"Monthly fees charged by the Homeowner's Association for maintenance and amenities"
+
+Homeowners Insurance:
+"Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912"
+
+PMI (Optional):
+"Private Mortgage Insurance - required when down payment is less than 20% of home value"
+
+Property Tax (Optional):
+"Annual tax assessed by local government based on your property's value. Can change every few years."
+
+Pre-tax Contributions:
+"Annual contributions to retirement accounts, health savings, or other pre-tax deductions"
+
+Number of Dependents:
+"Number of qualifying dependents for tax purposes, affecting your tax credits and deductions"

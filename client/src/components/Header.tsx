@@ -16,7 +16,7 @@ export function Header() {
               </span>
             </h1>
           </div>
-          <p className="text-muted-foreground text-base">Not just a simple mortgage calculator.</p>
+          <p className="text-muted-foreground text-base">More than a simple mortgage calculator.</p>
         </div>
       </div>
     </header>
