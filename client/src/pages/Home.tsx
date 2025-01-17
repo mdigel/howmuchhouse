@@ -168,7 +168,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
-          <Card className="p-6 space-y-6">
+          <Card className="p-6 space-y-6 bg-[#F0F4FF]">
             <BasicInputs form={basicForm} />
             <AdvancedInputs form={advancedForm} />
             <Button
