@@ -201,15 +201,17 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                       <FormItem>
                         <FormLabel>Number of Dependents</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Number of dependents"
-                            {...field}
-                            className="text-sm"
-                            style={{ fontSize: '14px' }}
-                          />
+                          <div className="relative">
+                            <Input 
+                              type="number"
+                              min="0"
+                              step="1"
+                              placeholder="Number of dependents"
+                              {...field}
+                              className="pl-7 text-sm"
+                              style={{ fontSize: '14px' }}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
