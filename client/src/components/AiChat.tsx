@@ -66,8 +66,8 @@ interface AiChatProps {
   calculatorData: CalculatorResults;
 }
 
-// Fetch this from environment or server config
-const AI_CHARGE_MODE = true; // Set this based on your environment
+// Using AI_CHARGE_MODE from server config via environment
+const AI_CHARGE_MODE = import.meta.env.VITE_AI_CHARGE_MODE === "true";
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
