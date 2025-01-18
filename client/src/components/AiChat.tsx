@@ -512,40 +512,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
               </div>
             ))}
           </div>
-
-          {(isEffectivelyPaid || questionsAsked < FREE_QUESTIONS) && (
-            <div className="space-y-4">
-              <Textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Message Homi."
-                className="min-h-[100px]"
-                maxLength={3000}
-              />
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">
-                  {message.length}/3000 characters
-                </span>
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isLoading || message.trim().length === 0}
-                  className="bg-gradient-to-r from-primary to-primary/90"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Thinking...
-                    </>
-                  ) : (
-                    "Ask Question"
-                  )}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Questions Remaining: {PAID_QUESTIONS - questionsAsked}
-              </p>
-            </div>
-          )}
         </div>
       )}
 
