@@ -438,7 +438,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </p>
       </div>
 
-      {!hasAskedQuestion && !messages.length && (
+      {!messages.length && (
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <LightbulbIcon className="h-4 w-4" />
@@ -549,7 +549,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {!hasAskedQuestion && (
+      {(!messages.length || !AI_CHARGE_MODE) && (
         <div className="space-y-4">
           <Textarea
             value={message}
@@ -564,11 +564,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             </span>
             <Button
               onClick={handleSubmit}
-              disabled={
-                isLoading ||
-                message.trim().length === 0 ||
-                questionsAsked >= FREE_QUESTIONS
-              }
+              disabled={isLoading || message.trim().length === 0}
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
@@ -581,11 +577,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
               )}
             </Button>
           </div>
-          {questionsAsked < FREE_QUESTIONS && (
-            <p className="text-sm text-muted-foreground">
-              Questions Remaining: {FREE_QUESTIONS - questionsAsked}
-            </p>
-          )}
         </div>
       )}
       {AI_CHARGE_MODE && isPaid && questionsAsked >= PAID_QUESTIONS && (
