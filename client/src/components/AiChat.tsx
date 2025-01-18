@@ -515,7 +515,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {((!AI_CHARGE_MODE || isPaid || questionsAsked < FREE_QUESTIONS) && !isLoading) && (
+      {(questionsAsked < FREE_QUESTIONS || (!AI_CHARGE_MODE || isPaid)) && !isLoading && (
         <div className="space-y-4">
           <Textarea
             value={message}
