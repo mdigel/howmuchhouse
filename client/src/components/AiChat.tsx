@@ -515,7 +515,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {(!messages.length || (!AI_CHARGE_MODE || isPaid) || questionsAsked < FREE_QUESTIONS) && (
+      {(!messages.length || (!AI_CHARGE_MODE || isPaid) || questionsAsked < FREE_QUESTIONS) && !isLoading && (
         <div className="space-y-4">
           <Textarea
             value={message}
@@ -533,16 +533,17 @@ export function AiChat({ calculatorData }: AiChatProps) {
               disabled={isLoading || message.trim().length === 0}
               className="bg-gradient-to-r from-primary to-primary/90"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Thinking...
-                </>
-              ) : (
-                "Ask Question"
-              )}
+              Ask Question
             </Button>
           </div>
+        </div>
+      )}
+      {isLoading && (
+        <div className="flex justify-center py-4">
+          <Button disabled className="bg-gradient-to-r from-primary to-primary/90">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Thinking...
+          </Button>
         </div>
       )}
       {AI_CHARGE_MODE && isPaid && questionsAsked >= PAID_QUESTIONS && (
@@ -562,7 +563,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {AI_CHARGE_MODE && questionsAsked >= FREE_QUESTIONS && !isPaid && messages.length > 0 ? (
+        {AI_CHARGE_MODE && questionsAsked >= FREE_QUESTIONS && !isPaid && messages.length > 0 && !isLoading ? (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
