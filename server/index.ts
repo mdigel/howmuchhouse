@@ -5,6 +5,7 @@ import { registerRoutes } from './routes';
 import { setupVite, serveStatic } from './vite';
 
 console.log('Starting server initialization...');
+console.log('AI_CHARGE_MODE:', process.env.AI_CHARGE_MODE);
 
 // Initialize express app
 const app = express();
