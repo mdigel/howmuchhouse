@@ -26,5 +26,12 @@ export const payments = pgTable("payments", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+export const featureFlags = pgTable("feature_flags", {
+  id: serial("id").primaryKey(),
+  name: text("name").unique().notNull(),
+  enabled: boolean("enabled").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
