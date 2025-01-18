@@ -9,7 +9,7 @@ console.log('Starting server initialization...');
 const app = express();
 
 // Environment variables and configuration
-const PORT = 5000;
+const PORT = Number(process.env.PORT) || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Basic middleware setup
@@ -61,7 +61,7 @@ app.use((err: Error & { status?: number }, req: Request, res: Response, _next: N
 const startServer = async () => {
   try {
     console.log('Starting HTTP server...');
-    server.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, () => {
       console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log('Server initialization complete');
     });
