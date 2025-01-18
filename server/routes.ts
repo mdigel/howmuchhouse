@@ -1,3 +1,6 @@
+
+import { config } from "./config";
+
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
@@ -71,8 +74,6 @@ export function registerRoutes(app: Express): Server {
       });
     }
   });
-
-  import { config } from "./config";
 
 app.post("/api/chat", async (req: Request, res: Response) => {
     const { message, calculatorData, isPaid } = req.body;
