@@ -113,6 +113,39 @@ export function BasicInputs({ form }: BasicInputsProps) {
 
           <FormField
             control={form.control}
+            name="downPayment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="flex items-center">
+                    Down Payment
+                    <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
+                  </span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input 
+                      type="text"
+                      placeholder="Enter your down payment amount" 
+                      {...field}
+                      className="max-w-md pl-7"
+                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        field.onChange(value);
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="monthlyDebt"
             render={({ field }) => (
               <FormItem>
@@ -121,7 +154,6 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     Monthly Debt
                     <InfoTooltip text="Total monthly payments for car loans, student loans, and other debts. Don't include credit card debt if you pay it off each month." />
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">(current monthly payments)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -143,10 +175,6 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="downPayment"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
