@@ -28,8 +28,8 @@ interface AiChatProps {
 }
 
 const EXAMPLE_QUESTIONS = [
-  "What I want to spend my 'Max House Price'?",
-  "Create a detailed monthly budget for the save 15% scenario.",
+  "What if I want to spend my 'Max House Price'?",
+  "Create a detailed monthly budget for the save 15% scenario. Include things like groceries and gym membership.",
   "How did you calculate my property taxes?",
 ];
 
