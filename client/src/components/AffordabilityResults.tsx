@@ -132,7 +132,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
           </AccordionTrigger>
           <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
             <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-              This scenario reflects the highest house price you can typically afford under the '28/36 rule,' which says your mortgage payment (principal, interest, taxes, and insurance) shouldn't exceed 28% of your gross income, and your total debt shouldn't exceed 36%. Lenders rely on these limits to reduce the risk of default. However, buyers with strong credit, extra savings, or other factors can sometimes qualify above these thresholds. (<a href="https://www.nerdwallet.com/article/mortgages/debt-income-ratio-mortgage" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">NerdWallet</a>).
+              This scenario reflects the highest house price the bank/lender will allow under the '28/36 rule,' (<a href="https://www.nerdwallet.com/article/mortgages/debt-income-ratio-mortgage" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">NerdWallet</a>) which says your mortgage payment (principal, interest, taxes, and insurance) shouldn't exceed 28% of your gross income, and your total debt shouldn't exceed 36%. However, buyers with strong credit, extra savings, or other factors can sometimes qualify above these thresholds.
             </p>
             <div className="hidden md:block">
               <button
