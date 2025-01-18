@@ -17,7 +17,7 @@ if (!process.env.STRIPE_TEST_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
-  apiVersion: "2024-12-18.acacia", // Updated to latest version
+  apiVersion: "2024-12-18.acacia",
   typescript: true,
 });
 
@@ -25,11 +25,10 @@ export function registerRoutes(app: Express): Server {
   console.log("Registering core API routes...");
   const httpServer = createServer(app);
 
-  // 1. Calculator endpoint
+  // API Routes
   app.post("/api/calculate", async (req: Request, res: Response) => {
     console.log("Received calculator request:", req.body);
     try {
-      // Convert string inputs to numbers
       const input: CalculateAllScenariosInput = {
         householdIncome: Number(req.body.householdIncome),
         downPayment: Number(req.body.downPayment),
@@ -38,7 +37,6 @@ export function registerRoutes(app: Express): Server {
         loanTermYears: Number(req.body.loanTermYears),
         state: req.body.state,
         filingStatus: req.body.filingStatus,
-        // Optional parameters
         hoaFees: req.body.hoaFees ? Number(req.body.hoaFees) : undefined,
         homeownersInsurance: req.body.homeownersInsurance ? Number(req.body.homeownersInsurance) : undefined,
         pmiInput: req.body.pmiInput ? Number(req.body.pmiInput) : null,
@@ -74,7 +72,6 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  // 2. Chat endpoint
   app.post("/api/chat", async (req: Request, res: Response) => {
     const { message, calculatorData, isPaid } = req.body;
     console.log("Received chat request");
@@ -139,7 +136,6 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  // 3. Checkout endpoint
   app.post("/api/create-checkout", async (req: Request, res: Response) => {
     try {
       const origin = `${req.protocol}://${req.get("host")}`;
@@ -170,7 +166,7 @@ export function registerRoutes(app: Express): Server {
         throw new Error("Checkout session URL was not generated");
       }
 
-      res.status(200).json({ url: session.url });
+      res.json({ url: session.url });
     } catch (error) {
       console.error("Stripe checkout error:", error);
       res.status(500).json({
@@ -180,7 +176,6 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  // 4. Feedback endpoint
   app.post("/api/feedback", async (req: Request, res: Response) => {
     const { isHelpful, response } = req.body;
     console.log("Received feedback:", { isHelpful, response });

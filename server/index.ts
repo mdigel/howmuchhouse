@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { registerRoutes } from './routes';
+import { setupVite, serveStatic } from './vite';
 
 console.log('Starting server initialization...');
 
@@ -17,6 +18,17 @@ console.log('Setting up middleware...');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'development-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: isProduction,
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
+
 // CORS for development
 if (!isProduction) {
   app.use((req, res, next) => {
@@ -30,38 +42,30 @@ if (!isProduction) {
   });
 }
 
-// Session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'development-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: isProduction,
-    maxAge: 24 * 60 * 60 * 1000
-  }
-}));
-
-// Register routes first
-console.log('Registering routes...');
-const server = registerRoutes(app);
-
-// Health check endpoint
-app.get('/health', (_req: Request, res: Response) => {
-  res.json({ status: 'healthy' });
-});
-
-// Basic error handling middleware (after routes)
-app.use((err: Error & { status?: number }, req: Request, res: Response, _next: NextFunction) => {
-  console.error(`Error handling ${req.method} ${req.path}:`, err);
-  res.status(err.status || 500).json({
-    error: isProduction ? 'Internal Server Error' : err.message
-  });
-});
-
-const startServer = async () => {
+// Setup Vite or static file serving based on environment
+const setupServer = async () => {
   try {
+    // Register API routes first
+    console.log('Registering routes...');
+    const server = registerRoutes(app);
+
+    // Health check endpoint
+    app.get('/health', (_req: Request, res: Response) => {
+      res.json({ status: 'healthy' });
+    });
+
+    if (!isProduction) {
+      // Development mode: Setup Vite
+      console.log('Setting up Vite in development mode...');
+      await setupVite(app, server);
+    } else {
+      // Production mode: Serve static files
+      console.log('Setting up static file serving in production mode...');
+      serveStatic(app);
+    }
+
     console.log('Starting HTTP server...');
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
       console.log('Server initialization complete');
     });
@@ -90,6 +94,6 @@ process.on('unhandledRejection', (error) => {
   console.error('Unhandled Rejection:', error);
 });
 
-startServer();
+setupServer();
 
-export default server;
+export default app;
