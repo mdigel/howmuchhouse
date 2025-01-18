@@ -3,6 +3,9 @@ import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { registerRoutes } from './routes';
 import { setupVite, serveStatic } from './vite';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 console.log('Starting server initialization...');
 console.log('AI_CHARGE_MODE:', process.env.AI_CHARGE_MODE);
