@@ -151,7 +151,7 @@ export function registerRoutes(app: Express): Server {
                 name: "AI Chat Access",
                 description: "Unlimited access to AI home buying assistant",
               },
-              unit_amount: 299,
+              unit_amount: 129,
             },
             quantity: 1,
           },
