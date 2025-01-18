@@ -12,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -43,28 +44,45 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = registerRoutes(app);
+  try {
+    const server = registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    // Error handling middleware - Don't throw after responding
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+      console.error("Server Error:", err);
+      res.status(status).json({ message });
+    });
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    // Only setup vite in development
+    if (!isProduction) {
+      await setupVite(app, server);
+    } else {
+      // In production, serve static files
+      serveStatic(app);
+      log("Running in production mode");
+    }
 
-  // Only setup vite in development
-  if (!isProduction) {
-    await setupVite(app, server);
-  } else {
-    // In production, serve static files
-    serveStatic(app);
-    log("Running in production mode");
+    // ALWAYS serve the app on port 5000
+    const PORT = 5000;
+    server.listen(PORT, "0.0.0.0", () => {
+      log(`serving on port ${PORT} in ${isProduction ? 'production' : 'development'} mode`);
+    });
+
+    // Handle server shutdown gracefully
+    const shutdown = () => {
+      server.close(() => {
+        console.log('Server shutdown complete');
+        process.exit(0);
+      });
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
+
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
   }
-
-  // ALWAYS serve the app on port 5000
-  const PORT = 5000;
-  server.listen(PORT, "0.0.0.0", () => {
-    log(`serving on port ${PORT} in ${isProduction ? 'production' : 'development'} mode`);
-  });
 })();

@@ -122,68 +122,30 @@ export function AiChat({ calculatorData }: AiChatProps) {
       const sessionId = params.get("session_id");
 
       if (isSuccess && sessionId) {
-        console.log("Payment successful, attempting to restore state");
+        console.log("Payment successful");
         setIsPaid(true);
         setShowSuccessModal(true);
+        // Clean URL without refreshing the page
+        window.history.replaceState({}, '', window.location.pathname);
 
-        // Restore all state after successful payment
-        const savedState = localStorage.getItem("calculatorState");
-        console.log("Retrieved saved state:", savedState);
-
-        if (savedState) {
-          try {
-            const { calculator, chat, userInputs } = JSON.parse(savedState);
-            console.log("Parsed state:", { calculator, chat, userInputs });
-
-            // First restore chat state
-            if (chat) {
-              if (chat.message) setMessage(chat.message);
-              if (chat.messages) setMessages(chat.messages);
-              setHasAskedQuestion(true);
-
-              // Save chat history
-              sessionStorage.setItem(
-                "chatHistory",
-                JSON.stringify({
-                  messages: chat.messages,
-                }),
-              );
-            }
-
-            // Then restore calculator data
-            if (calculator) {
-              Object.assign(calculatorData, calculator);
-            }
-
-            // Finally restore user inputs and trigger calculation
-            if (userInputs) {
-              sessionStorage.setItem("userInputs", JSON.stringify(userInputs));
-
-              // Dispatch event to restore form inputs
-              const restoreEvent = new CustomEvent("restoreUserInputs", {
-                detail: { inputs: userInputs },
-              });
-              window.dispatchEvent(restoreEvent);
-            }
-
-            // Clean up localStorage after successful restoration
-            localStorage.removeItem("calculatorState");
-            console.log("State restoration complete");
-          } catch (error) {
-            console.error("Failed to restore application state:", error);
-            toast({
-              title: "State Restoration Error",
-              description:
-                "There was an issue restoring your previous session. Please try refreshing the page.",
-              variant: "destructive",
-            });
-          }
+        // Store paid status in sessionStorage
+        sessionStorage.setItem("isPaidUser", "true");
+      } else {
+        // Check if user was previously paid
+        const wasPaid = sessionStorage.getItem("isPaidUser") === "true";
+        if (wasPaid) {
+          setIsPaid(true);
         }
       }
     } catch (error) {
       console.error("Error in payment success handler:", error);
+      toast({
+        title: "Payment Verification Error",
+        description: "There was an issue verifying your payment. Please refresh the page or contact support if the issue persists.",
+        variant: "destructive",
+      });
     }
-  }, [calculatorData, toast]);
+  }, [toast]);
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
@@ -578,6 +540,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               )}
             </Button>
           </div>
+          {/* Only show remaining questions in AI Charging mode */}
           {isAiChargingEnabled && questionsAsked < FREE_QUESTIONS && (
             <p className="text-sm text-muted-foreground">
               Questions Remaining: {FREE_QUESTIONS - questionsAsked}

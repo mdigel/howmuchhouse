@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import OpenAI from "openai";
@@ -19,16 +19,9 @@ if (!process.env.STRIPE_TEST_SECRET_KEY) {
 
 console.log("Starting server initialization...");
 
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-  typescript: true,
-});
+const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY);
 
 console.log("Stripe initialized successfully");
-
-// From Replit... I have these in Step 4
-// type FilingStatus = "single" | "married" | "head";
-// type StateCode = "CA" | "NY" | "TX" | string;
 
 interface CalculatorInput {
   // Basic inputs
@@ -111,7 +104,6 @@ export function registerRoutes(app: Express): Server {
           filingStatus,
         });
 
-
         console.log("Calculation completed successfully");
         res.json(results);
       } catch (error) {
@@ -176,7 +168,11 @@ export function registerRoutes(app: Express): Server {
           },
           {
             role: "user",
-            content: `Here is the user's financial data:\n${JSON.stringify(calculatorData, null, 2)}\n\nUser's question: ${message}`,
+            content: `Here is the user's financial data:\n${JSON.stringify(
+              calculatorData,
+              null,
+              2,
+            )}\n\nUser's question: ${message}`,
           },
         ],
         model: "gpt-3.5-turbo",
@@ -196,9 +192,9 @@ export function registerRoutes(app: Express): Server {
 
       // Set session ID in response headers and include feature flag status
       res.setHeader("X-Session-Id", sessionId);
-      res.json({ 
+      res.json({
         response,
-        isAiChargingEnabled // Send this to the client so it knows whether to show payment UI
+        isAiChargingEnabled, // Send this to the client so it knows whether to show payment UI
       });
     } catch (error) {
       console.error("Chat API Error:", error);
@@ -231,7 +227,7 @@ export function registerRoutes(app: Express): Server {
           },
         ],
         mode: "payment",
-        success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${origin}/success`,
         cancel_url: `${origin}/?canceled=true`,
         allow_promotion_codes: true,
       });

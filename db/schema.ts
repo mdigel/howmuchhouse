@@ -14,7 +14,7 @@ export const aiChats = pgTable("ai_chats", {
   response: text("response").notNull(),
   characterCount: integer("character_count").notNull(),
   hasPaid: boolean("has_paid").default(false),
-  isHelpful: boolean("is_helpful").default(null),
+  isHelpful: boolean("is_helpful").default(false),
   createdAt: timestamp("created_at").defaultNow()
 });
 
