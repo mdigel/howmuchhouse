@@ -515,7 +515,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {(!messages.length || (!AI_CHARGE_MODE || isPaid) || questionsAsked < FREE_QUESTIONS) && !isLoading && (
+      {((!AI_CHARGE_MODE || isPaid || questionsAsked < FREE_QUESTIONS) && !isLoading) && (
         <div className="space-y-4">
           <Textarea
             value={message}
@@ -563,7 +563,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {AI_CHARGE_MODE && questionsAsked >= FREE_QUESTIONS && !isPaid && messages.length > 0 && !isLoading ? (
+        {AI_CHARGE_MODE && questionsAsked >= FREE_QUESTIONS && !isPaid && !isLoading ? (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
