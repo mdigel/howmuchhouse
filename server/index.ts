@@ -1,48 +1,94 @@
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
+import session from 'express-session';
 import { registerRoutes } from './routes';
-import path from 'path';
 
+console.log('Starting server initialization...');
+
+// Initialize express app
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 
-// Basic middleware
+// Environment variables and configuration
+const PORT = 5000;
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Basic middleware setup
+console.log('Setting up middleware...');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API request logging
-app.use((req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('/api')) {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  }
-  next();
-});
-
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(process.cwd(), 'dist')));
+// CORS for development
+if (!isProduction) {
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Session-Id');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    next();
+  });
 }
 
-// Register API routes (this contains all the existing endpoints)
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'development-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: isProduction,
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
+
+// Register routes first
+console.log('Registering routes...');
 const server = registerRoutes(app);
 
-// Global error handler - keep it simple
+// Health check endpoint
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'healthy' });
+});
+
+// Basic error handling middleware (after routes)
 app.use((err: Error & { status?: number }, req: Request, res: Response, _next: NextFunction) => {
   console.error(`Error handling ${req.method} ${req.path}:`, err);
   res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error'
+    error: isProduction ? 'Internal Server Error' : err.message
   });
 });
 
-// Start server with basic error handling
-const startServer = () => {
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-  });
+const startServer = async () => {
+  try {
+    console.log('Starting HTTP server...');
+    server.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+      console.log('Server initialization complete');
+    });
+
+    // Server error handling
+    server.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use`);
+        process.exit(1);
+      }
+      console.error('Server error:', error);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
-process.on('uncaughtException', console.error);
-process.on('unhandledRejection', console.error);
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  setTimeout(() => process.exit(1), 1000);
+});
+
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled Rejection:', error);
+});
 
 startServer();
 
