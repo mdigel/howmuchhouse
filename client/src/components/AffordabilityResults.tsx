@@ -332,10 +332,9 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
             </AccordionTrigger>
             <AccordionContent className="pt-6 px-6 bg-card rounded-lg">
               <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                This scenario shows what your budget would look like if you purchased a home for{" "}
-                {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split(".")[0]}.
-                By choosing a more affordable home, you can save{" "}
-                {formatPercentage(scenario.scenario.savings.percentage)} of your income for other financial goals.
+                If you want to save {formatPercentage(scenario.scenario.savings.percentage)} of your net income, consider buying a home priced at around {formatCurrency(scenario.mortgagePaymentStats.purchasePrice).split(".")[0]}.
+                {"\n\n"}
+                For budgeting, we used the <a href="https://www.nerdwallet.com/article/finance/nerdwallet-budget-calculator" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">NerdWallet's 50/30/20 Budget Rule</a>. (50% Needs, 30% Wants, 20% Saving).
               </p>
               <div className="hidden md:block">
                 <button
