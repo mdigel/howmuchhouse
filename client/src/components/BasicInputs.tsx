@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -175,32 +176,6 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-                  <span className="flex items-center">
-                    Down Payment
-                    <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
-                  </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">(available for down payment)</span>
-                </FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input 
-                      type="text"
-                      placeholder="Enter your down payment amount" 
-                      {...field}
-                      className="max-w-md pl-7"
-                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
-                        field.onChange(value);
-                      }}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
@@ -264,6 +239,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
+          
           <FormField
             control={form.control}
             name="filingStatus"
