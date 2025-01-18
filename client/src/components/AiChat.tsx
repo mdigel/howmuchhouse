@@ -438,7 +438,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </p>
       </div>
 
-      {!messages.length && (
+      {!hasAskedQuestion && !messages.length && (
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <LightbulbIcon className="h-4 w-4" />
@@ -513,7 +513,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             ))}
           </div>
 
-          {(!AI_CHARGE_MODE || questionsAsked < FREE_QUESTIONS) && (
+          {(isEffectivelyPaid || questionsAsked < FREE_QUESTIONS) && (
             <div className="space-y-4">
               <Textarea
                 value={message}
