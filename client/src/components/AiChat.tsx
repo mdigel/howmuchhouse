@@ -563,7 +563,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {AI_CHARGE_MODE && questionsAsked >= FREE_QUESTIONS && !isPaid && !isLoading ? (
+        {AI_CHARGE_MODE && hasAskedQuestion && !isPaid && !isLoading ? (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
