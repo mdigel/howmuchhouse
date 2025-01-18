@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=cjs --outdir=dist"]
+run = ["sh", "-c", "tsx server/index.ts"]
 
 [[ports]]
 localPort = 3000
@@ -29,14 +29,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Production"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Build"
+args = "Development"
 
 [[workflows.workflow]]
-name = "Production"
+name = "Development"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -47,19 +43,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "NODE_ENV=production node dist/index.js"
+args = "tsx server/index.ts"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "Build"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=cjs --outdir=dist --external:express --external:ws --external:net --external:fs --external:path"
