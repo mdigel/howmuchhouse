@@ -1,9 +1,9 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import OpenAI from "openai";
 import { db } from "../db";
-import { aiChats, featureFlags } from "../db/schema";
+import { aiChats } from "../db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import {
@@ -19,9 +19,16 @@ if (!process.env.STRIPE_TEST_SECRET_KEY) {
 
 console.log("Starting server initialization...");
 
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+  typescript: true,
+});
 
 console.log("Stripe initialized successfully");
+
+// From Replit... I have these in Step 4
+// type FilingStatus = "single" | "married" | "head";
+// type StateCode = "CA" | "NY" | "TX" | string;
 
 interface CalculatorInput {
   // Basic inputs
@@ -104,6 +111,135 @@ export function registerRoutes(app: Express): Server {
           filingStatus,
         });
 
+        // // Calculate adjusted gross income considering pre-tax contributions
+        // const adjustedGrossIncome = numericInputs.householdIncome - numericInputs.pretaxContributions;
+
+        // // Calculate tax rates based on filing status and state
+        // const taxRates: Record<FilingStatus, number> = {
+        //   single: 0.22,
+        //   married: 0.18,
+        //   head: 0.20
+        // };
+
+        // const stateTaxRates: Record<string, number> = {
+        //   CA: 0.093,
+        //   NY: 0.085,
+        //   TX: 0
+        // };
+
+        // const federalTaxRate = taxRates[filingStatus] || 0.22;
+        // const stateTaxRate = stateTaxRates[state as StateCode] || 0.05;
+
+        // // Calculate child tax credit based on dependents
+        // const childTaxCredit = numericInputs.dependents * 2000;
+
+        // const mockResults = {
+        //   incomeSummary: {
+        //     grossIncome: numericInputs.householdIncome,
+        //     adjustedGrossIncome,
+        //     federalTax: adjustedGrossIncome * federalTaxRate,
+        //     stateTax: adjustedGrossIncome * stateTaxRate,
+        //     socialSecurityTax: Math.min(adjustedGrossIncome * 0.062, 9932.4),
+        //     medicareTax: adjustedGrossIncome * 0.0145,
+        //     additionalMedicareTax: adjustedGrossIncome > 200000 ? (adjustedGrossIncome - 200000) * 0.009 : 0,
+        //     childTaxCredit,
+        //     get totalTax() {
+        //       return this.federalTax + this.stateTax + this.socialSecurityTax +
+        //              this.medicareTax + this.additionalMedicareTax - this.childTaxCredit;
+        //     },
+        //     get netIncome() {
+        //       return this.grossIncome - this.totalTax;
+        //     }
+        //   },
+        //   monthlyDebt: numericInputs.monthlyDebt,
+        //   maxHomePrice: {
+        //     description: "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
+        //     mortgagePaymentStats: {
+        //       purchasePrice: adjustedGrossIncome * 3.5,
+        //       loanAmount: (adjustedGrossIncome * 3.5) - numericInputs.downPayment,
+        //       downpayment: numericInputs.downPayment,
+        //       totalPayment: ((adjustedGrossIncome * 3.5 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //       mortgagePayment: ((adjustedGrossIncome * 3.5 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //       propertyTax: numericInputs.propertyTaxInput || ((adjustedGrossIncome * 3.5) * 0.01) / 12,
+        //       pmi: numericInputs.pmiInput || (numericInputs.downPayment < (adjustedGrossIncome * 3.5) * 0.2 ? 100 : 0),
+        //       homeownersInsurance: numericInputs.homeownersInsurance / 12,
+        //       hoa: numericInputs.hoaFees
+        //     },
+        //     scenario: {
+        //       monthlyNetIncome: (adjustedGrossIncome - (adjustedGrossIncome * federalTaxRate)) / 12,
+        //       mortgage: {
+        //         amount: ((adjustedGrossIncome * 3.5) * (numericInputs.annualInterestRate/100)) / 12,
+        //         percentage: 0.42
+        //       },
+        //       wants: { amount: (adjustedGrossIncome * 0.3) / 12, percentage: 0.3 },
+        //       remainingNeeds: { amount: (adjustedGrossIncome * 0.15) / 12, percentage: 0.15 },
+        //       savings: { amount: (adjustedGrossIncome * 0.13) / 12, percentage: 0.13 }
+        //     }
+        //   },
+        //   savingScenarios: [
+        //     {
+        //       description: "15% Saving Scenario",
+        //       mortgagePaymentStats: {
+        //         purchasePrice: adjustedGrossIncome * 2.7,
+        //         loanAmount: (adjustedGrossIncome * 2.7) - numericInputs.downPayment,
+        //         downpayment: numericInputs.downPayment,
+        //         totalPayment: ((adjustedGrossIncome * 2.7 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         mortgagePayment: ((adjustedGrossIncome * 2.7 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         propertyTax: numericInputs.propertyTaxInput || ((adjustedGrossIncome * 2.7) * 0.01) / 12,
+        //         pmi: numericInputs.pmiInput || (numericInputs.downPayment < (adjustedGrossIncome * 2.7) * 0.2 ? 75 : 0),
+        //         homeownersInsurance: numericInputs.homeownersInsurance / 12,
+        //         hoa: numericInputs.hoaFees
+        //       },
+        //       scenario: {
+        //         mortgage: { amount: ((adjustedGrossIncome * 2.7) * (numericInputs.annualInterestRate/100)) / 12, percentage: 0.35 },
+        //         wants: { amount: (adjustedGrossIncome * 0.3) / 12, percentage: 0.3 },
+        //         remainingNeeds: { amount: (adjustedGrossIncome * 0.2) / 12, percentage: 0.2 },
+        //         savings: { amount: (adjustedGrossIncome * 0.15) / 12, percentage: 0.15 }
+        //       }
+        //     },
+        //     {
+        //       description: "20% Saving Scenario",
+        //       mortgagePaymentStats: {
+        //         purchasePrice: adjustedGrossIncome * 2.4,
+        //         loanAmount: (adjustedGrossIncome * 2.4) - numericInputs.downPayment,
+        //         downpayment: numericInputs.downPayment,
+        //         totalPayment: ((adjustedGrossIncome * 2.4 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         mortgagePayment: ((adjustedGrossIncome * 2.4 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         propertyTax: numericInputs.propertyTaxInput || ((adjustedGrossIncome * 2.4) * 0.01) / 12,
+        //         pmi: numericInputs.pmiInput || (numericInputs.downPayment < (adjustedGrossIncome * 2.4) * 0.2 ? 50 : 0),
+        //         homeownersInsurance: numericInputs.homeownersInsurance / 12,
+        //         hoa: numericInputs.hoaFees
+        //       },
+        //       scenario: {
+        //         mortgage: { amount: ((adjustedGrossIncome * 2.4) * (numericInputs.annualInterestRate/100)) / 12, percentage: 0.3 },
+        //         wants: { amount: (adjustedGrossIncome * 0.3) / 12, percentage: 0.3 },
+        //         remainingNeeds: { amount: (adjustedGrossIncome * 0.2) / 12, percentage: 0.2 },
+        //         savings: { amount: (adjustedGrossIncome * 0.2) / 12, percentage: 0.2 }
+        //       }
+        //     },
+        //     {
+        //       description: "25% Saving Scenario",
+        //       mortgagePaymentStats: {
+        //         purchasePrice: adjustedGrossIncome * 2.1,
+        //         loanAmount: (adjustedGrossIncome * 2.1) - numericInputs.downPayment,
+        //         downpayment: numericInputs.downPayment,
+        //         totalPayment: ((adjustedGrossIncome * 2.1 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         mortgagePayment: ((adjustedGrossIncome * 2.1 - numericInputs.downPayment) * (numericInputs.annualInterestRate/1200) * Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12)) / (Math.pow(1 + numericInputs.annualInterestRate/1200, numericInputs.loanTermYears * 12) - 1),
+        //         propertyTax: numericInputs.propertyTaxInput || ((adjustedGrossIncome * 2.1) * 0.01) / 12,
+        //         pmi: numericInputs.pmiInput || (numericInputs.downPayment < (adjustedGrossIncome * 2.1) * 0.2 ? 0 : 0),
+        //         homeownersInsurance: numericInputs.homeownersInsurance / 12,
+        //         hoa: numericInputs.hoaFees
+        //       },
+        //       scenario: {
+        //         mortgage: { amount: ((adjustedGrossIncome * 2.1) * (numericInputs.annualInterestRate/100)) / 12, percentage: 0.25 },
+        //         wants: { amount: (adjustedGrossIncome * 0.3) / 12, percentage: 0.3 },
+        //         remainingNeeds: { amount: (adjustedGrossIncome * 0.2) / 12, percentage: 0.2 },
+        //         savings: { amount: (adjustedGrossIncome * 0.25) / 12, percentage: 0.25 }
+        //       }
+        //     }
+        //   ]
+        // };
+
         console.log("Calculation completed successfully");
         res.json(results);
       } catch (error) {
@@ -120,14 +256,6 @@ export function registerRoutes(app: Express): Server {
     const { message, calculatorData, isPaid } = req.body;
     console.log("Received chat request:", { message, calculatorData, isPaid });
     try {
-      // Check if AI charging is enabled
-      const [aiChargingFlag] = await db
-        .select()
-        .from(featureFlags)
-        .where(eq(featureFlags.name, "ai_charging_enabled"));
-
-      const isAiChargingEnabled = aiChargingFlag?.enabled ?? true; // Default to true if not found
-
       // Validate message length
       if (message.length > 3000) {
         return res.status(400).json({
@@ -149,7 +277,7 @@ export function registerRoutes(app: Express): Server {
           message,
           response: "",
           characterCount: message.length,
-          hasPaid: isAiChargingEnabled ? isPaid : true, // If charging is disabled, treat all requests as paid
+          hasPaid: isPaid,
         })
         .returning();
 
@@ -168,11 +296,7 @@ export function registerRoutes(app: Express): Server {
           },
           {
             role: "user",
-            content: `Here is the user's financial data:\n${JSON.stringify(
-              calculatorData,
-              null,
-              2,
-            )}\n\nUser's question: ${message}`,
+            content: `Here is the user's financial data:\n${JSON.stringify(calculatorData, null, 2)}\n\nUser's question: ${message}`,
           },
         ],
         model: "gpt-3.5-turbo",
@@ -190,12 +314,9 @@ export function registerRoutes(app: Express): Server {
         .set({ response })
         .where(eq(aiChats.id, chat[0].id));
 
-      // Set session ID in response headers and include feature flag status
+      // Set session ID in response headers
       res.setHeader("X-Session-Id", sessionId);
-      res.json({
-        response,
-        isAiChargingEnabled, // Send this to the client so it knows whether to show payment UI
-      });
+      res.json({ response });
     } catch (error) {
       console.error("Chat API Error:", error);
       res.status(500).json({
@@ -227,7 +348,7 @@ export function registerRoutes(app: Express): Server {
           },
         ],
         mode: "payment",
-        success_url: `${origin}/success`,
+        success_url: `${origin}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/?canceled=true`,
         allow_promotion_codes: true,
       });
@@ -270,6 +391,3 @@ export function registerRoutes(app: Express): Server {
   console.log("HTTP server created");
   return httpServer;
 }
-
-type FilingStatus = "single" | "married" | "head";
-type StateCode = "CA" | "NY" | "TX" | string;

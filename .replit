@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
+run = ["sh", "-c", "npm run build && NODE_ENV=production node dist/index.js"]
 
 [[ports]]
 localPort = 3000
@@ -31,8 +31,45 @@ author = "agent"
 task = "workflow.run"
 args = "Production Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Production"
+
 [[workflows.workflow]]
 name = "Production Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build && NODE_ENV=production node dist/index.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Build"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+
+[[workflows.workflow]]
+name = "Production"
 author = "agent"
 
 [workflows.workflow.metadata]

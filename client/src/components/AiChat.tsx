@@ -91,7 +91,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
     return stored === "true";
   });
   const [isPaid, setIsPaid] = useState(false);
-  const [isAiChargingEnabled, setIsAiChargingEnabled] = useState(true); // Default to true
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -122,30 +121,68 @@ export function AiChat({ calculatorData }: AiChatProps) {
       const sessionId = params.get("session_id");
 
       if (isSuccess && sessionId) {
-        console.log("Payment successful");
+        console.log("Payment successful, attempting to restore state");
         setIsPaid(true);
         setShowSuccessModal(true);
-        // Clean URL without refreshing the page
-        window.history.replaceState({}, '', window.location.pathname);
 
-        // Store paid status in sessionStorage
-        sessionStorage.setItem("isPaidUser", "true");
-      } else {
-        // Check if user was previously paid
-        const wasPaid = sessionStorage.getItem("isPaidUser") === "true";
-        if (wasPaid) {
-          setIsPaid(true);
+        // Restore all state after successful payment
+        const savedState = localStorage.getItem("calculatorState");
+        console.log("Retrieved saved state:", savedState);
+
+        if (savedState) {
+          try {
+            const { calculator, chat, userInputs } = JSON.parse(savedState);
+            console.log("Parsed state:", { calculator, chat, userInputs });
+
+            // First restore chat state
+            if (chat) {
+              if (chat.message) setMessage(chat.message);
+              if (chat.messages) setMessages(chat.messages);
+              setHasAskedQuestion(true);
+
+              // Save chat history
+              sessionStorage.setItem(
+                "chatHistory",
+                JSON.stringify({
+                  messages: chat.messages,
+                }),
+              );
+            }
+
+            // Then restore calculator data
+            if (calculator) {
+              Object.assign(calculatorData, calculator);
+            }
+
+            // Finally restore user inputs and trigger calculation
+            if (userInputs) {
+              sessionStorage.setItem("userInputs", JSON.stringify(userInputs));
+
+              // Dispatch event to restore form inputs
+              const restoreEvent = new CustomEvent("restoreUserInputs", {
+                detail: { inputs: userInputs },
+              });
+              window.dispatchEvent(restoreEvent);
+            }
+
+            // Clean up localStorage after successful restoration
+            localStorage.removeItem("calculatorState");
+            console.log("State restoration complete");
+          } catch (error) {
+            console.error("Failed to restore application state:", error);
+            toast({
+              title: "State Restoration Error",
+              description:
+                "There was an issue restoring your previous session. Please try refreshing the page.",
+              variant: "destructive",
+            });
+          }
         }
       }
     } catch (error) {
       console.error("Error in payment success handler:", error);
-      toast({
-        title: "Payment Verification Error",
-        description: "There was an issue verifying your payment. Please refresh the page or contact support if the issue persists.",
-        variant: "destructive",
-      });
     }
-  }, [toast]);
+  }, [calculatorData, toast]);
 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
@@ -165,7 +202,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       toast({
         title: "Browser Compatibility Issue",
         description: "Please use a different browser for full functionality.",
-        variant: "destructive",
+        variant: "warning",
       });
       return;
     }
@@ -179,19 +216,16 @@ export function AiChat({ calculatorData }: AiChatProps) {
       return;
     }
 
-    // Only check question limits if AI charging is enabled
-    if (isAiChargingEnabled) {
-      const maxQuestions = isPaid ? PAID_QUESTIONS : FREE_QUESTIONS;
-      if (questionsAsked >= maxQuestions) {
-        toast({
-          title: "Question limit reached",
-          description: isPaid
-            ? "You've used all 5 questions in this session."
-            : "You've used your free question.",
-          variant: "destructive",
-        });
-        return;
-      }
+    const maxQuestions = isPaid ? PAID_QUESTIONS : FREE_QUESTIONS;
+    if (questionsAsked >= maxQuestions) {
+      toast({
+        title: "Question limit reached",
+        description: isPaid
+          ? "You've used all 5 questions in this session."
+          : "You've used your free question.",
+        variant: "destructive",
+      });
+      return;
     }
 
     setIsLoading(true);
@@ -240,9 +274,6 @@ export function AiChat({ calculatorData }: AiChatProps) {
         throw new Error("Invalid response from server");
       }
 
-      // Update AI charging status from server
-      setIsAiChargingEnabled(data.isAiChargingEnabled);
-
       // Add assistant message to chat
       const assistantMessage: Message = {
         role: "assistant",
@@ -258,8 +289,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       }
       setFeedbackGiven(false);
 
-      // Only increment questions if AI charging is enabled
-      if (isAiChargingEnabled && isPaid) {
+      if (isPaid) {
         setQuestionsAsked((prev) => prev + 1);
       }
     } catch (error) {
@@ -511,13 +541,12 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {/* Conditionally render the textarea and submit button */}
-      {(!isAiChargingEnabled || !hasAskedQuestion || (isPaid && questionsAsked < PAID_QUESTIONS)) && (
+      {!hasAskedQuestion && (
         <div className="space-y-4">
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={hasAskedQuestion ? "Message Homi." : "Ask about your home affordability calculation..."}
+            placeholder="Ask about your home affordability calculation..."
             className="min-h-[100px]"
             maxLength={3000}
           />
@@ -527,7 +556,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
             </span>
             <Button
               onClick={handleSubmit}
-              disabled={isLoading || message.trim().length === 0}
+              disabled={
+                isLoading ||
+                message.trim().length === 0 ||
+                questionsAsked >= FREE_QUESTIONS
+              }
               className="bg-gradient-to-r from-primary to-primary/90"
             >
               {isLoading ? (
@@ -540,104 +573,96 @@ export function AiChat({ calculatorData }: AiChatProps) {
               )}
             </Button>
           </div>
-          {/* Only show remaining questions in AI Charging mode */}
-          {isAiChargingEnabled && questionsAsked < FREE_QUESTIONS && (
+          {questionsAsked < FREE_QUESTIONS && (
             <p className="text-sm text-muted-foreground">
               Questions Remaining: {FREE_QUESTIONS - questionsAsked}
             </p>
           )}
         </div>
       )}
-
-      {/* Only show payment UI if AI charging is enabled */}
-      {isAiChargingEnabled && (
-        <>
-          {isPaid && questionsAsked >= PAID_QUESTIONS && (
-            <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
-              <span className="text-sm text-muted-foreground">
-                You've used all your questions
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handlePayment}
-                className="ml-2"
-              >
-                Buy More Questions
-              </Button>
-            </div>
-          )}
-
-          <AnimatePresence>
-            {hasAskedQuestion && !isPaid && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="text-center space-y-4 bg-muted p-6 rounded-lg my-6"
-              >
-                <motion.h3
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-lg"
-                >
-                  Have More Questions?
-                </motion.h3>
-                <p className="text-muted-foreground">
-                  You've used up your free question to ChatGPT 4o OpenAI's top tier
-                  model. Continue the conversation with {PAID_QUESTIONS} follow-up
-                  questions to make the most informed decision about your home
-                  purchase.
-                </p>
-                <div className="space-y-2">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full max-w-xs mx-auto"
-                  >
-                    <Button
-                      onClick={handlePayment}
-                      disabled={isLoading}
-                      className={`
-                        w-full bg-gradient-to-r from-primary to-primary/90 
-                        hover:to-primary hover:scale-105 transition-all duration-200
-                        ${isLoading ? "animate-pulse" : ""}
-                      `}
-                    >
-                      {isLoading ? (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-center gap-2"
-                        >
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Processing...
-                        </motion.div>
-                      ) : (
-                        <motion.span
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          Unlock 5 Questions for $2.99
-                        </motion.span>
-                      )}
-                    </Button>
-                  </motion.div>
-                  <p className="text-xs text-muted-foreground">
-                    Secure payment powered by Stripe
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
+      {isPaid && questionsAsked >= PAID_QUESTIONS && (
+        <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
+          <span className="text-sm text-muted-foreground">
+            You've used all your questions
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePayment}
+            className="ml-2"
+          >
+            Buy More Questions
+          </Button>
+        </div>
       )}
 
+      <AnimatePresence>
+        {hasAskedQuestion && !isPaid && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center space-y-4 bg-muted p-6 rounded-lg my-6"
+          >
+            <motion.h3
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg"
+            >
+              Have More Questions?
+            </motion.h3>
+            <p className="text-muted-foreground">
+              You've used up your free question to ChatGPT 4o OpenAI's top tier
+              model. Continue the conversation with {PAID_QUESTIONS} follow-up
+              questions to make the most informed decision about your home
+              purchase.
+            </p>
+            <div className="space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-xs mx-auto"
+              >
+                <Button
+                  onClick={handlePayment}
+                  disabled={isLoading}
+                  className={`
+                    w-full bg-gradient-to-r from-primary to-primary/90 
+                    hover:to-primary hover:scale-105 transition-all duration-200
+                    ${isLoading ? "animate-pulse" : ""}
+                  `}
+                >
+                  {isLoading ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Processing...
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      Unlock 5 Questions for $2.99
+                    </motion.span>
+                  )}
+                </Button>
+              </motion.div>
+              <p className="text-xs text-muted-foreground">
+                Secure payment powered by Stripe
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <PaymentSuccessModal
         isOpen={showSuccessModal}
         onClose={handleSuccessModalClose}

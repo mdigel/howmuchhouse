@@ -1,6 +1,5 @@
 import { Switch, Route } from "wouter";
 import Home from "./pages/Home";
-import Success from "./pages/Success";
 import { Header } from "./components/Header";
 import "@fontsource/noto-sans/700.css"; // Import Noto Sans Bold weight
 
@@ -26,7 +25,6 @@ function App() {
       <main className="container mx-auto px-4 py-6">
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/success" component={Success} />
           <Route>404 Page Not Found</Route>
         </Switch>
       </main>

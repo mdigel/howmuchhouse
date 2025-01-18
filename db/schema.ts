@@ -14,7 +14,7 @@ export const aiChats = pgTable("ai_chats", {
   response: text("response").notNull(),
   characterCount: integer("character_count").notNull(),
   hasPaid: boolean("has_paid").default(false),
-  isHelpful: boolean("is_helpful").default(false),
+  isHelpful: boolean("is_helpful").default(null),
   createdAt: timestamp("created_at").defaultNow()
 });
 
@@ -23,13 +23,6 @@ export const payments = pgTable("payments", {
   stripeSessionId: text("stripe_session_id").notNull(),
   status: text("status").notNull(),
   amount: integer("amount").notNull(),
-  createdAt: timestamp("created_at").defaultNow()
-});
-
-export const featureFlags = pgTable("feature_flags", {
-  id: serial("id").primaryKey(),
-  name: text("name").unique().notNull(),
-  enabled: boolean("enabled").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });
 
