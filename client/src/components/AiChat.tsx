@@ -71,7 +71,7 @@ const AI_CHARGE_MODE = false; // Set this based on your environment
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
-  const effectiveIsPaid = AI_CHARGE_MODE ? isPaid : true; // Always treat as paid if charge mode is off
+  const isEffectivelyPaid = !AI_CHARGE_MODE || isPaid; // Always treat as paid if charge mode is off
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       // First check localStorage for pending chat state
@@ -438,7 +438,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </p>
       </div>
 
-      {!hasAskedQuestion && (
+      {!hasAskedQuestion && !messages.length && (
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-3">
             <LightbulbIcon className="h-4 w-4" />
@@ -513,7 +513,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             ))}
           </div>
 
-          {(!AI_CHARGE_MODE || (isPaid && questionsAsked < PAID_QUESTIONS)) && (
+          {(isEffectivelyPaid || questionsAsked < FREE_QUESTIONS) && (
             <div className="space-y-4">
               <Textarea
                 value={message}
