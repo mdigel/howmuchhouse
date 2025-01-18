@@ -80,13 +80,6 @@ export function registerRoutes(app: Express): Server {
     console.log("Received chat request");
 
     try {
-      if (!message) {
-        return res.status(400).json({
-          error: "Missing message",
-          message: "Please provide a message to chat with the AI",
-        });
-      }
-
       if (message.length > 3000) {
         return res.status(400).json({
           error: "Message too long",
@@ -94,10 +87,8 @@ export function registerRoutes(app: Express): Server {
         });
       }
 
-      // Use existing session ID or create new one
       const sessionId = (req.headers["x-session-id"] as string) || crypto.randomUUID();
 
-      // Store chat in database
       const chat = await db
         .insert(aiChats)
         .values({
@@ -109,16 +100,10 @@ export function registerRoutes(app: Express): Server {
         })
         .returning();
 
-      // Initialize OpenAI
-      if (!process.env.OPENAI_API_KEY) {
-        throw new Error("Missing OpenAI API key");
-      }
-
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Generate AI response
       const completion = await openai.chat.completions.create({
         messages: [
           {
@@ -138,7 +123,6 @@ export function registerRoutes(app: Express): Server {
       const response = completion.choices[0]?.message?.content || 
         "I apologize, but I couldn't generate a response. Please try again.";
 
-      // Update chat with response
       await db
         .update(aiChats)
         .set({ response })
@@ -150,7 +134,7 @@ export function registerRoutes(app: Express): Server {
       console.error("Chat API Error:", error);
       res.status(500).json({
         error: "Failed to get AI response",
-        message: error instanceof Error ? error.message : "Our AI service is temporarily unavailable. Please try again later.",
+        message: "Our AI service is temporarily unavailable. Please try again later.",
       });
     }
   });
@@ -171,7 +155,7 @@ export function registerRoutes(app: Express): Server {
                 name: "AI Chat Access",
                 description: "Unlimited access to AI home buying assistant",
               },
-              unit_amount: 299, // $2.99
+              unit_amount: 299,
             },
             quantity: 1,
           },
@@ -198,31 +182,14 @@ export function registerRoutes(app: Express): Server {
 
   // 4. Feedback endpoint
   app.post("/api/feedback", async (req: Request, res: Response) => {
-    const { isHelpful, chatId, response } = req.body;
-    console.log("Received feedback:", { isHelpful, chatId, response });
-
+    const { isHelpful, response } = req.body;
+    console.log("Received feedback:", { isHelpful, response });
     try {
-      if (chatId) {
-        // If we have a chatId, update the chat record with feedback
-        await db
-          .update(aiChats)
-          .set({ 
-            wasHelpful: isHelpful,
-            feedbackComment: response 
-          })
-          .where(eq(aiChats.id, chatId));
-      }
-
-      res.json({ 
-        success: true,
-        message: "Feedback received successfully"
-      });
+      // Store feedback in database (implement as needed)
+      res.json({ success: true });
     } catch (error) {
       console.error("Feedback Error:", error);
-      res.status(500).json({ 
-        error: "Failed to save feedback",
-        details: error instanceof Error ? error.message : "Unknown error"
-      });
+      res.status(500).json({ error: "Failed to save feedback" });
     }
   });
 
