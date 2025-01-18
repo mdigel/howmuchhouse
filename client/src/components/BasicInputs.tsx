@@ -175,9 +175,6 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                   <span className="flex items-center">
                     Down Payment
                     <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
