@@ -67,7 +67,7 @@ interface AiChatProps {
 }
 
 // Fetch this from environment or server config
-const AI_CHARGE_MODE = false; // Set this based on your environment
+const AI_CHARGE_MODE = true; // Set this based on your environment
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
@@ -515,7 +515,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
         </div>
       )}
 
-      {(!messages.length || !AI_CHARGE_MODE) && (
+      {(!messages.length || (!AI_CHARGE_MODE || isPaid)) && (
         <div className="space-y-4">
           <Textarea
             value={message}
