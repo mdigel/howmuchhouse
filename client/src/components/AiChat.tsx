@@ -513,7 +513,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
             ))}
           </div>
 
-          {isPaid && questionsAsked < PAID_QUESTIONS && (
+          {(!AI_CHARGE_MODE || (isPaid && questionsAsked < PAID_QUESTIONS)) && (
             <div className="space-y-4">
               <Textarea
                 value={message}
@@ -605,7 +605,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {AI_CHARGE_MODE && hasAskedQuestion && !isPaid && (
+        {AI_CHARGE_MODE && hasAskedQuestion && !isPaid ? (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -669,7 +669,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
               </p>
             </div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
       <PaymentSuccessModal
         isOpen={showSuccessModal}
