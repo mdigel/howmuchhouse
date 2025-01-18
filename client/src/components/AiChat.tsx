@@ -71,7 +71,6 @@ const AI_CHARGE_MODE = true; // Set this based on your environment
 
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
-  const isEffectivelyPaid = !AI_CHARGE_MODE || isPaid; // Always treat as paid if charge mode is off
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       // First check localStorage for pending chat state
@@ -99,6 +98,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
     return stored === "true";
   });
   const [isPaid, setIsPaid] = useState(false);
+  const isEffectivelyPaid = !AI_CHARGE_MODE || isPaid; // Always treat as paid if charge mode is off
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
