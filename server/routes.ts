@@ -72,9 +72,12 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.post("/api/chat", async (req: Request, res: Response) => {
+  import { config } from "./config";
+
+app.post("/api/chat", async (req: Request, res: Response) => {
     const { message, calculatorData, isPaid } = req.body;
     console.log("Received chat request");
+    const effectiveIsPaid = config.aiChargeMode ? isPaid : true; // Always treat as paid if charge mode is off
 
     try {
       if (message.length > 3000) {
@@ -93,7 +96,7 @@ export function registerRoutes(app: Express): Server {
           message,
           response: "",
           characterCount: message.length,
-          hasPaid: isPaid,
+          hasPaid: effectiveIsPaid,
         })
         .returning();
 

@@ -62,8 +62,16 @@ export function AiChatWithErrorBoundary(props: AiChatProps) {
   );
 }
 
+interface AiChatProps {
+  calculatorData: CalculatorResults;
+}
+
+// Fetch this from environment or server config
+const AI_CHARGE_MODE = false; // Set this based on your environment
+
 export function AiChat({ calculatorData }: AiChatProps) {
   const [message, setMessage] = useState("");
+  const effectiveIsPaid = AI_CHARGE_MODE ? isPaid : true; // Always treat as paid if charge mode is off
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
       // First check localStorage for pending chat state
@@ -580,7 +588,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
           )}
         </div>
       )}
-      {isPaid && questionsAsked >= PAID_QUESTIONS && (
+      {AI_CHARGE_MODE && isPaid && questionsAsked >= PAID_QUESTIONS && (
         <div className="flex items-center justify-between px-4 py-2 bg-muted rounded-lg mb-4">
           <span className="text-sm text-muted-foreground">
             You've used all your questions
@@ -597,7 +605,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
       )}
 
       <AnimatePresence>
-        {hasAskedQuestion && !isPaid && (
+        {AI_CHARGE_MODE && hasAskedQuestion && !isPaid && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
