@@ -109,7 +109,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     Household Income
                     <InfoTooltip text="Total annual income before taxes from all sources in your household" />
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0">(per year)</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0 pt-1 pb-2">(per year)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -142,7 +142,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     Down Payment
                     <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0">(available for down payment)</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0 pt-1 pb-2">(available for down payment)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
