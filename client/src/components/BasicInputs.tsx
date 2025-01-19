@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -105,7 +104,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="householdIncome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-0">
                   <span className="flex items-center">
                     Household Income
                     <InfoTooltip text="Total annual income before taxes from all sources in your household" />
@@ -138,7 +137,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="downPayment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-0">
                   <span className="flex items-center">
                     Down Payment
                     <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
@@ -171,7 +170,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="monthlyDebt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-0">
                   <span className="flex items-center">
                     Monthly Debt
                     <InfoTooltip text="Total monthly payments for car loans, student loans, and other debts. Don't include credit card debt if you pay it off each month." />
@@ -203,7 +202,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="annualInterestRate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center">
+                <FormLabel className="flex items-center gap-0">
                   Interest Rate (%)
                   <InfoTooltip text="Annual interest rate on the mortgage loan" />
                 </FormLabel>
@@ -229,7 +228,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center">
+                <FormLabel className="flex items-center gap-0">
                   State
                   <InfoTooltip text="Your state of residence (2-letter code)" />
                 </FormLabel>
@@ -260,13 +259,13 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="filingStatus"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center">
+                <FormLabel className="flex items-center gap-0">
                   Filing Status
                   <InfoTooltip text="Your tax filing status (single or married filing jointly)" />
                 </FormLabel>
