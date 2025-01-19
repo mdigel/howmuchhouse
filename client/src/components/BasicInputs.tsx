@@ -98,8 +98,8 @@ export const basicInputSchema = z.object({
 export function BasicInputs({ form }: BasicInputsProps) {
   return (
     <Form {...form}>
-      <div className="space-y-2">
-        <div className="space-y-4">
+      <div className="space-y-1">
+        <div className="space-y-2">
           <FormField
             control={form.control}
             name="householdIncome"
