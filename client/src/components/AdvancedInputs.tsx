@@ -19,11 +19,21 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const isMobile = useIsMobile();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isMobile) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
-    <TooltipProvider disableHoverableContent>
-      <Tooltip delayDuration={0}>
+    <TooltipProvider>
+      <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <button onClick={(e) => e.preventDefault()}>
+          <button onClick={handleClick}>
             <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </TooltipTrigger>
