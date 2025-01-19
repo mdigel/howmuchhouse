@@ -116,6 +116,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input 
                       type="text"
+                      inputMode="numeric"
                       placeholder="Enter your annual income" 
                       {...field}
                       className="max-w-md pl-7"
@@ -149,6 +150,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input 
                       type="text"
+                      inputMode="numeric"
                       placeholder="Enter your down payment amount" 
                       {...field}
                       className="max-w-md pl-7"
@@ -182,6 +184,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input 
                       type="text"
+                      inputMode="numeric"
                       placeholder="Enter your total monthly debt" 
                       {...field}
                       className="max-w-md pl-7"

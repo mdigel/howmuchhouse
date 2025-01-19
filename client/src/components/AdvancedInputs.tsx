@@ -117,6 +117,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input 
                               type="text"
+                              inputMode="numeric"
                               placeholder="Monthly HOA fees" 
                               {...field}
                               className="pl-7"
@@ -149,6 +150,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input 
                               type="text"
+                              inputMode="numeric"
                               placeholder="Annual insurance cost" 
                               {...field}
                               className="pl-7"
@@ -181,6 +183,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input 
                               type="text"
+                              inputMode="numeric"
                               placeholder="Annual PMI" 
                               {...field}
                               className="pl-7"
@@ -213,6 +216,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input 
                               type="text"
+                              inputMode="numeric"
                               placeholder="Annual property tax" 
                               {...field}
                               className="pl-7"
@@ -245,6 +249,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                             <Input 
                               type="text"
+                              inputMode="numeric"
                               placeholder="Annual pre-tax contributions" 
                               {...field}
                               className="pl-7"
