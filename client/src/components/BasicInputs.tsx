@@ -104,7 +104,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="householdIncome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
                   <span className="flex items-center h-6 sm:h-auto">
                     Household Income
                     <InfoTooltip text="Total annual income before taxes from all sources in your household" />
@@ -137,7 +137,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="downPayment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
                   <span className="flex items-center h-6 sm:h-auto">
                     Down Payment
                     <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
@@ -170,7 +170,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
             name="monthlyDebt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
                   <span className="flex items-center h-6 sm:h-auto">
                     Monthly Debt
                     <InfoTooltip text="Total monthly payments for car loans, student loans, and other debts. Don't include credit card debt if you pay it off each month." />
