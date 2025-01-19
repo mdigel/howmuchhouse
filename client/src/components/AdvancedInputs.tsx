@@ -24,6 +24,7 @@ function InfoTooltip({ text }: InfoTooltipProps) {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (isMobile) {
       setIsOpen(!isOpen);
     }
@@ -33,7 +34,12 @@ function InfoTooltip({ text }: InfoTooltipProps) {
     <TooltipProvider>
       <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <button onClick={handleClick}>
+          <button 
+            type="button" 
+            onClick={handleClick}
+            onTouchStart={(e) => e.stopPropagation()}
+            className="touch-manipulation"
+          >
             <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </TooltipTrigger>
