@@ -98,9 +98,9 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
         <AccordionTrigger>Advanced Inputs</AccordionTrigger>
         <AccordionContent className="px-2 py-1">
           <Form {...form}>
-            <div className="space-y-2 sm:space-y-4">
-              <div className="grid gap-2 sm:gap-3">
-                <div className="grid gap-2 sm:gap-3 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className="grid gap-2">
+                <div className="grid gap-2 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="hoaFees"
