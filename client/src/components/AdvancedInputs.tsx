@@ -96,17 +96,17 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
     <Accordion type="single" collapsible className="mt-6">
       <AccordionItem value="advanced">
         <AccordionTrigger>Advanced Inputs</AccordionTrigger>
-        <AccordionContent className="px-2 py-4">
+        <AccordionContent className="px-2 py-1">
           <Form {...form}>
-            <div className="space-y-1">
-              <div className="grid gap-2">
-                <div className="grid gap-2 md:grid-cols-2">
+            <div className="space-y-6">
+              <div className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="hoaFees"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           HOA Fees
                           <InfoTooltip text="Monthly fees charged by the Homeowner's Association for maintenance and amenities" />
                         </FormLabel>
@@ -136,7 +136,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="homeownersInsurance"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           Homeowners Insurance
                           <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912" />
                         </FormLabel>
@@ -166,7 +166,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pmiInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           PMI (Optional)
                           <InfoTooltip text="Private Mortgage Insurance - required when down payment is less than 20% of home value" />
                         </FormLabel>
@@ -196,7 +196,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="propertyTaxInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           Property Tax (Optional)
                           <InfoTooltip text="Annual tax assessed by local government based on your property's value. Can change every few years." />
                         </FormLabel>
@@ -226,7 +226,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pretaxContributions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           Pre-tax Contributions
                           <InfoTooltip text="Annual contributions to retirement accounts, health savings, or other pre-tax deductions" />
                         </FormLabel>
@@ -256,7 +256,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="dependents"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                        <FormLabel className="flex items-center">
                           Number of Dependents
                           <InfoTooltip text="Number of qualifying dependents for tax purposes, affecting your tax credits and deductions" />
                         </FormLabel>
