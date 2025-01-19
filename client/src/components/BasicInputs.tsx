@@ -15,13 +15,47 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const isMobile = useIsMobile();
+  const tooltipRef = React.useRef<HTMLButtonElement>(null);
+
+  const handleToggle = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0}>
+      <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          <button 
+            ref={tooltipRef}
+            type="button" 
+            onClick={handleToggle}
+            onTouchEnd={handleToggle}
+            className="touch-none p-2 -m-2"
+          >
+            <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          </button>
         </TooltipTrigger>
-        <TooltipContent side="right" align="start" className="max-w-[280px]">
+        <TooltipContent side="right" align="start" className="max-w-[280px] touch-none">
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>
