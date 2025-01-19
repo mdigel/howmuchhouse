@@ -1,7 +1,9 @@
 
+import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -15,13 +17,32 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
     <TooltipProvider>
-      <Tooltip delayDuration={0}>
+      <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isMobile) {
+                setIsOpen(!isOpen);
+              }
+            }}
+            className="touch-manipulation"
+          >
+            <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          </button>
         </TooltipTrigger>
-        <TooltipContent side="right" align="start" className="max-w-[280px]">
+        <TooltipContent 
+          side={isMobile ? "bottom" : "right"} 
+          align={isMobile ? "center" : "start"}
+          className="max-w-[280px] touch-none"
+          sideOffset={isMobile ? 5 : 4}
+        >
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>
