@@ -19,15 +19,32 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <TooltipProvider disableHoverableContent>
-      <Tooltip delayDuration={0}>
+    <TooltipProvider>
+      <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <button onClick={(e) => e.preventDefault()}>
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isMobile) {
+                setIsOpen(!isOpen);
+              }
+            }}
+            className="touch-manipulation"
+          >
             <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right" align="start" className="max-w-[280px] touch-none">
+        <TooltipContent 
+          side={isMobile ? "bottom" : "right"} 
+          align={isMobile ? "center" : "start"}
+          className="max-w-[280px] touch-none"
+          sideOffset={isMobile ? 5 : 4}
+        >
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>
