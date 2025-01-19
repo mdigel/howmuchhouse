@@ -1,5 +1,4 @@
 import { Info } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile"; // Added import statement here
 import {
   Tooltip,
   TooltipContent,
