@@ -106,9 +106,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="hoaFees"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          HOA Fees
-                          <InfoTooltip text="Monthly fees charged by the Homeowner's Association for maintenance and amenities" />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            HOA Fees
+                            <InfoTooltip text="Monthly fees charged by the Homeowner's Association for maintenance and amenities" />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
