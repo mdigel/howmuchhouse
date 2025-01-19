@@ -106,7 +106,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="hoaFees"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           HOA Fees
                           <InfoTooltip text="Monthly fees charged by the Homeowner's Association for maintenance and amenities" />
                         </FormLabel>
@@ -136,7 +136,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="homeownersInsurance"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           Homeowners Insurance
                           <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912" />
                         </FormLabel>
@@ -166,7 +166,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pmiInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           PMI (Optional)
                           <InfoTooltip text="Private Mortgage Insurance - required when down payment is less than 20% of home value" />
                         </FormLabel>
@@ -196,7 +196,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="propertyTaxInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           Property Tax (Optional)
                           <InfoTooltip text="Annual tax assessed by local government based on your property's value. Can change every few years." />
                         </FormLabel>
@@ -226,7 +226,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pretaxContributions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           Pre-tax Contributions
                           <InfoTooltip text="Annual contributions to retirement accounts, health savings, or other pre-tax deductions" />
                         </FormLabel>
@@ -256,7 +256,7 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="dependents"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center">
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
                           Number of Dependents
                           <InfoTooltip text="Number of qualifying dependents for tax purposes, affecting your tax credits and deductions" />
                         </FormLabel>
