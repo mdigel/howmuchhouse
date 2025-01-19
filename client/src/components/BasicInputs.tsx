@@ -1,9 +1,7 @@
 
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -17,19 +15,13 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
-  const isMobile = useIsMobile();
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
         </TooltipTrigger>
-        <TooltipContent 
-          side={isMobile ? "bottom" : "right"} 
-          align={isMobile ? "center" : "start"}
-          className="max-w-[280px]"
-          sideOffset={isMobile ? 20 : 4}
-        >
+        <TooltipContent side="right" align="start" className="max-w-[280px]">
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>

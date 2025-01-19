@@ -23,19 +23,13 @@ interface InfoTooltipProps {
 }
 
 function InfoTooltip({ text }: InfoTooltipProps) {
-  const isMobile = useIsMobile();
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
         </TooltipTrigger>
-        <TooltipContent 
-          side={isMobile ? "bottom" : "right"} 
-          align={isMobile ? "center" : "start"}
-          className="max-w-[280px]"
-          sideOffset={isMobile ? 20 : 4}
-        >
+        <TooltipContent side="right" align="start" className="max-w-[280px]">
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>
