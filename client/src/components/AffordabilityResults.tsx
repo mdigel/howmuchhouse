@@ -129,7 +129,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 AffordabilityResults">
       <Accordion type="single" collapsible className="w-full">
         {/* Max Price Result */}
         <AccordionItem value="item-0">

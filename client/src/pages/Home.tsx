@@ -163,8 +163,9 @@ export default function Home() {
       setIsCalculating(false);
       // Auto scroll to results on mobile and tablet views
       if (window.innerWidth < 1024) {
+        // Wait for results to be rendered
         setTimeout(() => {
-          const resultsElement = document.querySelector('.space-y-6');
+          const resultsElement = document.querySelector('.AffordabilityResults');
           if (resultsElement) {
             const headerOffset = 20;
             const elementPosition = resultsElement.getBoundingClientRect().top;
@@ -175,7 +176,7 @@ export default function Home() {
               behavior: 'smooth'
             });
           }
-        }, 100);
+        }, 300);
       }
     }
   };
