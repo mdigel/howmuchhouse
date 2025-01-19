@@ -8,7 +8,7 @@ export function Header() {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
               How Much <span className="relative inline-block">
-                Home
+                House
                 <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
               </span> Can I <span className="relative inline-block">
                 Afford.ai
@@ -16,7 +16,7 @@ export function Header() {
               </span>
             </h1>
           </div>
-          <p className="text-muted-foreground text-base">More than a simple mortgage calculator.</p>
+          <p className="text-muted-foreground text-base">An affordability calculator with an AI Assistant.</p>
         </div>
       </div>
     </header>
