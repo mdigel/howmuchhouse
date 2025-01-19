@@ -164,10 +164,17 @@ export default function Home() {
       // Auto scroll to results on mobile and tablet views
       if (window.innerWidth < 1024) {
         setTimeout(() => {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
+          const resultsElement = document.querySelector('.space-y-6');
+          if (resultsElement) {
+            const headerOffset = 20;
+            const elementPosition = resultsElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
         }, 100);
       }
     }
