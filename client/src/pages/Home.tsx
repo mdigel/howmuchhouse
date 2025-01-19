@@ -161,6 +161,15 @@ export default function Home() {
       // You might want to show this error to the user with a toast notification
     } finally {
       setIsCalculating(false);
+      // Auto scroll to results on mobile and tablet views
+      if (window.innerWidth < 1024) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
     }
   };
 
