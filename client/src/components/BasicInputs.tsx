@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import type { BasicInputType } from "@/lib/calculatorTypes";
+import { useIsMobile } from "@/hooks/use-mobile"; // Corrected import path
 
 interface InfoTooltipProps {
   text: string;
@@ -245,7 +245,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="filingStatus"

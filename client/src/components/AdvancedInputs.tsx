@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import type { AdvancedInputType } from "@/lib/calculatorTypes";
-import { useIsMobile } from "@/hooks/useIsMobile"; // Assuming this hook exists
+import { useIsMobile } from "@/hooks/use-mobile"; // Assuming this hook exists
 
 interface InfoTooltipProps {
   text: string;
