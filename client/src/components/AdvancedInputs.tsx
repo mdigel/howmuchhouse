@@ -138,9 +138,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="homeownersInsurance"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          Homeowners Insurance
-                          <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912" />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            Homeowners Insurance
+                            <InfoTooltip text="Annual cost of insurance to protect your home and belongings from damage or loss. National average is $1,912" />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -168,9 +170,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pmiInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          PMI (Optional)
-                          <InfoTooltip text="Private Mortgage Insurance - required when down payment is less than 20% of home value" />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            PMI (Optional)
+                            <InfoTooltip text="Private Mortgage Insurance - required when down payment is less than 20% of home value" />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -198,9 +202,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="propertyTaxInput"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          Property Tax (Optional)
-                          <InfoTooltip text="Annual tax assessed by local government based on your property's value. Can change every few years." />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            Property Tax (Optional)
+                            <InfoTooltip text="Annual tax assessed by local government based on your property's value. Can change every few years." />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -228,9 +234,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="pretaxContributions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          Pre-tax Contributions
-                          <InfoTooltip text="Annual contributions to retirement accounts, health savings, or other pre-tax deductions" />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            Pre-tax Contributions
+                            <InfoTooltip text="Annual contributions to retirement accounts, health savings, or other pre-tax deductions" />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -258,9 +266,11 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                     name="dependents"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-[2px] sm:gap-2">
-                          Number of Dependents
-                          <InfoTooltip text="Number of qualifying dependents for tax purposes, affecting your tax credits and deductions" />
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-2">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            Number of Dependents
+                            <InfoTooltip text="Number of qualifying dependents for tax purposes, affecting your tax credits and deductions" />
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
