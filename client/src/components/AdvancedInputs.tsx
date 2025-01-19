@@ -20,12 +20,14 @@ interface InfoTooltipProps {
 
 function InfoTooltip({ text }: InfoTooltipProps) {
   return (
-    <TooltipProvider>
+    <TooltipProvider disableHoverableContent>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          <button onClick={(e) => e.preventDefault()}>
+            <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
+          </button>
         </TooltipTrigger>
-        <TooltipContent side="right" align="start" className="max-w-[280px]">
+        <TooltipContent side="right" align="start" className="max-w-[280px] touch-none">
           <p className="text-sm">{text}</p>
         </TooltipContent>
       </Tooltip>
