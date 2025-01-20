@@ -8,7 +8,6 @@ export function Header() {
   const [location] = useLocation();
 
   const menuItems = [
-    { path: '/', label: 'Home' },
     { path: '/how-it-works', label: 'How It Works?' },
     { path: '/feedback', label: 'Feedback' }
   ];
@@ -17,7 +16,7 @@ export function Header() {
     <header className="w-full py-6 border-b border-border relative">
       <div className="container mx-auto px-4 md:px-4 lg:px-4 max-w-[1200px]">
         <div className="flex justify-between items-center">
-          <div className="text-left space-y-2">
+          <Link href="/" className="text-left space-y-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
                 How Much <span className="relative inline-block">
@@ -30,7 +29,7 @@ export function Header() {
               </h1>
             </div>
             <p className="text-muted-foreground text-base">An affordability calculator with an AI Assistant.</p>
-          </div>
+          </Link>
           
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-6">
