@@ -1,6 +1,6 @@
 import { loadStripe as loadStripeJs } from "@stripe/stripe-js";
 
-const isProduction = import.meta.env.PROD;
+const isProduction = import.meta.env.PROD || import.meta.env.VITE_REPLIT_DEPLOYMENT === '1';
 const STRIPE_PUBLISHABLE_KEY = isProduction
   ? import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
   : import.meta.env.VITE_STRIPE_TEST_PUBLISHABLE_KEY;

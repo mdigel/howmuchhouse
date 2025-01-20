@@ -15,7 +15,7 @@ import {
 } from "./calculatorLogic/Orchestrator";
 
 // Initialize Stripe
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
 const stripeSecretKey = isProduction 
   ? process.env.STRIPE_SECRET_KEY 
   : process.env.STRIPE_TEST_SECRET_KEY;
