@@ -20,6 +20,8 @@ const stripeSecretKey = isProduction
   ? process.env.STRIPE_SECRET_KEY 
   : process.env.STRIPE_TEST_SECRET_KEY;
 
+console.log('Stripe Mode:', isProduction ? 'Production' : 'Test');
+
 if (!stripeSecretKey) {
   throw new Error(`Missing Stripe ${isProduction ? 'production' : 'test'} secret key - Please check Replit Secrets`);
 }
