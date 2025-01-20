@@ -65,7 +65,13 @@ const setupServer = async () => {
     } else {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
-      serveStatic(app);
+      const path = require('path');
+      app.use(express.static(path.join(__dirname, '../dist/public')));
+      
+      // Handle SPA routes
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+      });
     }
 
     console.log('Starting HTTP server...');
