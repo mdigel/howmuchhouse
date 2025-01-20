@@ -28,6 +28,12 @@ if (!stripeSecretKey) {
 
 const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2024-12-18.acacia",
+
+  app.get("/api/config", async (_req: Request, res: Response) => {
+    res.json({ AI_CHARGE_MODE: config.aiChargeMode });
+  });
+
+
   typescript: true,
 });
 
