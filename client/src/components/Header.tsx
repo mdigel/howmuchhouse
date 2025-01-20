@@ -18,7 +18,7 @@ export function Header() {
         <div className="flex justify-between items-center">
           <Link href="/" className="text-left space-y-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
+              <h1 className="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
                 How Much <span className="relative inline-block">
                   House
                   <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
@@ -28,7 +28,7 @@ export function Header() {
                 </span>
               </h1>
             </div>
-            <p className="text-muted-foreground text-base">An affordability calculator with an AI Assistant.</p>
+            <p className="text-muted-foreground text-xs md:text-base">An affordability calculator with an AI Assistant.</p>
           </Link>
           
           {/* Desktop Menu */}
