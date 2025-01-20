@@ -15,11 +15,16 @@ import {
 } from "./calculatorLogic/Orchestrator";
 
 // Initialize Stripe
-if (!process.env.STRIPE_TEST_SECRET_KEY) {
-  throw new Error("Missing Stripe test secret key - Please check environment variables");
+const isProduction = process.env.NODE_ENV === 'production';
+const stripeSecretKey = isProduction 
+  ? process.env.STRIPE_LIVE_SECRET_KEY 
+  : process.env.STRIPE_TEST_SECRET_KEY;
+
+if (!stripeSecretKey) {
+  throw new Error(`Missing Stripe ${isProduction ? 'live' : 'test'} secret key - Please check environment variables`);
 }
 
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY, {
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2024-12-18.acacia",
   typescript: true,
 });
