@@ -37,7 +37,13 @@ export function registerRoutes(app: Express): Server {
   
   // Serve static files in production
   if (process.env.NODE_ENV === 'production') {
-    const path = require('path');
+    import path from 'path';
+    import { fileURLToPath } from 'url';
+    import { dirname } from 'path';
+    
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    
     app.use(express.static(path.join(__dirname, '../dist/public')));
     
     // Handle client-side routing
