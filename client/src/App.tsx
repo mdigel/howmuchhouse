@@ -25,13 +25,13 @@ function App() {
       <Header />
       <main className="container mx-auto px-4 py-6">
         <Suspense fallback={<div>Loading...</div>}>
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/how-it-works" component={React.lazy(() => import('./pages/HowItWorks'))} />
-          <Route path="/feedback" component={React.lazy(() => import('./pages/Feedback'))} />
-          <Route>404 Page Not Found</Route>
-        </Switch>
-        </React.Suspense>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/how-it-works" component={React.lazy(() => import('./pages/HowItWorks'))} />
+            <Route path="/feedback" component={React.lazy(() => import('./pages/Feedback'))} />
+            <Route>404 Page Not Found</Route>
+          </Switch>
+        </Suspense>
       </main>
     </div>
   );
