@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export default defineConfig({
   define: {
-    'import.meta.env.VITE_AI_CHARGE_MODE': JSON.stringify(process.env.AI_CHARGE_MODE)
+    'import.meta.env.VITE_AI_CHARGE_MODE': JSON.stringify(process.env.VITE_AI_CHARGE_MODE)
   },
   plugins: [
     react(),
