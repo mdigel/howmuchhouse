@@ -466,8 +466,16 @@ export function AiChat({ calculatorData }: AiChatProps) {
           <div
             className="max-h-[500px] overflow-y-auto mb-6"
             ref={(el) => {
-              if (el) {
-                el.scrollTop = el.scrollHeight;
+              if (el && messages.length > 0) {
+                const lastMessage = messages[messages.length - 1];
+                if (lastMessage.role === "assistant") {
+                  setTimeout(() => {
+                    el.scrollTo({
+                      top: el.scrollHeight,
+                      behavior: "smooth"
+                    });
+                  }, 100);
+                }
               }
             }}
           >
