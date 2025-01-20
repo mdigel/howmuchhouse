@@ -2,7 +2,7 @@ import { loadStripe as loadStripeJs } from "@stripe/stripe-js";
 
 const isProduction = import.meta.env.PROD;
 const STRIPE_PUBLISHABLE_KEY = isProduction
-  ? process.env.STRIPE_LIVE_PUBLISHABLE_KEY
+  ? process.env.STRIPE_PUBLISHABLE_KEY
   : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
 
 if (!STRIPE_PUBLISHABLE_KEY) {

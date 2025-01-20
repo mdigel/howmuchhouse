@@ -17,11 +17,11 @@ import {
 // Initialize Stripe
 const isProduction = process.env.NODE_ENV === 'production';
 const stripeSecretKey = isProduction 
-  ? process.env.STRIPE_LIVE_SECRET_KEY 
+  ? process.env.STRIPE_SECRET_KEY 
   : process.env.STRIPE_TEST_SECRET_KEY;
 
 if (!stripeSecretKey) {
-  throw new Error(`Missing Stripe ${isProduction ? 'live' : 'test'} secret key - Please check Replit Secrets`);
+  throw new Error(`Missing Stripe ${isProduction ? 'production' : 'test'} secret key - Please check Replit Secrets`);
 }
 
 const stripe = new Stripe(stripeSecretKey, {
