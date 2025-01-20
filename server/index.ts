@@ -4,6 +4,7 @@ import session from 'express-session';
 import { registerRoutes } from './routes';
 import { setupVite, serveStatic } from './vite';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
 
@@ -65,7 +66,6 @@ const setupServer = async () => {
     } else {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
-      import * as path from 'path';
       app.use(express.static(path.join(__dirname, '../dist/public')));
       
       // Handle SPA routes
