@@ -25,6 +25,8 @@ function App() {
       <main className="container mx-auto px-4 py-6">
         <Switch>
           <Route path="/" component={Home} />
+          <Route path="/how-it-works" component={() => import('./pages/HowItWorks').then(m => m.default)} />
+          <Route path="/feedback" component={() => import('./pages/Feedback').then(m => m.default)} />
           <Route>404 Page Not Found</Route>
         </Switch>
       </main>
