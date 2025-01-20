@@ -32,9 +32,6 @@ const stripe = new Stripe(stripeSecretKey, {
 });
 
 export function registerRoutes(app: Express): Server {
-  app.get("/api/config", async (_req: Request, res: Response) => {
-    res.json({ AI_CHARGE_MODE: config.aiChargeMode });
-  });
   console.log("Registering core API routes...");
   const httpServer = createServer(app);
 
