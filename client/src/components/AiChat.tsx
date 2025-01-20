@@ -469,12 +469,13 @@ export function AiChat({ calculatorData }: AiChatProps) {
               if (el && messages.length > 0) {
                 const lastMessage = messages[messages.length - 1];
                 if (lastMessage.role === "assistant") {
-                  setTimeout(() => {
-                    el.scrollTo({
-                      top: el.scrollHeight,
-                      behavior: "smooth"
-                    });
-                  }, 100);
+                  const userMessages = Array.from(el.children).filter(child => 
+                    child.className.includes("justify-end")
+                  );
+                  const lastUserMessage = userMessages[userMessages.length - 1];
+                  if (lastUserMessage) {
+                    lastUserMessage.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
                 }
               }
             }}
