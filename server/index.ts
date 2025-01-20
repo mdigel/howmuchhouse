@@ -5,7 +5,9 @@ import { registerRoutes } from './routes';
 import { setupVite, serveStatic } from './vite';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config();
 
 console.log('Starting server initialization...');
