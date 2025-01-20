@@ -16,7 +16,7 @@ const app = express();
 
 // Environment variables and configuration
 const PORT = Number(process.env.PORT) || 3000;
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
 
 // Basic middleware setup
 console.log('Setting up middleware...');
