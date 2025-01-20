@@ -23,12 +23,14 @@ function App() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-6">
+        <React.Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/how-it-works" component={() => import('./pages/HowItWorks').then(m => m.default)} />
-          <Route path="/feedback" component={() => import('./pages/Feedback').then(m => m.default)} />
+          <Route path="/how-it-works" component={React.lazy(() => import('./pages/HowItWorks'))} />
+          <Route path="/feedback" component={React.lazy(() => import('./pages/Feedback'))} />
           <Route>404 Page Not Found</Route>
         </Switch>
+        </React.Suspense>
       </main>
     </div>
   );
