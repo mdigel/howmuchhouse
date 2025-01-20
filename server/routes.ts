@@ -21,7 +21,7 @@ const stripeSecretKey = isProduction
   : process.env.STRIPE_TEST_SECRET_KEY;
 
 if (!stripeSecretKey) {
-  throw new Error(`Missing Stripe ${isProduction ? 'live' : 'test'} secret key - Please check environment variables`);
+  throw new Error(`Missing Stripe ${isProduction ? 'live' : 'test'} secret key - Please check Replit Secrets`);
 }
 
 const stripe = new Stripe(stripeSecretKey, {
