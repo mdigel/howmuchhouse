@@ -49,7 +49,7 @@ export async function setupVite(app: Express, server: Server) {
       middlewareMode: true,
     },
     define: {
-      'import.meta.env.VITE_AI_CHARGE_MODE': JSON.stringify(process.env.AI_CHARGE_MODE)
+      'import.meta.env.VITE_AI_CHARGE_MODE': JSON.stringify(process.env.VITE_AI_CHARGE_MODE)
     },
     appType: "custom",
   });
