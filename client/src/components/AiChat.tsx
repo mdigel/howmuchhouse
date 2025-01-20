@@ -525,9 +525,16 @@ export function AiChat({ calculatorData }: AiChatProps) {
             maxLength={3000}
           />
           <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">
-              {message.length}/3000 characters
-            </span>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                {message.length}/3000 characters
+              </span>
+              {AI_CHARGE_MODE && isPaid && (
+                <span className="text-sm text-muted-foreground">
+                  Questions remaining: {PAID_QUESTIONS - questionsAsked}
+                </span>
+              )}
+            </div>
             <Button
               onClick={handleSubmit}
               disabled={isLoading || message.trim().length === 0}
