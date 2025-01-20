@@ -34,17 +34,6 @@ const stripe = new Stripe(stripeSecretKey, {
 export function registerRoutes(app: Express): Server {
   console.log("Registering core API routes...");
   const httpServer = createServer(app);
-  
-  // Serve static files in production
-  if (process.env.NODE_ENV === 'production') {
-    const path = require('path');
-    app.use(express.static(path.join(__dirname, '../dist/public')));
-    
-    // Handle client-side routing
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../dist/public/index.html'));
-    });
-  }
 
   // API Routes
   app.post("/api/calculate", async (req: Request, res: Response) => {
