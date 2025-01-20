@@ -624,7 +624,7 @@ export function AiChat({ calculatorData }: AiChatProps) {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      Unlock 5 Questions for $2.99
+                      Unlock 5 Questions for $1.29
                     </motion.span>
                   )}
                 </Button>
