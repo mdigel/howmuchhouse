@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import { Switch, Route } from "wouter";
 import Home from "./pages/Home";
 import { Header } from "./components/Header";
@@ -23,7 +24,7 @@ function App() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-6">
-        <React.Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/how-it-works" component={React.lazy(() => import('./pages/HowItWorks'))} />
