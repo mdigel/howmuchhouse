@@ -1,4 +1,5 @@
 // Import interfaces from other backend files
+import { calculationError } from './Step 1';
 import { LoanCalculationResult } from './Step 3';
 import { NetIncomeAnnualStats } from './Step 4';
 import { BudgetOutput } from './Step 5';
@@ -26,6 +27,7 @@ interface CalculatorResults {
   maxHomePrice: HomePrice;
   savingScenarios: HomePrice[];
   monthlyDebt: number; // <- also part of what the frontend wants
+  error?: calculationError;
 }
 
 interface IncomeSummary {
@@ -78,7 +80,8 @@ interface ScenarioBreakdown {
  */
 function transformCalculateAllScenariosOutput(
   calcOutput: CalculateAllScenariosOutput,
-  monthlyDebtValue: number // pass monthlyDebt or derive from your numericInputs
+  monthlyDebtValue: number, // pass monthlyDebt or derive from your numericInputs
+  calculationError: calculationError
 ): CalculatorResults {
   const { incomeSummary, maxMortgageStats, allSavingsScenarios } = calcOutput;
 
@@ -117,6 +120,7 @@ function transformCalculateAllScenariosOutput(
     maxHomePrice,
     savingScenarios,
     monthlyDebt: monthlyDebtValue, // from your logic or numericInputs
+    error: calculationError,
   };
 
   return finalResults;

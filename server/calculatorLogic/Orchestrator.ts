@@ -1,29 +1,29 @@
 // Import modules
-import { forEachChild } from 'typescript';
-import { debtCheck, DebtCheckOutput } from './Step 1';
-import { calculateMaxMortgagePayment } from './Step 2';
+import { forEachChild } from "typescript";
+import { debtCheck, DebtCheckOutput, calculationError } from "./Step 1";
+import { calculateMaxMortgagePayment } from "./Step 2";
 import {
   calculateLoanAmountFromMonthlyPayment,
   LoanCalculationResult,
-} from './Step 3';
+} from "./Step 3";
 import {
   calculateNetIncome,
   NetIncomeAnnualStats,
   FilingStatus,
-} from './Step 4';
-import { calculateSimpleMonthlyBudget, BudgetOutput } from './Step 5';
+} from "./Step 4";
+import { calculateSimpleMonthlyBudget, BudgetOutput } from "./Step 5";
 import {
   calculateComplexBudgetsForSavingsPercentages,
   ComplexBudgetBreakdown,
-} from './Step 7';
+} from "./Step 7";
 import {
   calculateMortgageForEachSavingScenario,
   MortgageAndBudgetStatsPerScenario,
-} from './Step 8';
+} from "./Step 8";
 import {
   transformCalculateAllScenariosOutput,
   CalculatorResults,
-} from './Step 9';
+} from "./Step 9";
 
 // Interfaces
 
@@ -59,6 +59,21 @@ function calculateAllScenarios({
   dependents = 0,
   monthlyDebt,
 }: CalculateAllScenariosInput): CalculatorResults | { error: string } {
+  // Create error object
+  let calculationError: calculationError = {
+    maxScenario: {
+      exists: false,
+      message: '',
+      details: '',
+    },
+    // savingsScenario: [],  // Ensure the correct initialization without type declaration here
+    inputError: {
+      exists: false,
+      message: '',
+      details: '',
+    }
+  };
+  
   // STEP 1: Debt Check
   const debtOutput: DebtCheckOutput = debtCheck(householdIncome, monthlyDebt);
   let maxMonthlyMortgagePayment = 0;
@@ -70,7 +85,7 @@ function calculateAllScenarios({
     const allowedDIR = 0.36 - debtOutput.debtPercentage;
     maxMonthlyMortgagePayment = calculateMaxMortgagePayment(
       householdIncome,
-      allowedDIR
+      allowedDIR,
     );
   }
 
@@ -88,7 +103,7 @@ function calculateAllScenarios({
   const netIncomeAnnualStats: NetIncomeAnnualStats = calculateNetIncome(
     householdIncome,
     state,
-    filingStatus as FilingStatus
+    filingStatus as FilingStatus,
   );
 
   // STEP 5: Simple Monthly Budget
@@ -101,15 +116,18 @@ function calculateAllScenarios({
 
   // Check for Errors in Step 5
   if (baselineBudgetDIR28.error) {
-    return {
-      error: `Error within Step 5: ${baselineBudgetDIR28.error}`,
-    };
+    calculationError = {
+      maxScenario: {
+        exists: true,
+        message: 'A reasonable budget is not possible with the max loan a Bank might give you based on the 28/36 DIR rule.',
+        details: `Step 5 - ${baselineBudgetDIR28.error}`,
+      },
   }
 
   // Create Max Mortgage stats & budget output for Step 5
   const maxMortgageWithBaselineBudgetOutput = {
     description:
-      'Max Mortgage Scenario with as close to 50/30/20 budget as possible',
+      "Max Mortgage Scenario with as close to 50/30/20 budget as possible",
     mortgagePaymentStats: maxPurchasePriceStats,
     scenario: baselineBudgetDIR28,
   };
@@ -120,12 +138,12 @@ function calculateAllScenarios({
     | { savingsPercentage: number; error: string }
   )[] = calculateComplexBudgetsForSavingsPercentages(
     netIncomeAnnualStats.netIncome,
-    monthlyDebt
+    monthlyDebt,
   );
 
   // Check for Errors in Step 7
   allSavingScenariosStats.forEach((scenario) => {
-    if ('error' in scenario) {
+    if ("error" in scenario) {
       return {
         error: `Error within Step 7 specifically with the ${scenario.savingsPercentage} scenario`,
       };
@@ -142,7 +160,7 @@ function calculateAllScenarios({
       hoaFees,
       homeownersInsurance,
       pmiInput,
-      propertyTaxInput
+      propertyTaxInput,
     );
 
   // STEP 9: Transfer Output for frontend
@@ -160,7 +178,8 @@ function calculateAllScenarios({
   // Transform
   const finalOutput = transformCalculateAllScenariosOutput(
     calcOutput,
-    monthlyDebt
+    monthlyDebt,
+    calculationError
   );
 
   // Return Final Output
