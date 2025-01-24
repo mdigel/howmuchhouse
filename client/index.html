@@ -28,6 +28,7 @@
       <style>
         .initial-loader {
           display: flex;
+          flex-direction: column;
           justify-content: center;
           align-items: center;
           height: 100vh;
@@ -37,9 +38,14 @@
           width: 50px;
           height: 50px;
           border: 3px solid #f3f3f3;
-          border-top: 3px solid #4169E1;
+          border-top: 3px solid #D2E1FF;
           border-radius: 50%;
           animation: spin 1s linear infinite;
+          margin-bottom: 1rem;
+        }
+        .initial-loader__text {
+          color: #666;
+          font-size: 1rem;
         }
         @keyframes spin {
           0% { transform: rotate(0deg); }
@@ -48,6 +54,7 @@
       </style>
       <div class="initial-loader">
         <div class="initial-loader__spinner"></div>
+        <div class="initial-loader__text">How Much House Can I Afford.ai</div>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
