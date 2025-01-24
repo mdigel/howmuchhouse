@@ -63,17 +63,17 @@ function calculateAllScenarios({
   let calculationError: calculationError = {
     maxScenario: {
       exists: false,
-      message: '',
-      details: '',
+      message: "",
+      details: "",
     },
-    // savingsScenario: [],  // Ensure the correct initialization without type declaration here
+    savingsScenario: [],
     inputError: {
       exists: false,
-      message: '',
-      details: '',
-    }
+      message: "",
+      details: "",
+    },
   };
-  
+
   // STEP 1: Debt Check
   const debtOutput: DebtCheckOutput = debtCheck(householdIncome, monthlyDebt);
   let maxMonthlyMortgagePayment = 0;
@@ -116,12 +116,12 @@ function calculateAllScenarios({
 
   // Check for Errors in Step 5
   if (baselineBudgetDIR28.error) {
-    calculationError = {
-      maxScenario: {
-        exists: true,
-        message: 'A reasonable budget is not possible with the max loan a Bank might give you based on the 28/36 DIR rule.',
-        details: `Step 5 - ${baselineBudgetDIR28.error}`,
-      },
+    calculationError.maxScenario = {
+      exists: true,
+      message:
+        "A reasonable budget is not possible with the max loan a Bank might give you based on the 28/36 DIR rule.",
+      details: `Step 5 - ${baselineBudgetDIR28.error}`,
+    };
   }
 
   // Create Max Mortgage stats & budget output for Step 5
@@ -144,9 +144,12 @@ function calculateAllScenarios({
   // Check for Errors in Step 7
   allSavingScenariosStats.forEach((scenario) => {
     if ("error" in scenario) {
-      return {
-        error: `Error within Step 7 specifically with the ${scenario.savingsPercentage} scenario`,
-      };
+      calcuationError.savingsScenario.push({
+        scenarioDescription: scenario.description,
+        message:
+          "This saving scenario had an error likely because it's not realistic",
+        details: `Error within Step 7 specifically with the ${scenario.savingsPercentage} scenario. Error: ${scenario.error}`,
+      });
     }
   });
 
@@ -179,7 +182,7 @@ function calculateAllScenarios({
   const finalOutput = transformCalculateAllScenariosOutput(
     calcOutput,
     monthlyDebt,
-    calculationError
+    calculationError,
   );
 
   // Return Final Output

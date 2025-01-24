@@ -3,11 +3,11 @@ interface DebtCheckOutput {
   debtPercentage: number;
 }
 
-// interface savingScenarioError {
-//   scenarioDescription: string;
-//   message: string;
-//   details: string;
-// };
+interface savingScenarioError {
+  scenarioDescription: string;
+  message: string;
+  details: string;
+};
 
 interface calculationError {
   maxScenario: {
@@ -15,7 +15,7 @@ interface calculationError {
     message: string;
     details: string;
   };
-  // savingsScenario:savingScenarioError[];
+  savingsScenario:savingScenarioError[];
   inputError: {
     exists: boolean;
     message: string;

@@ -1,10 +1,10 @@
 // Import interfaces from other backend files
-import { calculationError } from './Step 1';
-import { LoanCalculationResult } from './Step 3';
-import { NetIncomeAnnualStats } from './Step 4';
-import { BudgetOutput } from './Step 5';
-import { ComplexBudgetBreakdown } from './Step 7';
-import { MortgageAndBudgetStatsPerScenario } from './Step 8';
+import { calculationError } from "./Step 1";
+import { LoanCalculationResult } from "./Step 3";
+import { NetIncomeAnnualStats } from "./Step 4";
+import { BudgetOutput } from "./Step 5";
+import { ComplexBudgetBreakdown } from "./Step 7";
+import { MortgageAndBudgetStatsPerScenario } from "./Step 8";
 
 // Matt's function output
 interface CalculateAllScenariosOutput {
@@ -23,11 +23,11 @@ interface CalculateAllScenariosOutput {
 
 // Frontend's Interfaces
 interface CalculatorResults {
+  error?: calculationError;
   incomeSummary: IncomeSummary;
   maxHomePrice: HomePrice;
   savingScenarios: HomePrice[];
   monthlyDebt: number; // <- also part of what the frontend wants
-  error?: calculationError;
 }
 
 interface IncomeSummary {
@@ -81,7 +81,7 @@ interface ScenarioBreakdown {
 function transformCalculateAllScenariosOutput(
   calcOutput: CalculateAllScenariosOutput,
   monthlyDebtValue: number, // pass monthlyDebt or derive from your numericInputs
-  calculationError: calculationError
+  calculationError: calculationError,
 ): CalculatorResults {
   const { incomeSummary, maxMortgageStats, allSavingsScenarios } = calcOutput;
 
@@ -98,7 +98,7 @@ function transformCalculateAllScenariosOutput(
       ...maxMortgageStats.mortgagePaymentStats,
     },
     scenario:
-      typeof maxMortgageStats.scenario === 'string'
+      typeof maxMortgageStats.scenario === "string"
         ? transformStringScenario(maxMortgageStats.scenario) // handle edge case if needed
         : transformBudgetOutputToScenario(maxMortgageStats.scenario),
   };
@@ -111,16 +111,16 @@ function transformCalculateAllScenariosOutput(
         ...scenarioItem.mortgagePaymentStats,
       },
       scenario: transformBudgetOutputToScenario(scenarioItem.scenarioBudget),
-    })
+    }),
   );
 
   // 4. Combine into the final `CalculatorResults` structure
   const finalResults: CalculatorResults = {
+    error: calculationError,
     incomeSummary: frontendIncomeSummary,
     maxHomePrice,
     savingScenarios,
     monthlyDebt: monthlyDebtValue, // from your logic or numericInputs
-    error: calculationError,
   };
 
   return finalResults;
@@ -131,7 +131,7 @@ function transformCalculateAllScenariosOutput(
  * into the `Scenario` type that the frontend expects.
  */
 function transformBudgetOutputToScenario(
-  budget: BudgetOutput | ComplexBudgetBreakdown
+  budget: BudgetOutput | ComplexBudgetBreakdown,
 ): Scenario {
   // Because BudgetOutput & ComplexBudgetBreakdown have the same base fields:
   return {
