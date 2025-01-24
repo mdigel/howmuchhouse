@@ -204,41 +204,27 @@ export function BasicInputs({ form }: BasicInputsProps) {
           <FormField
             control={form.control}
             name="annualInterestRate"
-            render={({ field }) => {
-              const [placeholderRate, setPlaceholderRate] = React.useState("Enter your interest rate");
-
-              React.useEffect(() => {
-                fetch('https://www.freddiemac.com/pmms/pmms30.json')
-                  .then(res => res.json())
-                  .then(data => {
-                    const currentRate = data.entries[0].value;
-                    setPlaceholderRate(`Current average: ${currentRate}%`);
-                  })
-                  .catch(err => console.error('Failed to fetch mortgage rate:', err));
-              }, []);
-
-              return (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    Interest Rate (%)
-                    <InfoTooltip text="Annual interest rate on the mortgage loan" />
-                  </FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      placeholder={placeholderRate}
-                      {...field}
-                      className="max-w-md text-sm"
-                      style={{ fontSize: '14px' }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center">
+                  Interest Rate (%)
+                  <InfoTooltip text="Annual interest rate on the mortgage loan" />
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    placeholder="Enter your interest rate" 
+                    {...field}
+                    className="max-w-md text-sm"
+                    style={{ fontSize: '14px' }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
 
           <FormField
