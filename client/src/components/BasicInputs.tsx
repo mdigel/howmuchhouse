@@ -100,9 +100,14 @@ export function BasicInputs({ form }: BasicInputsProps) {
   const [interestRateTooltip, setInterestRateTooltip] = React.useState("Annual interest rate on the mortgage loan");
 
   React.useEffect(() => {
+    console.log('Fetching FRED data...');
     fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc')
-      .then(response => response.json())
+      .then(response => {
+        console.log('FRED API Response:', response);
+        return response.json();
+      })
       .then(data => {
+        console.log('FRED API Data:', data);
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
