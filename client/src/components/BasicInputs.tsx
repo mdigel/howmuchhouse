@@ -244,7 +244,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background">
+                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                       <input
                         type="number"
                         min="0"
@@ -252,7 +252,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                         step="0.01"
                         placeholder={ratePlaceholder}
                         {...field}
-                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none"
                         style={{ fontSize: '14px' }}
                       />
                       <div className="pointer-events-none pr-3 text-muted-foreground">%</div>
