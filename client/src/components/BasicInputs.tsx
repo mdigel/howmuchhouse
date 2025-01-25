@@ -132,7 +132,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
   return (
     <Form {...form}>
       <div className="space-y-2 sm:space-y-2">
-        <div className="space-y-2">
+        <div className="space-y-2 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
           <FormField
             control={form.control}
             name="householdIncome"
