@@ -20,6 +20,14 @@ function InfoTooltip({ text }: InfoTooltipProps) {
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    if (isOpen) {
+      const handleClick = () => setIsOpen(false);
+      document.addEventListener('click', handleClick);
+      return () => document.removeEventListener('click', handleClick);
+    }
+  }, [isOpen]);
+
   return (
     <TooltipProvider>
       <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
@@ -42,6 +50,7 @@ function InfoTooltip({ text }: InfoTooltipProps) {
           align={isMobile ? "center" : "start"}
           className="max-w-[280px] touch-none"
           sideOffset={isMobile ? 5 : 4}
+          onClick={(e) => e.stopPropagation()}
         >
           <p className="text-sm">{text}</p>
         </TooltipContent>
