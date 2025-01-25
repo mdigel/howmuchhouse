@@ -245,19 +245,11 @@ export function BasicInputs({ form }: BasicInputsProps) {
                         step="0.01"
                         placeholder={ratePlaceholder}
                         {...field}
-                        className="w-full border-0 px-3 py-2 text-sm focus:outline-none focus:ring-0"
+                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                         style={{ fontSize: '14px' }}
                       />
                       <div className="pointer-events-none pr-3 text-muted-foreground">%</div>
                     </div>
-                    <style jsx>{`
-                      .relative:focus-within {
-                        outline: none;
-                        ring: 2px;
-                        ring-offset: 2px;
-                        ring-ring;
-                      }
-                    `}</style>
                   </div>
                 </FormControl>
                 <FormMessage />
