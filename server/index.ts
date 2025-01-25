@@ -40,10 +40,13 @@ app.use(session({
 
 // CORS for development
 if (!isProduction) {
-  app.use((req, res, next) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Session-Id');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Session-Id');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
@@ -51,7 +54,7 @@ if (!isProduction) {
   });
 }
 
-// Setup Vite or static file serving based on environment
+// Setup server
 const setupServer = async () => {
   try {
     // Register API routes first
@@ -70,10 +73,17 @@ const setupServer = async () => {
     } else {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
+
+      // Serve static files from the dist/public directory
       app.use(express.static(path.join(__dirname, '../dist/public')));
+      app.use('/assets', express.static(path.join(__dirname, '../dist/public/assets')));
 
       // Handle SPA routes
-      app.get('*', (req, res) => {
+      app.get('*', (req: Request, res: Response, next: NextFunction) => {
+        // Skip API routes
+        if (req.path.startsWith('/api/')) {
+          return next();
+        }
         res.sendFile(path.join(__dirname, '../dist/public/index.html'));
       });
     }
