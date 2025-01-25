@@ -96,10 +96,10 @@ export const basicInputSchema = z.object({
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
-  const [defaultInterestRate, setDefaultInterestRate] = useState("6.00");
-  const [interestRateTooltip, setInterestRateTooltip] = useState("Annual interest rate on the mortgage loan");
+  const [defaultInterestRate, setDefaultInterestRate] = React.useState("6.00");
+  const [interestRateTooltip, setInterestRateTooltip] = React.useState("Annual interest rate on the mortgage loan");
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc')
       .then(response => response.json())
       .then(data => {
@@ -114,7 +114,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
       .catch(() => {
         setInterestRateTooltip("Failed to fetch current rates. Using 6% as a general 2025 estimate");
       });
-  }, []);
+  }, [form]);
 
   return (
     <Form {...form}>
