@@ -236,16 +236,19 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   <InfoTooltip text={interestRateTooltip} />
                 </FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    placeholder={ratePlaceholder} 
-                    {...field}
-                    className="max-w-md text-sm"
-                    style={{ fontSize: '14px' }}
-                  />
+                  <div className="relative">
+                    <Input 
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      placeholder={ratePlaceholder} 
+                      {...field}
+                      className="max-w-md text-sm pr-7"
+                      style={{ fontSize: '14px' }}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
