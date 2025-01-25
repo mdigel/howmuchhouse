@@ -111,7 +111,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
-          setRatePlaceholder(`${rate}% is the current avg. rate`);
+          setRatePlaceholder(`${rate}% is the current avg. rate (${date})`);
           setInterestRateTooltip(`Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`);
         }
       })
