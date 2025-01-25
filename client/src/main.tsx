@@ -1,3 +1,14 @@
+// Only configure Vite development features in development mode
+if (import.meta.env.DEV) {
+  window.viteConfig = {
+    server: {
+      hmr: {
+        overlay: false
+      }
+    }
+  };
+}
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -6,14 +17,7 @@ import { Toaster } from "@/components/ui/toaster";
 import App from './App';
 import "./index.css";
 
-const rootElement = document.getElementById("root");
-if (!rootElement) {
-  throw new Error("Failed to find the root element");
-}
-
-const root = createRoot(rootElement);
-
-root.render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
