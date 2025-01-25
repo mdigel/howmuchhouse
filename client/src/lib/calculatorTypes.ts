@@ -15,6 +15,7 @@ export interface AdvancedInputType {
   propertyTaxInput: number | null;
   pretaxContributions: string;
   dependents: string;
+  loanTermYears: string;
 }
 
 export interface IncomeSummary {

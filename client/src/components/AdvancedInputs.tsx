@@ -55,6 +55,8 @@ function InfoTooltip({ text }: InfoTooltipProps) {
 }
 
 export const advancedInputSchema = z.object({
+  loanTermYears: z.string()
+    .default("30"),
   hoaFees: z.string()
     .regex(/^[0-9]*\.?[0-9]*$/, "Please enter a valid number")
     .transform(val => val === "" ? "0" : val)
@@ -261,6 +263,34 @@ export function AdvancedInputs({ form }: { form: ReturnType<typeof useForm<Advan
                             />
                           </div>
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="loanTermYears"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
+                          <span className="flex items-center h-6 sm:h-auto">
+                            Loan Term
+                            <InfoTooltip text="Length of your mortgage loan term in years" />
+                          </span>
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value} defaultValue="30">
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select loan term" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="15">15 Year</SelectItem>
+                            <SelectItem value="20">20 Year</SelectItem>
+                            <SelectItem value="30">30 Year</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
