@@ -1,4 +1,5 @@
-import express from 'express';
+import express from "express";
+import compression from "compression";
 import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { registerRoutes } from './routes';
@@ -15,6 +16,7 @@ console.log('AI_CHARGE_MODE:', process.env.AI_CHARGE_MODE);
 
 // Initialize express app
 const app = express();
+app.use(compression());
 
 // Environment variables and configuration
 const PORT = Number(process.env.PORT) || 3000;
@@ -69,7 +71,7 @@ const setupServer = async () => {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
       app.use(express.static(path.join(__dirname, '../dist/public')));
-      
+
       // Handle SPA routes
       app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../dist/public/index.html'));

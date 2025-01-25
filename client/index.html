@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preload" href="/src/index.css" as="style">
+    <link rel="preload" href="/src/main.tsx" as="script">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <title>How Much House Can I Afford.ai</title>
     <meta name="title" content="How Much House Can I Afford.ai" />
     <meta name="description" content="An affordability calculator with an AI assistant." />
@@ -27,6 +30,11 @@
   <body>
     <div id="root">
       <style>
+        /* Optimize paint performance */
+        * {
+          text-rendering: optimizeSpeed;
+          -webkit-font-smoothing: antialiased;
+        }
         .initial-loader {
           display: flex;
           flex-direction: column;
