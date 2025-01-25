@@ -95,6 +95,26 @@ export const basicInputSchema = z.object({
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
+  const [defaultInterestRate, setDefaultInterestRate] = useState("6.00");
+  const [interestRateTooltip, setInterestRateTooltip] = useState("Annual interest rate on the mortgage loan");
+
+  useEffect(() => {
+    fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc')
+      .then(response => response.json())
+      .then(data => {
+        if (data.observations && data.observations[0]?.value) {
+          const rate = data.observations[0].value;
+          const date = data.observations[0].date;
+          setDefaultInterestRate(rate);
+          setInterestRateTooltip(`Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`);
+          form.setValue('annualInterestRate', rate);
+        }
+      })
+      .catch(() => {
+        setInterestRateTooltip("Failed to fetch current rates. Using 6% as a general 2025 estimate");
+      });
+  }, []);
+
   return (
     <Form {...form}>
       <div className="space-y-2 sm:space-y-2">
@@ -208,7 +228,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
               <FormItem>
                 <FormLabel className="flex items-center">
                   Interest Rate (%)
-                  <InfoTooltip text="Annual interest rate on the mortgage loan" />
+                  <InfoTooltip text={interestRateTooltip} />
                 </FormLabel>
                 <FormControl>
                   <Input 
@@ -216,7 +236,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     min="0"
                     max="100"
                     step="0.01"
-                    placeholder="Enter your interest rate" 
+                    placeholder={`Current rate: ${defaultInterestRate}%`} 
                     {...field}
                     className="max-w-md text-sm"
                     style={{ fontSize: '14px' }}
