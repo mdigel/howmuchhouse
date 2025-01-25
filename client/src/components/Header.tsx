@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
@@ -8,6 +7,7 @@ export function Header() {
   const [location] = useLocation();
 
   const menuItems = [
+    { path: '/affordability-by-income-level', label: 'Income Levels' },
     { path: '/how-it-works', label: 'How It Works?' },
     { path: '/feedback', label: 'Feedback' }
   ];
@@ -30,7 +30,7 @@ export function Header() {
             </div>
             <p className="text-muted-foreground text-xs md:text-base">An affordability calculator with an AI Assistant.</p>
           </Link>
-          
+
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-6">
             {menuItems.map((item) => (
