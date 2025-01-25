@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function Feedback() {
   return (
-    <div className="container mx-auto px-4 py-6 min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-transparent to-background/5">
+    <div className="container mx-auto px-4 py-6 min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-transparent to-[#D2E1FF]/20">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
