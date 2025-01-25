@@ -117,7 +117,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
         }
       })
       .catch(() => {
-        setInterestRateTooltip("Failed to fetch current rates. Using 6% as a general 2025 estimate");
+        setInterestRateTooltip("Failed to fetch current rates. Using 6.5% as a general 2025 estimate");
       });
   }, [form]);
 
