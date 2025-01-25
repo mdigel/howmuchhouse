@@ -244,10 +244,13 @@ export function BasicInputs({ form }: BasicInputsProps) {
                       step="0.01"
                       placeholder={ratePlaceholder} 
                       {...field}
-                      className="max-w-md text-sm pr-8"
-                      style={{ fontSize: '14px' }}
+                      className="max-w-md text-sm"
+                      style={{ fontSize: '14px', paddingRight: '1.5rem' }}
                     />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">%</span>
+                    <span 
+                      className="absolute top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                      style={{ right: '0.5rem' }}
+                    >%</span>
                   </div>
                 </FormControl>
                 <FormMessage />
