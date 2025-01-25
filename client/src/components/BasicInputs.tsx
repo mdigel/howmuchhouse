@@ -101,7 +101,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
 
   React.useEffect(() => {
     console.log('Fetching FRED data...');
-    fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc')
+    fetch('/api/current-rate')
       .then(response => {
         console.log('FRED API Response:', response);
         return response.json();

@@ -1,4 +1,3 @@
-
 import { config } from "./config";
 
 import type { Express, Request, Response } from "express";
@@ -36,6 +35,16 @@ export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
 
   // API Routes
+  app.get("/api/current-rate", async (_req: Request, res: Response) => {
+    try {
+      const response = await fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc');
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("FRED API Error:", error);
+      res.status(500).json({ error: "Failed to fetch interest rate" });
+    }
+  });
   app.post("/api/calculate", async (req: Request, res: Response) => {
     console.log("Received calculator request:", req.body);
     try {
