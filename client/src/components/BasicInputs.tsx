@@ -96,7 +96,7 @@ export const basicInputSchema = z.object({
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
-  const [defaultInterestRate, setDefaultInterestRate] = React.useState("6.00");
+  const [ratePlaceholder, setRatePlaceholder] = React.useState("Enter interest rate");
   const [interestRateTooltip, setInterestRateTooltip] = React.useState("Annual interest rate on the mortgage loan");
 
   React.useEffect(() => {
@@ -111,9 +111,8 @@ export function BasicInputs({ form }: BasicInputsProps) {
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
-          setDefaultInterestRate(rate);
+          setRatePlaceholder(`Current average rate as of ${date}: ${rate}%`);
           setInterestRateTooltip(`Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`);
-          form.setValue('annualInterestRate', rate);
         }
       })
       .catch(() => {
@@ -242,7 +241,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                     min="0"
                     max="100"
                     step="0.01"
-                    placeholder={`Current rate: ${defaultInterestRate}%`} 
+                    placeholder={ratePlaceholder} 
                     {...field}
                     className="max-w-md text-sm"
                     style={{ fontSize: '14px' }}
