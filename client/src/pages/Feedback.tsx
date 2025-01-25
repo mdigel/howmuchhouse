@@ -16,10 +16,7 @@ export default function Feedback() {
           </svg>
           <span className="text-base">ideas, feedback, bugs</span>
         </a>
-        <div className="space-y-2 text-sm text-muted-foreground text-center">
-          <p>© {new Date().getFullYear()} A Plymouth Holding Production</p>
-          <p className="text-xs">Talk to a human before making a huge financial decision.</p>
-        </div>
+        
       </div>
     </div>
   );
