@@ -252,7 +252,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                         step="0.01"
                         placeholder={ratePlaceholder}
                         {...field}
-                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none"
+                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         style={{ fontSize: '14px' }}
                       />
                       <div className="pointer-events-none pr-3 text-muted-foreground">%</div>
