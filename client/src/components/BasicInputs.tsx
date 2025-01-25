@@ -178,15 +178,14 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                      <div className="pointer-events-none pl-3 text-muted-foreground">$</div>
-                      <Input 
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="Enter your down payment amount" 
-                        {...field}
-                        className="border-0"
+                  <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                    <div className="pointer-events-none pl-3 text-muted-foreground">$</div>
+                    <Input 
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Enter your down payment amount" 
+                      {...field}
+                      className="border-0"
                       value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
