@@ -146,7 +146,7 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                   </span>
                 </div>
                 <span className="self-start px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
-                  Not Recommended
+                  House Poor Risk
                 </span>
               </div>
             </div>
