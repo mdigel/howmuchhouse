@@ -12,12 +12,6 @@ import {
   type CalculateAllScenariosInput,
 } from "./calculatorLogic/Orchestrator";
 
-// Initialize Stripe
-const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
-const stripeSecretKey = isProduction 
-  ? process.env.STRIPE_SECRET_KEY 
-  : process.env.STRIPE_TEST_SECRET_KEY;
-
 // Define income levels and states
 const incomes = [
   "30k", "50k", "70k", "90k", "110k",
@@ -30,6 +24,12 @@ const states = [
   "illinois", "pennsylvania", "ohio", "georgia",
   "michigan", "north-carolina"
 ];
+
+// Initialize Stripe
+const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
+const stripeSecretKey = isProduction 
+  ? process.env.STRIPE_SECRET_KEY 
+  : process.env.STRIPE_TEST_SECRET_KEY;
 
 console.log('Stripe Mode:', isProduction ? 'Production' : 'Test');
 
@@ -67,8 +67,14 @@ export function registerRoutes(app: Express): Server {
   console.log("Registering core API routes...");
   const httpServer = createServer(app);
 
-  // SSR Routes
-  app.get("/affordability-by-income-level", (_req: Request, res: Response) => {
+  // SSR Routes - Only handle non-API requests
+  app.get("/affordability-by-income-level", (req: Request, res: Response) => {
+    // Check if this is an API request
+    const isApiRequest = req.headers.accept?.includes('application/json');
+    if (isApiRequest) {
+      return res.json({ message: 'API endpoint not available' });
+    }
+
     let content = `
       <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Home Affordability by Income Level</h1>
@@ -98,9 +104,13 @@ export function registerRoutes(app: Express): Server {
   // Dynamic income/state route
   app.get("/:income/:state", async (req: Request, res: Response) => {
     const { income, state } = req.params;
+    const isApiRequest = req.headers.accept?.includes('application/json');
 
     // Validate parameters
     if (!incomes.includes(income) || !states.includes(state.toLowerCase())) {
+      if (isApiRequest) {
+        return res.status(404).json({ error: 'Invalid income or state' });
+      }
       return res.status(404).send(generatePageHTML("Page Not Found", `
         <div class="container mx-auto px-4 py-8">
           <h1 class="text-3xl font-bold mb-6">Page Not Found</h1>
@@ -113,19 +123,26 @@ export function registerRoutes(app: Express): Server {
     }
 
     try {
-      // Calculate affordability using existing logic
       const incomeValue = parseInt(income.replace('k', '000'));
       const calculatorInput: CalculateAllScenariosInput = {
         householdIncome: incomeValue,
-        downPayment: incomeValue * 0.2, // 20% down payment example
-        monthlyDebt: 500, // Example monthly debt
-        annualInterestRate: 7.5, // Example interest rate
+        downPayment: incomeValue * 0.2,
+        monthlyDebt: 500,
+        annualInterestRate: 7.5,
         loanTermYears: 30,
         state: state,
         filingStatus: "single"
       };
 
       const results = calculateAllScenarios(calculatorInput);
+
+      if ('error' in results) {
+        throw new Error(results.error);
+      }
+
+      if (isApiRequest) {
+        return res.json(results);
+      }
 
       const content = `
         <div class="container mx-auto px-4 py-8">
@@ -135,8 +152,8 @@ export function registerRoutes(app: Express): Server {
           <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
             <h2 class="text-2xl font-semibold mb-4">Summary</h2>
             <div class="space-y-4">
-              <p><strong>Maximum Home Price:</strong> $${new Intl.NumberFormat().format(results.maxMortgageStats.mortgagePaymentStats.purchasePrice)}</p>
-              <p><strong>Monthly Payment:</strong> $${new Intl.NumberFormat().format(results.maxMortgageStats.mortgagePaymentStats.monthlyMortgagePayment)}</p>
+              <p><strong>Maximum Home Price:</strong> $${new Intl.NumberFormat().format(results.maxMortgageStats?.mortgagePaymentStats?.purchasePrice || 0)}</p>
+              <p><strong>Monthly Payment:</strong> $${new Intl.NumberFormat().format(results.maxMortgageStats?.mortgagePaymentStats?.monthlyMortgagePayment || 0)}</p>
               <p><strong>Down Payment:</strong> $${new Intl.NumberFormat().format(calculatorInput.downPayment)}</p>
             </div>
           </div>
@@ -152,6 +169,9 @@ export function registerRoutes(app: Express): Server {
       ));
     } catch (error) {
       console.error("Error generating affordability page:", error);
+      if (isApiRequest) {
+        return res.status(500).json({ error: 'Failed to calculate affordability' });
+      }
       res.status(500).send(generatePageHTML("Error", `
         <div class="container mx-auto px-4 py-8">
           <h1 class="text-3xl font-bold mb-6">Error</h1>
