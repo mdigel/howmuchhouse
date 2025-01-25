@@ -145,9 +145,11 @@ export function AffordabilityResults({ results, isLoading = false }: Affordabili
                     {formatCurrency(results.maxHomePrice.mortgagePaymentStats.purchasePrice).split(".")[0]}
                   </span>
                 </div>
-                <span className="self-start px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
-                  House Poor Risk
-                </span>
+                {results.maxHomePrice.scenario.savings.percentage <= 0.05 && (
+                  <span className="self-start px-3 py-1 text-sm font-medium bg-destructive/15 text-destructive rounded-lg border border-destructive/30">
+                    House Poor Risk
+                  </span>
+                )}
               </div>
             </div>
           </AccordionTrigger>
