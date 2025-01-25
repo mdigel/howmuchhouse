@@ -145,14 +145,14 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                    <div className="pointer-events-none pl-3 text-muted-foreground">$</div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input 
                       type="text"
                       inputMode="numeric"
                       placeholder="Enter your annual income" 
                       {...field}
-                      className="border-0"
+                      className="max-w-md pl-7"
                       value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
@@ -178,14 +178,14 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                    <div className="pointer-events-none pl-3 text-muted-foreground">$</div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                     <Input 
                       type="text"
                       inputMode="numeric"
                       placeholder="Enter your down payment amount" 
                       {...field}
-                      className="border-0"
+                      className="max-w-md pl-7"
                       value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
@@ -213,14 +213,13 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                      <div className="pointer-events-none pl-3 text-muted-foreground">$</div>
-                      <Input 
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="Enter your total monthly debt" 
-                        {...field}
-                        className="border-0"
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                    <Input 
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="Enter your total monthly debt" 
+                      {...field}
+                      className="max-w-md pl-7"
                       value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
                       onChange={(e) => {
                         const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
@@ -245,7 +244,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background">
                       <input
                         type="number"
                         min="0"
@@ -253,7 +252,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                         step="0.01"
                         placeholder={ratePlaceholder}
                         {...field}
-                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                         style={{ fontSize: '14px' }}
                       />
                       <div className="pointer-events-none pr-3 text-muted-foreground">%</div>
