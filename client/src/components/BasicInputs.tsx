@@ -140,10 +140,9 @@ export function BasicInputs({ form }: BasicInputsProps) {
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
                   <span className="flex items-center h-6 sm:h-auto">
-                    Household Income
+                    Household Income (Yearly)
                     <InfoTooltip text="Total annual income before taxes from all sources in your household" />
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0 pt-1 pb-2">(per year)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -174,10 +173,9 @@ export function BasicInputs({ form }: BasicInputsProps) {
               <FormItem>
                 <FormLabel className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1">
                   <span className="flex items-center h-6 sm:h-auto">
-                    Down Payment
+                    Downpayment
                     <InfoTooltip text="Amount of money you can put towards the purchase of your home. This does not include closing costs." />
                   </span>
-                  <span className="text-xs sm:text-sm text-muted-foreground -mt-2 sm:mt-0 pt-1 pb-2">(available for down payment)</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
