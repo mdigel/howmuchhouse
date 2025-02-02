@@ -1,9 +1,16 @@
-// Only configure Vite development features in development mode
+// Configure error handling and HMR
 if (import.meta.env.DEV) {
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+  });
+  
   window.viteConfig = {
     server: {
       hmr: {
-        overlay: false
+        overlay: false,
+        timeout: 30000,
+        protocol: 'ws',
+        host: '0.0.0.0'
       }
     }
   };
