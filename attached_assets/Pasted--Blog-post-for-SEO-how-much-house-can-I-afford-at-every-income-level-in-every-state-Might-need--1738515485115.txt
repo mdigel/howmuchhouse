@@ -1,0 +1,93 @@
+# Blog post for SEO… how much house can I afford… at every income level in every state.
+
+Might need this for creating custom lines: https://www.instagram.com/share/BAUtdGXcii
+
+####
+
+We’re enhancing our existing full stack Node.js + Express application to server-side render a set of dynamic routes. Each route will target a combination of {income} and {state}, generating a unique SEO-friendly page titled, “How much house can I afford with {x}k salary in {State}.” We’ll also create a single “Affordability by Income Level” page listing different income brackets, each linking to the relevant SSR route. This lets us easily manage unique content for each scenario—without manually creating separate files—and ensure search engines can crawl and index the pages effectively. The “Affordability by Income Level” page should be added to the main menu. Below is code that should be used as inspiration for what to insert into the server code. 
+
+/***************************************************
+
+- Node.js + Express Example for SSR with dynamic
+- routes: /{income}/{state}
+***************************************************/
+
+const express = require("express");
+const app = express();
+
+// 1) Define the incomes we want to cover
+const incomes = [
+"30k", "50k", "70k", "90k", "110k",
+"130k", "150k", "170k", "190k",
+"210k", "250k", "300k", "400k"
+];
+
+// 2) Define a small set of states for the demo
+// (Add all 50 states if you want!)
+const states = [
+"california",
+"texas",
+"new-york",
+"florida"
+];
+
+// 3) Here is where you'd store your unique content,
+// e.g. "title" and "body" for each combo of income+state.
+//
+// For a real project, consider storing this in a database
+// or auto-generating with OpenAI and caching the results.
+//
+// Example key format: "<income>_<state>"
+const uniqueContentMap = {
+"30k_california": {
+title: "How much house can I afford with 30k salary in California",
+body: "With a $30k salary in California, you’ll want to consider higher coastal property taxes..."
+},
+"50k_california": {
+title: "How much house can I afford with 50k salary in California",
+body: "For a $50k salary in California, budgeting for the Bay Area might be tough, but inland cities..."
+},
+// ...add more combos, or generate them dynamically.
+};
+
+// 4) "Affordability by Income Level" page (instead of "by State")
+// Lists each income bracket, and from there you can link to states
+app.get("/affordability-by-income-level", (req, res) => {
+let pageHTML =     `<h1>Affordability by Income Level</h1>     <p>Select an income level below to see available states:</p>     <ul>`  ;
+
+incomes.forEach((income) => {
+// We'll link to a sub-page (just pick the first state as an example)
+// or build out a link to a mini-list of states.
+pageHTML += `<li><a href="/${income}/california">${income} - California</a></li>`;
+// You could link to multiple states if you'd like:
+// states.forEach((st) => {
+//   pageHTML += \`<li><a href="/${income}/${st}">${income} - ${st}</a></li>\\`;
+// });
+});
+
+pageHTML += "</ul>";
+res.send(pageHTML);
+});
+
+// 5) Dynamic route: /:income/:state
+// Renders title + unique content if available
+app.get("/:income/:state", (req, res) => {
+const { income, state } = req.params;
+const key = `${income}_${state}`;
+
+// If we have unique content for this key, display it
+if (uniqueContentMap[key]) {
+const { title, body } = uniqueContentMap[key];
+const pageHTML =       `<h1>${title}</h1>       <p>${body}</p>`    ;
+res.send(pageHTML);
+
+} else {
+// Otherwise, show a default or 404 message
+res.status(404).send(      `<h1>Page Not Found</h1>       <p>We don't have a custom scenario for ${income} in ${state} yet.</p>`    );
+}
+});
+
+// 6) Start the server on Replit's default port
+app.listen(3000, () => {
+console.log("Server is running on port 3000");
+});
