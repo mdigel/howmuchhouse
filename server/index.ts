@@ -52,7 +52,7 @@ if (!isProduction) {
   });
 }
 
-// Setup server
+// Setup Vite or static file serving based on environment
 const setupServer = async () => {
   try {
     // Register API routes first
@@ -64,41 +64,36 @@ const setupServer = async () => {
       res.json({ status: 'healthy' });
     });
 
+    // Register SEO routes after API routes but before the SPA handling
+    console.log('Registering SEO routes...');
+    app.use('/', (req: Request, res: Response, next: NextFunction) => {
+      // Check if the route is a SEO route
+      if (req.path === '/affordability-by-income-level' || 
+          /^\/\d+k\/[a-z-]+$/.test(req.path)) {
+        seoRoutes(req, res, next);
+      } else {
+        next();
+      }
+    });
+
     if (!isProduction) {
-      // Development mode
+      // Development mode: Setup Vite
       console.log('Setting up Vite in development mode...');
-
-      // Register SEO routes before Vite middleware
-      console.log('Registering SEO routes...');
-      app.use((req: Request, res: Response, next: NextFunction) => {
-        if (req.path === '/affordability-by-income-level' || /^\/\d+k\/[a-z-]+$/.test(req.path)) {
-          seoRoutes(req, res, next);
-        } else {
-          next();
-        }
-      });
-
       await setupVite(app, server);
     } else {
-      // Production mode
+      // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
-
-      // Register SEO routes first
-      console.log('Registering SEO routes...');
-      app.use((req: Request, res: Response, next: NextFunction) => {
-        if (req.path === '/affordability-by-income-level' || /^\/\d+k\/[a-z-]+$/.test(req.path)) {
-          seoRoutes(req, res, next);
-        } else {
-          next();
-        }
-      });
-
-      // Serve static files
       app.use(express.static(path.join(__dirname, '../dist/public')));
 
-      // SPA fallback
-      app.get('*', (req: Request, res: Response) => {
-        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+      // Handle SPA routes
+      app.get('*', (req: Request, res: Response, next: NextFunction) => {
+        // Check if it's a SEO route first
+        if (req.path === '/affordability-by-income-level' || 
+            /^\/\d+k\/[a-z-]+$/.test(req.path)) {
+          next();
+        } else {
+          res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+        }
       });
     }
 
