@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -21,74 +20,82 @@
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+  <script>
+    const states = [
+      { id: 'alabama' },
+      { id: 'alaska' },
+      { id: 'arizona' },
+      { id: 'arkansas' },
+      { id: 'california' },
+      { id: 'colorado' },
+      { id: 'connecticut' },
+      { id: 'delaware' },
+      { id: 'florida' },
+      { id: 'georgia' },
+      { id: 'hawaii' },
+      { id: 'idaho' },
+      { id: 'illinois' },
+      { id: 'indiana' },
+      { id: 'iowa' },
+      { id: 'kansas' },
+      { id: 'kentucky' },
+      { id: 'louisiana' },
+      { id: 'maine' },
+      { id: 'maryland' },
+      { id: 'massachusetts' },
+      { id: 'michigan' },
+      { id: 'minnesota' },
+      { id: 'mississippi' },
+      { id: 'missouri' },
+      { id: 'montana' },
+      { id: 'nebraska' },
+      { id: 'nevada' },
+      { id: 'new-hampshire' },
+      { id: 'new-jersey' },
+      { id: 'new-mexico' },
+      { id: 'new-york' },
+      { id: 'north-carolina' },
+      { id: 'north-dakota' },
+      { id: 'ohio' },
+      { id: 'oklahoma' },
+      { id: 'oregon' },
+      { id: 'pennsylvania' },
+      { id: 'rhode-island' },
+      { id: 'south-carolina' },
+      { id: 'south-dakota' },
+      { id: 'tennessee' },
+      { id: 'texas' },
+      { id: 'utah' },
+      { id: 'vermont' },
+      { id: 'virginia' },
+      { id: 'washington' },
+      { id: 'west-virginia' },
+      { id: 'wisconsin' },
+      { id: 'wyoming' },
+    ];
+
+    const incomes = [
+        '70k',
+        '90k',
+        '110k',
+        '130k',
+        '150k',
+        '170k',
+        '190k',
+        '210k',
+        '250k',
+        '300k',
+        '350k',
+        '400k',
+        '450k',
+        '+500k',
+    ];
+  </script>
+  ${states.map(state => 
+  incomes.map(income => `
   <url>
-    <loc>https://howmuchhousecaniafford.ai/70k/california</loc>
+    <loc>https://howmuchhousecaniafford.ai/${income}/${state.id}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/90k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/110k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/130k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/150k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/170k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/190k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/210k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/250k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/300k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/350k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/400k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/450k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://howmuchhousecaniafford.ai/+500k/california</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
+  </url>`).join('')).join('')}
 </urlset>
