@@ -30,16 +30,9 @@ export default defineConfig({
     cssMinify: true,
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'vendor';
-            }
-          }
-          if (id.includes('components/ui/')) {
-            return 'ui';
-          }
-          return null;
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@/components/ui'],
         }
       }
     }
