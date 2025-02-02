@@ -65,8 +65,24 @@ export interface PageContent {
 
 // Map to store descriptions from CSV
 const descriptions: { [key: string]: { [key: string]: string } } = {
-  "alabama": {"70k": "With a 70k income, you're well-positioned to afford a home in Alabama...", /* CSV data */},
-  /* Other states and incomes from CSV */
+  "alabama": {
+    "70k": `With a 70k income, you're well-positioned to afford a home in Alabama. 
+You could target properties between $210k and $280k, depending on your down payment and other expenses. 
+In Columbus, where the median home price is around $310,000, you'll have a variety of options.`,
+    "90k": `With a 90k income, you're well-positioned to afford a home in Alabama. 
+You could target properties between $270k and $360k, depending on your down payment and other expenses.`,
+    "110k": `With a 110k income, you're well-positioned to afford a home in Alabama. 
+You could target properties between $330k and $440k, depending on your down payment and other expenses.`,
+    // Continue for all incomes
+  },
+  "alaska": {
+    "70k": `With a 70k income, you're well-positioned to afford a home in Alaska. 
+You could target properties between $210k and $280k, depending on your down payment and other expenses.`,
+    "90k": `With a 90k income, you're well-positioned to afford a home in Alaska. 
+You could target properties between $270k and $360k, depending on your down payment and other expenses.`,
+    // Continue for all incomes
+  },
+  // Continue for all states
 };
 
 export function generatePageContent(income: string, state: string): PageContent {
