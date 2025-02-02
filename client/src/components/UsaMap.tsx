@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 
 interface State {
   id: string;
@@ -14,11 +14,11 @@ interface UsaMapProps {
 }
 
 export function UsaMap({ selectedIncome, onStateClick }: UsaMapProps) {
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
 
   const handleStateClick = (stateId: string) => {
     onStateClick(stateId);
-    navigate(`/${selectedIncome}/${stateId}`);
+    setLocation(`/${selectedIncome}/${stateId}`);
   };
 
   return (
@@ -37,14 +37,14 @@ export function UsaMap({ selectedIncome, onStateClick }: UsaMapProps) {
               whileHover={{ opacity: 1, scale: 1.02 }}
               transition={{ duration: 0.2 }}
               onClick={() => handleStateClick(state.id)}
-              css={{
+              style={{
                 fill: "rgb(229 231 235)",
                 stroke: "rgb(255 255 255)",
                 strokeWidth: "1",
                 cursor: "pointer",
-                "&:hover": {
-                  fill: "rgb(59 130 246)",
-                }
+              }}
+              whileHover={{
+                fill: "rgb(59 130 246)",
               }}
             />
           ))}
