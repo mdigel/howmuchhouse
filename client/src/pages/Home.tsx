@@ -8,6 +8,7 @@ import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
+import { InteractiveAffordability } from "@/components/InteractiveAffordability";
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
@@ -213,33 +214,7 @@ export default function Home() {
               <AffordabilityResults results={results} />
             </div>
           ) : (
-            <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
-              <h2 className="text-2xl font-semibold">Let’s Find What You Can Afford 🏡</h2>
-              {/* <p className="text-muted-foreground mb-6">Fill in your details on the left to see:</p> */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">💰</span>
-                  <div>
-                    <h3 className="font-medium">Maximum Home Price</h3>
-                    <p className="text-sm text-muted-foreground">See the highest price the bank will likely allow</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">📊</span>
-                  <div>
-                    <h3 className="font-medium">Comfortable Home Prices</h3>
-                    <p className="text-sm text-muted-foreground">Purchase & save a significant portion of your income</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🤖</span>
-                  <div>
-                    <h3 className="font-medium">AI Personalized Advisor</h3>
-                    <p className="text-sm text-muted-foreground">Get analysis for your exact situation</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <InteractiveAffordability />
           )}
         </div>
       </div>
