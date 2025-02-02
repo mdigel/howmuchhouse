@@ -68,7 +68,7 @@ router.get('/affordability-by-income-level', (req, res) => {
 });
 
 // Dynamic income/state pages
-router.get('/:income/:state', (req, res) => {
+router.get('/:income/:state', async (req, res) => {
   const { income, state } = req.params;
 
   // Validate income and state
@@ -76,7 +76,7 @@ router.get('/:income/:state', (req, res) => {
     return res.status(404).send('Page not found');
   }
 
-  const pageContent = generatePageContent(income, state);
+  const pageContent = await generatePageContent(income, state);
 
   const content = `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

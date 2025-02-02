@@ -62,9 +62,9 @@ export interface PageContent {
   metaDescription: string;
 }
 
-export function generatePageContent(income: string, state: string): PageContent {
+export async function generatePageContent(income: string, state: string): Promise<PageContent> {
   // Import descriptions here to avoid circular dependency
-  const { descriptions } = require('./descriptions');
+  const { descriptions } = await import('./descriptions.js');
   const stateName = states.find(s => s.id === state.toLowerCase())?.name || state;
   const title = `How Much ${
     '<span className="relative inline-block">House<span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span></span>'
