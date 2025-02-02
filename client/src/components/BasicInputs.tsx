@@ -356,21 +356,24 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <div className="relative flex max-w-md items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        placeholder={ratePlaceholder}
-                        {...field}
-                        className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none"
-                        style={{ fontSize: "14px" }}
-                      />
-                      <div className="pointer-events-none pr-3 text-muted-foreground">
-                        %
+                    <div className="relative">
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          placeholder={ratePlaceholder}
+                          {...field}
+                          className="max-w-md pr-7"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^\d.]/g, '');
+                            if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                              field.onChange(value);
+                            }
+                          }}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+                          %
+                        </div>
                       </div>
-                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />
