@@ -48,7 +48,12 @@ function computeAnnualTax(referenceHomePrice: number, taxRate: number): number {
 }
 
 export function generateDescription(stateName: string, incomeStr: string): string {
-  const state = stateData[stateName];
+  // Ensure first letter is capitalized for state data lookup
+  const formattedStateName = stateName.charAt(0).toUpperCase() + stateName.slice(1).toLowerCase();
+  const state = stateData[formattedStateName];
+  if (!state) {
+    return `With a ${incomeStr} income, you're exploring home ownership opportunities in ${stateName}. Consider factors like local market conditions, property taxes, and cost of living when determining your ideal home budget.`;
+  }
   const affordability = getAffordabilityData(incomeStr);
   const annualTax = computeAnnualTax(state.medianPriceMajorCity, state.propertyTaxRate);
 
