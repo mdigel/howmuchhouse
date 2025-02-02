@@ -42,16 +42,20 @@ export function getLayout(title: string, metaDescription: string, content: strin
                    Affordability By Income
                 </a>
               </div>
-              <!-- Mobile menu button -->
+              <!-- Hamburger menu button -->
               <div class="flex items-center sm:hidden">
                 <button type="button" 
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                        class="hamburger-menu inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
                         aria-controls="mobile-menu"
                         aria-expanded="false">
                   <span class="sr-only">Open main menu</span>
-                  <!-- Menu icon -->
-                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <!-- Hamburger icon -->
+                  <svg class="block h-6 w-6" id="hamburger-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  <!-- Close icon -->
+                  <svg class="hidden h-6 w-6" id="close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
@@ -59,7 +63,7 @@ export function getLayout(title: string, metaDescription: string, content: strin
           </div>
 
           <!-- Mobile menu -->
-          <div class="sm:hidden" id="mobile-menu">
+          <div class="hidden sm:hidden" id="mobile-menu">
             <div class="pt-2 pb-3 space-y-1">
               <a href="/" 
                  class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
@@ -91,12 +95,18 @@ export function getLayout(title: string, metaDescription: string, content: strin
           </div>
         </footer>
         <script>
-          // Mobile menu toggle
-          document.querySelector('button[aria-controls="mobile-menu"]').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
+          // Hamburger menu toggle with animation
+          const hamburgerButton = document.querySelector('.hamburger-menu');
+          const mobileMenu = document.getElementById('mobile-menu');
+          const hamburgerIcon = document.getElementById('hamburger-icon');
+          const closeIcon = document.getElementById('close-icon');
+
+          hamburgerButton.addEventListener('click', function() {
             const isExpanded = this.getAttribute('aria-expanded') === 'true';
             this.setAttribute('aria-expanded', !isExpanded);
             mobileMenu.classList.toggle('hidden');
+            hamburgerIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
           });
         </script>
       </body>
