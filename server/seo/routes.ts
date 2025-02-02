@@ -122,7 +122,7 @@ router.get("/:income/:state", async (req, res) => {
         <div class="px-4 py-5 sm:p-6">
           <h1 class="text-3xl font-bold text-gray-900 mb-6">${pageContent.title}</h1>
           <div class="prose prose-lg text-gray-600">
-            <p class="mb-6">${pageContent.description}</p>
+            ${pageContent.description.split('\n\n').map(p => `<p class="mb-6">${p}</p>`).join('')}
             <div class="mt-8">
               <a 
                 href="/affordability-by-income-level"
