@@ -32,9 +32,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: Object.keys(require.cache).filter(id => 
-            id.includes('components/ui/') && !id.endsWith('.d.ts')
-          )
+          ui: ['@/components/ui/button', '@/components/ui/dialog', '@/components/ui/input']
         }
       }
     }
