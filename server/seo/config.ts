@@ -70,7 +70,7 @@ export function generatePageContent(income: string, state: string): PageContent 
   } Can I Afford on a ${
     '<span className="relative inline-block">' + income + ' Income<span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span></span>'
   } in ${
-    '<span className="relative inline-block">' + stateName + '<span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span></span>'
+    '<span className="relative inline-block">' + stateName + '<span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span></span>'
   }?`;
   const description = `Discover the home price range you can afford with a ${income} annual salary in ${stateName}. Get detailed insights into your buying power based on local market conditions, taxes, and living costs.`;
   const metaDescription = `Calculate your home buying power with a ${income} salary in ${stateName}. Get personalized insights on affordable house prices, monthly payments, and local market factors.`;
