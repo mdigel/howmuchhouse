@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
@@ -8,8 +7,10 @@ export function Header() {
   const [location] = useLocation();
 
   const menuItems = [
+    { path: '/', label: 'Calculator' },
     { path: '/how-it-works', label: 'How It Works?' },
-    { path: '/feedback', label: 'Feedback' }
+    { path: '/feedback', label: 'Feedback' },
+    { path: '/affordability-by-income-level', label: 'Affordability By Income' }
   ];
 
   return (
@@ -30,7 +31,7 @@ export function Header() {
             </div>
             <p className="text-muted-foreground text-xs md:text-base">An affordability calculator with an AI Assistant.</p>
           </Link>
-          
+
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-6">
             {menuItems.map((item) => (
@@ -51,6 +52,8 @@ export function Header() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 hover:bg-accent rounded-md"
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMenuOpen ? (
               <X className="h-6 w-6" />
