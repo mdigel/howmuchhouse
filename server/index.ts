@@ -52,7 +52,7 @@ if (!isProduction) {
   });
 }
 
-// Setup Vite or static file serving based on environment
+// Setup server with proper middleware order
 const setupServer = async () => {
   try {
     // Register API routes first
@@ -64,16 +64,20 @@ const setupServer = async () => {
       res.json({ status: 'healthy' });
     });
 
-    // Register SEO routes after API routes but before the SPA handling
+    // Register SEO routes before any SPA handling
     console.log('Registering SEO routes...');
-    app.use('/', (req: Request, res: Response, next: NextFunction) => {
+    const seoRoutePaths = ['/affordability-by-income-level', /^\/\d+k\/[a-z-]+$/];
+
+    // Middleware to handle SEO routes
+    app.use((req: Request, res: Response, next: NextFunction) => {
       // Check if the route is a SEO route
-      if (req.path === '/affordability-by-income-level' || 
-          /^\/\d+k\/[a-z-]+$/.test(req.path)) {
-        seoRoutes(req, res, next);
-      } else {
-        next();
+      if (seoRoutePaths.some(path => 
+          typeof path === 'string' 
+            ? req.path === path 
+            : path.test(req.path))) {
+        return seoRoutes(req, res, next);
       }
+      next();
     });
 
     if (!isProduction) {
@@ -85,15 +89,16 @@ const setupServer = async () => {
       console.log('Setting up static file serving in production mode...');
       app.use(express.static(path.join(__dirname, '../dist/public')));
 
-      // Handle SPA routes
+      // Handle SPA routes (but not SEO routes)
       app.get('*', (req: Request, res: Response, next: NextFunction) => {
-        // Check if it's a SEO route first
-        if (req.path === '/affordability-by-income-level' || 
-            /^\/\d+k\/[a-z-]+$/.test(req.path)) {
-          next();
-        } else {
-          res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+        // Skip SEO routes
+        if (seoRoutePaths.some(path => 
+            typeof path === 'string' 
+              ? req.path === path 
+              : path.test(req.path))) {
+          return next();
         }
+        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
       });
     }
 
