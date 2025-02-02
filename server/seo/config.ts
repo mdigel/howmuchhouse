@@ -63,27 +63,7 @@ export interface PageContent {
   metaDescription: string;
 }
 
-// Map to store descriptions from CSV
-const descriptions: { [key: string]: { [key: string]: string } } = {
-  "alabama": {
-    "70k": `With a 70k income, you're well-positioned to afford a home in Alabama. 
-You could target properties between $210k and $280k, depending on your down payment and other expenses. 
-In Columbus, where the median home price is around $310,000, you'll have a variety of options.`,
-    "90k": `With a 90k income, you're well-positioned to afford a home in Alabama. 
-You could target properties between $270k and $360k, depending on your down payment and other expenses.`,
-    "110k": `With a 110k income, you're well-positioned to afford a home in Alabama. 
-You could target properties between $330k and $440k, depending on your down payment and other expenses.`,
-    // Continue for all incomes
-  },
-  "alaska": {
-    "70k": `With a 70k income, you're well-positioned to afford a home in Alaska. 
-You could target properties between $210k and $280k, depending on your down payment and other expenses.`,
-    "90k": `With a 90k income, you're well-positioned to afford a home in Alaska. 
-You could target properties between $270k and $360k, depending on your down payment and other expenses.`,
-    // Continue for all incomes
-  },
-  // Continue for all states
-};
+import { descriptions } from './descriptions';
 
 export function generatePageContent(income: string, state: string): PageContent {
   const stateName = states.find(s => s.id === state.toLowerCase())?.name || state;
@@ -98,7 +78,7 @@ export function generatePageContent(income: string, state: string): PageContent 
   // Get description from CSV mapping
   const description = descriptions[state.toLowerCase()]?.[income] || 
     `Discover the home price range you can afford with a ${income} annual salary in ${stateName}. Get detailed insights into your buying power based on local market conditions, taxes, and living costs.`;
-  
+
   const metaDescription = `Calculate your home buying power with a ${income} salary in ${stateName}. Get personalized insights on affordable house prices, monthly payments, and local market factors.`;
 
   return { title, description, metaDescription };
