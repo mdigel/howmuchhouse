@@ -34,7 +34,11 @@ export function UsaMap({ selectedIncome, onStateClick }: UsaMapProps) {
               d={state.d}
               className="state-path"
               initial={{ opacity: 0.7 }}
-              whileHover={{ opacity: 1, scale: 1.02 }}
+              whileHover={{
+                opacity: 1,
+                scale: 1.02,
+                fill: "rgb(59 130 246)",
+              }}
               transition={{ duration: 0.2 }}
               onClick={() => handleStateClick(state.id)}
               style={{
@@ -42,9 +46,6 @@ export function UsaMap({ selectedIncome, onStateClick }: UsaMapProps) {
                 stroke: "rgb(255 255 255)",
                 strokeWidth: "1",
                 cursor: "pointer",
-              }}
-              whileHover={{
-                fill: "rgb(59 130 246)",
               }}
             />
           ))}

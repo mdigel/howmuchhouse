@@ -4,23 +4,12 @@ import { getLayout } from './layout';
 
 const router = Router();
 
-// Main affordability index page - now with interactive components
-router.get('/affordability-by-income-level', (req, res) => {
-  const content = `
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  `;
-
-  const html = getLayout(
-    'Interactive Home Affordability Calculator | Find Your Perfect Price Range',
-    'Explore home affordability across different states with our interactive calculator. Use the slider to set your income and click on any state to see detailed insights.',
-    content
-  );
-
-  res.send(html);
+// Main affordability index page - redirect to the React app
+router.get('/affordability-by-income-level', (_req, res) => {
+  res.redirect('/');
 });
 
-// Keep existing dynamic income/state pages route
+// Dynamic income/state pages - redirect to the React app
 router.get('/:income/:state', (req, res) => {
   const { income, state } = req.params;
 
@@ -29,16 +18,8 @@ router.get('/:income/:state', (req, res) => {
     return res.status(404).send('Page not found');
   }
 
-  const pageContent = generatePageContent(income, state);
-
-  const content = `
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  `;
-
-  const html = getLayout(pageContent.title, pageContent.metaDescription, content);
-
-  res.send(html);
+  // Redirect to the React app with the parameters
+  res.redirect(`/?income=${income}&state=${state}`);
 });
 
 export default router;

@@ -42,8 +42,15 @@ export default function Home() {
   // Add event listeners for state restoration after payment
   useEffect(() => {
     const restoreAndCalculate = async () => {
-      const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
-        const { basic, advanced } = event.detail.inputs;
+      const handleRestoreInputs = async (event: Event) => {
+        const customEvent = event as CustomEvent<{
+          inputs: {
+            basic?: Record<string, string | number>;
+            advanced?: Record<string, string | number | null>;
+          };
+        }>;
+
+        const { basic, advanced } = customEvent.detail.inputs;
         console.log('Restoring form inputs:', { basic, advanced });
 
         try {
@@ -91,7 +98,8 @@ export default function Home() {
         try {
           const inputs = JSON.parse(storedInputs);
           console.log('Found stored inputs:', inputs);
-          await handleRestoreInputs(new CustomEvent('restoreUserInputs', { detail: { inputs } }));
+          const event = new CustomEvent('restoreUserInputs', { detail: { inputs } });
+          handleRestoreInputs(event);
         } catch (error) {
           console.error('Failed to parse stored inputs:', error);
         }

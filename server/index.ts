@@ -62,25 +62,14 @@ const setupServer = async () => {
     console.log('Registering routes...');
     const server = registerRoutes(app);
 
+    // Register SEO routes before Vite middleware
+    const seoRouter = express.Router();
+    seoRouter.use('/', seoRoutes);
+    app.use('/', seoRouter);
+
     // Health check endpoint
     app.get('/health', (_req: Request, res: Response) => {
       res.json({ status: 'healthy' });
-    });
-
-    // Register SEO routes before any SPA handling
-    console.log('Registering SEO routes...');
-    const seoRoutePaths = ['/affordability-by-income-level', /^\/\d+k\/[a-z-]+$/];
-
-    // Middleware to handle SEO routes
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      // Check if the route is a SEO route
-      if (seoRoutePaths.some(path => 
-          typeof path === 'string' 
-            ? req.path === path 
-            : path.test(req.path))) {
-        return seoRoutes(req, res, next);
-      }
-      next();
     });
 
     if (!isProduction) {
@@ -90,19 +79,7 @@ const setupServer = async () => {
     } else {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
-      app.use(express.static(path.join(__dirname, '../dist/public')));
-
-      // Handle SPA routes (but not SEO routes)
-      app.get('*', (req: Request, res: Response, next: NextFunction) => {
-        // Skip SEO routes
-        if (seoRoutePaths.some(path => 
-            typeof path === 'string' 
-              ? req.path === path 
-              : path.test(req.path))) {
-          return next();
-        }
-        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
-      });
+      serveStatic(app);
     }
 
     console.log('Starting HTTP server...');

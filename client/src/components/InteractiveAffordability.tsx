@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Slider } from "@/components/ui/slider";
 import { UsaMap } from "./UsaMap";
@@ -7,6 +7,20 @@ import { incomes } from "@/lib/constants";
 export function InteractiveAffordability() {
   const [selectedIncome, setSelectedIncome] = useState(incomes[0]);
 
+  useEffect(() => {
+    // Check for URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const incomeParam = params.get('income');
+    if (incomeParam && incomes.includes(incomeParam)) {
+      setSelectedIncome(incomeParam);
+      // Set the slider value
+      const incomeIndex = incomes.indexOf(incomeParam);
+      if (incomeIndex !== -1) {
+        handleSliderChange([incomeIndex]);
+      }
+    }
+  }, []);
+
   const handleSliderChange = (value: number[]) => {
     const income = incomes[value[0]];
     setSelectedIncome(income);
@@ -14,6 +28,8 @@ export function InteractiveAffordability() {
 
   const handleStateClick = (stateId: string) => {
     console.log(`Selected state: ${stateId} with income: ${selectedIncome}`);
+    // Use window.location.href to ensure full page navigation
+    window.location.href = `/${selectedIncome}/${stateId}`;
   };
 
   return (
@@ -24,7 +40,7 @@ export function InteractiveAffordability() {
           <h2 className="text-2xl font-semibold mb-6">Select Your Income Level</h2>
           <div className="space-y-6">
             <Slider
-              defaultValue={[0]}
+              defaultValue={[incomes.indexOf(selectedIncome)]}
               max={incomes.length - 1}
               step={1}
               onValueChange={handleSliderChange}
