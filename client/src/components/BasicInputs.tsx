@@ -5,10 +5,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import type { BasicInputType } from "@/lib/calculatorTypes";
 
@@ -23,8 +41,8 @@ function InfoTooltip({ text }: InfoTooltipProps) {
   React.useEffect(() => {
     if (isOpen) {
       const handleClick = () => setIsOpen(false);
-      document.addEventListener('click', handleClick);
-      return () => document.removeEventListener('click', handleClick);
+      document.addEventListener("click", handleClick);
+      return () => document.removeEventListener("click", handleClick);
     }
   }, [isOpen]);
 
@@ -32,7 +50,7 @@ function InfoTooltip({ text }: InfoTooltipProps) {
     <TooltipProvider>
       <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
-          <button 
+          <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -45,8 +63,8 @@ function InfoTooltip({ text }: InfoTooltipProps) {
             <Info className="h-4 w-4 ml-2 text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </TooltipTrigger>
-        <TooltipContent 
-          side={isMobile ? "bottom" : "right"} 
+        <TooltipContent
+          side={isMobile ? "bottom" : "right"}
           align={isMobile ? "center" : "start"}
           className="max-w-[280px] touch-none"
           sideOffset={isMobile ? 5 : 4}
@@ -64,68 +82,138 @@ interface BasicInputsProps {
 }
 
 const US_STATE_CODES = [
-  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
 ];
 
 export const basicInputSchema = z.object({
-  householdIncome: z.string()
+  householdIncome: z
+    .string()
     .min(1, "Income is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
-    .refine((val) => val === "" || Number(val) > 0, "Please enter positive numbers only"),
-  downPayment: z.string()
+    .refine(
+      (val) => val === "" || Number(val) > 0,
+      "Please enter positive numbers only",
+    ),
+  downPayment: z
+    .string()
     .min(1, "Down payment is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
-    .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
-  monthlyDebt: z.string()
+    .refine(
+      (val) => val === "" || Number(val) >= 0,
+      "Please enter positive numbers only",
+    ),
+  monthlyDebt: z
+    .string()
     .min(1, "Monthly debt is required")
     .regex(/^[0-9]*$/, "Please enter numbers only")
-    .refine((val) => val === "" || Number(val) >= 0, "Please enter positive numbers only"),
-  annualInterestRate: z.string()
+    .refine(
+      (val) => val === "" || Number(val) >= 0,
+      "Please enter positive numbers only",
+    ),
+  annualInterestRate: z
+    .string()
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
-    .refine((val) => val === "" || (Number(val) > 0 && Number(val) < 100), "Please enter a valid interest rate between 0-100"),
-  loanTermYears: z.string()
+    .refine(
+      (val) => val === "" || (Number(val) > 0 && Number(val) < 100),
+      "Please enter a valid interest rate between 0-100",
+    ),
+  loanTermYears: z
+    .string()
     .regex(/^[0-9]+$/, "Please enter a valid number")
-    .transform(val => val === "" ? "30" : val)
+    .transform((val) => (val === "" ? "30" : val))
     .default("30"),
-  state: z.string()
+  state: z
+    .string()
     .min(1, "State is required")
     .regex(/^[A-Za-z]+$/, "Please enter letters only")
     .length(2, "Please enter a valid 2-letter state code")
     .refine(
       (val) => val === "" || US_STATE_CODES.includes(val.toUpperCase()),
-      "Please enter a valid US state code"
+      "Please enter a valid US state code",
     ),
-  filingStatus: z.enum(["single", "married"])
-    .default("single")
+  filingStatus: z.enum(["single", "married"]).default("single"),
 });
 
 export function BasicInputs({ form }: BasicInputsProps) {
-  const [ratePlaceholder, setRatePlaceholder] = React.useState("Enter interest rate");
-  const [interestRateTooltip, setInterestRateTooltip] = React.useState("Annual interest rate on the mortgage loan");
+  const [ratePlaceholder, setRatePlaceholder] = React.useState(
+    "Enter interest rate",
+  );
+  const [interestRateTooltip, setInterestRateTooltip] = React.useState(
+    "Annual interest rate on the mortgage loan",
+  );
 
   React.useEffect(() => {
-    console.log('Fetching FRED data...');
-    fetch('/api/current-rate')
-      .then(response => {
-        console.log('FRED API Response:', response);
+    console.log("Fetching FRED data...");
+    fetch("/api/current-rate")
+      .then((response) => {
+        console.log("FRED API Response:", response);
         return response.json();
       })
-      .then(data => {
-        console.log('FRED API Data:', data);
+      .then((data) => {
+        console.log("FRED API Data:", data);
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
-          setRatePlaceholder(`${rate}% is the current avg. rate (${date})`);
-          setInterestRateTooltip(`Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`);
+          setRatePlaceholder(`${rate}% avg. rate (${date})`);
+          setInterestRateTooltip(
+            `Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`,
+          );
         }
       })
       .catch(() => {
-        setInterestRateTooltip("Failed to fetch current rates. Using 6.5% as a general 2025 estimate");
+        setInterestRateTooltip(
+          "Failed to fetch current rates. Using 6.5% as a general 2025 estimate",
+        );
       });
   }, [form]);
 
@@ -146,16 +234,24 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input 
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      $
+                    </span>
+                    <Input
                       type="text"
                       inputMode="numeric"
-                      placeholder="Enter your annual income" 
+                      placeholder="Enter your annual income"
                       {...field}
                       className="max-w-md pl-7"
-                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      value={
+                        field.value
+                          ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          : ""
+                      }
                       onChange={(e) => {
-                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        const value = e.target.value
+                          .replace(/,/g, "")
+                          .replace(/[^\d]/g, "");
                         field.onChange(value);
                       }}
                     />
@@ -179,16 +275,24 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input 
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      $
+                    </span>
+                    <Input
                       type="text"
                       inputMode="numeric"
-                      placeholder="Enter your down payment amount" 
+                      placeholder="Enter your down payment amount"
                       {...field}
                       className="max-w-md pl-7"
-                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      value={
+                        field.value
+                          ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          : ""
+                      }
                       onChange={(e) => {
-                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        const value = e.target.value
+                          .replace(/,/g, "")
+                          .replace(/[^\d]/g, "");
                         field.onChange(value);
                       }}
                     />
@@ -213,16 +317,24 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <Input 
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      $
+                    </span>
+                    <Input
                       type="text"
                       inputMode="numeric"
-                      placeholder="Enter your total monthly debt" 
+                      placeholder="Enter your total monthly debt"
                       {...field}
                       className="max-w-md pl-7"
-                      value={field.value ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''}
+                      value={
+                        field.value
+                          ? field.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          : ""
+                      }
                       onChange={(e) => {
-                        const value = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                        const value = e.target.value
+                          .replace(/,/g, "")
+                          .replace(/[^\d]/g, "");
                         field.onChange(value);
                       }}
                     />
@@ -253,9 +365,11 @@ export function BasicInputs({ form }: BasicInputsProps) {
                         placeholder={ratePlaceholder}
                         {...field}
                         className="w-full rounded-md border-0 px-3 py-2 text-sm focus:outline-none"
-                        style={{ fontSize: '14px' }}
+                        style={{ fontSize: "14px" }}
                       />
-                      <div className="pointer-events-none pr-3 text-muted-foreground">%</div>
+                      <div className="pointer-events-none pr-3 text-muted-foreground">
+                        %
+                      </div>
                     </div>
                   </div>
                 </FormControl>
@@ -274,24 +388,26 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   <InfoTooltip text="Your state of residence (2-letter code)" />
                 </FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     type="text"
                     maxLength={2}
-                    placeholder="Enter your state code" 
+                    placeholder="Enter your state code"
                     {...field}
                     className="max-w-md text-sm"
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: "14px" }}
                     onInput={(e) => {
                       const input = e.currentTarget;
-                      input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+                      input.value = input.value
+                        .replace(/[^A-Za-z]/g, "")
+                        .toUpperCase();
                       if (input.value.length === 2) {
-                        form.trigger('state');
+                        form.trigger("state");
                       }
                     }}
                     onChange={(e) => {
                       field.onChange(e);
                       if (e.target.value.length === 2) {
-                        form.trigger('state');
+                        form.trigger("state");
                       }
                     }}
                   />
@@ -310,7 +426,11 @@ export function BasicInputs({ form }: BasicInputsProps) {
                   Filing Status
                   <InfoTooltip text="Your tax filing status (single or married filing jointly)" />
                 </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} defaultValue="single">
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  defaultValue="single"
+                >
                   <FormControl>
                     <SelectTrigger className="max-w-md text-sm">
                       <SelectValue placeholder="Select filing status" />
