@@ -8,85 +8,96 @@ export function getLayout(title: string, metaDescription: string, content: strin
         <title>${title}</title>
         <meta name="description" content="${metaDescription}">
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
           body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
           }
         </style>
       </head>
       <body class="bg-gray-50">
-        <nav class="bg-white border-b border-gray-200">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-              <div class="flex">
-                <a href="/" class="flex items-center">
-                  <span class="text-xl font-bold text-gray-900">HouseAfford.ai</span>
-                </a>
-              </div>
-              <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+        <header class="w-full py-6 border-b border-border relative">
+          <div class="container mx-auto px-4 md:px-4 lg:px-4 max-w-[1200px]">
+            <div class="flex justify-between items-center">
+              <a href="/" class="text-left space-y-2 hover:opacity-80 transition-opacity">
+                <div class="flex items-center gap-2">
+                  <h1 class="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
+                    How Much <span class="relative inline-block">
+                      House
+                      <span class="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
+                    </span> Can I <span class="relative inline-block">
+                      Afford.ai
+                      <span class="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
+                    </span>
+                  </h1>
+                </div>
+                <p class="text-muted-foreground text-xs md:text-base">An affordability calculator with an AI Assistant.</p>
+              </a>
+
+              <!-- Desktop Menu -->
+              <nav class="hidden md:flex gap-6">
                 <a href="/" 
-                   class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                    Calculator
                 </a>
                 <a href="/how-it-works"
-                   class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
-                   How it works
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                   How It Works?
                 </a>
                 <a href="/feedback"
-                   class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                    Feedback
                 </a>
                 <a href="/affordability-by-income-level"
-                   class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                   Affordability By Income
+                </a>
+              </nav>
+
+              <!-- Mobile Menu Button -->
+              <button 
+                class="md:hidden p-2 hover:bg-accent rounded-md"
+                aria-label="Toggle menu"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+              >
+                <svg class="block h-6 w-6" id="hamburger-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg class="hidden h-6 w-6" id="close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <nav class="hidden md:hidden absolute left-0 right-0 top-full bg-background border-b border-border py-4 px-4 shadow-lg z-50" id="mobile-menu">
+              <div class="flex flex-col space-y-4">
+                <a href="/" 
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                   Calculator
+                </a>
+                <a href="/how-it-works"
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                   How It Works?
+                </a>
+                <a href="/feedback"
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                   Feedback
+                </a>
+                <a href="/affordability-by-income-level"
+                   class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                    Affordability By Income
                 </a>
               </div>
-              <!-- Hamburger menu button -->
-              <div class="flex items-center sm:hidden">
-                <button type="button" 
-                        class="hamburger-menu inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-                        aria-controls="mobile-menu"
-                        aria-expanded="false">
-                  <span class="sr-only">Open main menu</span>
-                  <!-- Hamburger icon -->
-                  <svg class="block h-6 w-6" id="hamburger-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                  <!-- Close icon -->
-                  <svg class="hidden h-6 w-6" id="close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            </nav>
           </div>
+        </header>
 
-          <!-- Mobile menu -->
-          <div class="hidden sm:hidden" id="mobile-menu">
-            <div class="pt-2 pb-3 space-y-1">
-              <a href="/" 
-                 class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-                 Calculator
-              </a>
-              <a href="/how-it-works"
-                 class="block pl-3 pr-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">
-                 How it works
-              </a>
-              <a href="/feedback"
-                 class="block pl-3 pr-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">
-                 Feedback
-              </a>
-              <a href="/affordability-by-income-level"
-                 class="block pl-3 pr-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">
-                 Affordability By Income
-              </a>
-            </div>
-          </div>
-        </nav>
         <main class="max-w-7xl mx-auto py-12 sm:px-6 lg:px-8">
           ${content}
         </main>
+
         <footer class="bg-white mt-12 border-t border-gray-200">
           <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <p class="text-center text-gray-500 text-sm">
@@ -94,16 +105,16 @@ export function getLayout(title: string, metaDescription: string, content: strin
             </p>
           </div>
         </footer>
+
         <script>
-          // Hamburger menu toggle with animation
-          const hamburgerButton = document.querySelector('.hamburger-menu');
+          const hamburgerButton = document.querySelector('button[aria-controls="mobile-menu"]');
           const mobileMenu = document.getElementById('mobile-menu');
           const hamburgerIcon = document.getElementById('hamburger-icon');
           const closeIcon = document.getElementById('close-icon');
 
           hamburgerButton.addEventListener('click', function() {
             const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !isExpanded);
+            this.setAttribute('aria-expanded', String(!isExpanded));
             mobileMenu.classList.toggle('hidden');
             hamburgerIcon.classList.toggle('hidden');
             closeIcon.classList.toggle('hidden');
