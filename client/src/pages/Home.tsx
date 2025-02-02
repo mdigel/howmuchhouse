@@ -8,7 +8,6 @@ import { AiChat } from "@/components/AiChat";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
-import { InteractiveAffordability } from "@/components/InteractiveAffordability";
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
@@ -42,15 +41,8 @@ export default function Home() {
   // Add event listeners for state restoration after payment
   useEffect(() => {
     const restoreAndCalculate = async () => {
-      const handleRestoreInputs = async (event: Event) => {
-        const customEvent = event as CustomEvent<{
-          inputs: {
-            basic?: Record<string, string | number>;
-            advanced?: Record<string, string | number | null>;
-          };
-        }>;
-
-        const { basic, advanced } = customEvent.detail.inputs;
+      const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
+        const { basic, advanced } = event.detail.inputs;
         console.log('Restoring form inputs:', { basic, advanced });
 
         try {
@@ -98,8 +90,7 @@ export default function Home() {
         try {
           const inputs = JSON.parse(storedInputs);
           console.log('Found stored inputs:', inputs);
-          const event = new CustomEvent('restoreUserInputs', { detail: { inputs } });
-          handleRestoreInputs(event);
+          await handleRestoreInputs(new CustomEvent('restoreUserInputs', { detail: { inputs } }));
         } catch (error) {
           console.error('Failed to parse stored inputs:', error);
         }
@@ -222,7 +213,33 @@ export default function Home() {
               <AffordabilityResults results={results} />
             </div>
           ) : (
-            <InteractiveAffordability />
+            <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
+              <h2 className="text-2xl font-semibold">Let’s Find What You Can Afford 🏡</h2>
+              {/* <p className="text-muted-foreground mb-6">Fill in your details on the left to see:</p> */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">💰</span>
+                  <div>
+                    <h3 className="font-medium">Maximum Home Price</h3>
+                    <p className="text-sm text-muted-foreground">See the highest price the bank will likely allow</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📊</span>
+                  <div>
+                    <h3 className="font-medium">Comfortable Home Prices</h3>
+                    <p className="text-sm text-muted-foreground">Purchase & save a significant portion of your income</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🤖</span>
+                  <div>
+                    <h3 className="font-medium">AI Personalized Advisor</h3>
+                    <p className="text-sm text-muted-foreground">Get analysis for your exact situation</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
