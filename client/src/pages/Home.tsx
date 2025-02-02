@@ -191,7 +191,7 @@ export default function Home() {
             <Button
               onClick={handleCalculate}
               disabled={isCalculating}
-              className="w-full max-w-md bg-[#006AFF] hover:bg-[#006AFF]/90 text-white font-semibold py-3 px-6 rounded transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
+              className="w-full bg-[#006AFF] hover:bg-[#006AFF]/90 text-white font-semibold py-3 px-6 rounded transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
             >
               {isCalculating ? (
                 <>
