@@ -1,11 +1,11 @@
-import { Router } from 'express';
-import { incomes, states, generatePageContent } from './config';
-import { getLayout } from './layout';
+import { Router } from "express";
+import { incomes, states, generatePageContent } from "./config";
+import { getLayout } from "./layout";
 
 const router = Router();
 
 // Main affordability index page
-router.get('/affordability-by-income-level', (req, res) => {
+router.get("/affordability-by-income-level", (req, res) => {
   const content = `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Breadcrumb -->
@@ -35,23 +35,31 @@ router.get('/affordability-by-income-level', (req, res) => {
             Select your income level to see how much house you can afford in different states:
           </p>
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            ${incomes.map(income => `
+            ${incomes
+              .map(
+                (income) => `
               <div class="bg-gray-50 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] hover:bg-blue-50">
                 <div class="p-6">
-                  <h2 class="text-xl font-semibold text-gray-900 mb-4">${income} Salary Range</h2>
+                  <h2 class="text-xl font-semibold text-gray-900 mb-4">${income} Income</h2>
                   <div class="grid grid-cols-2 gap-2">
-                    ${states.map(state => `
+                    ${states
+                      .map(
+                        (state) => `
                       <a 
                         href="/${income}/${state.id}"
                         class="text-blue-600 hover:text-blue-800 hover:underline text-sm truncate"
                       >
                         ${state.name}
                       </a>
-                    `).join('')}
+                    `,
+                      )
+                      .join("")}
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
       </div>
@@ -59,21 +67,21 @@ router.get('/affordability-by-income-level', (req, res) => {
   `;
 
   const html = getLayout(
-    'Home Affordability Calculator by Income Level | Find Your Perfect Price Range',
-    'Discover how much house you can afford based on your income level. Explore state-specific home buying guides for different salary ranges.',
-    content
+    "Home Affordability Calculator by Income Level | Find Your Perfect Price Range",
+    "Discover how much house you can afford based on your income level. Explore state-specific home buying guides for different salary ranges.",
+    content,
   );
 
   res.send(html);
 });
 
 // Dynamic income/state pages
-router.get('/:income/:state', async (req, res) => {
+router.get("/:income/:state", async (req, res) => {
   const { income, state } = req.params;
 
   // Validate income and state
-  if (!incomes.includes(income) || !states.find(s => s.id === state)) {
-    return res.status(404).send('Page not found');
+  if (!incomes.includes(income) || !states.find((s) => s.id === state)) {
+    return res.status(404).send("Page not found");
   }
 
   const pageContent = await generatePageContent(income, state);
@@ -129,7 +137,11 @@ router.get('/:income/:state', async (req, res) => {
     </div>
   `;
 
-  const html = getLayout(pageContent.title, pageContent.metaDescription, content);
+  const html = getLayout(
+    pageContent.title,
+    pageContent.metaDescription,
+    content,
+  );
 
   res.send(html);
 });
