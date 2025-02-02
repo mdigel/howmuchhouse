@@ -6,10 +6,15 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
 
-  const menuItems = [
+  // Regular menu items using wouter Link
+  const routerMenuItems = [
     { path: '/', label: 'Calculator' },
     { path: '/how-it-works', label: 'How It Works?' },
     { path: '/feedback', label: 'Feedback' },
+  ];
+
+  // SSR routes that need regular anchor tags
+  const ssrMenuItems = [
     { path: '/affordability-by-income-level', label: 'Affordability By Income' }
   ];
 
@@ -34,7 +39,7 @@ export function Header() {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-6">
-            {menuItems.map((item) => (
+            {routerMenuItems.map((item) => (
               <Link 
                 key={item.path} 
                 href={item.path}
@@ -44,6 +49,15 @@ export function Header() {
               >
                 {item.label}
               </Link>
+            ))}
+            {ssrMenuItems.map((item) => (
+              <a
+                key={item.path}
+                href={item.path}
+                className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+              >
+                {item.label}
+              </a>
             ))}
           </nav>
 
@@ -67,7 +81,7 @@ export function Header() {
         {isMenuOpen && (
           <nav className="md:hidden absolute left-0 right-0 top-full bg-background border-b border-border py-4 px-4 shadow-lg z-50">
             <div className="flex flex-col space-y-4">
-              {menuItems.map((item) => (
+              {routerMenuItems.map((item) => (
                 <Link
                   key={item.path}
                   href={item.path}
@@ -78,6 +92,16 @@ export function Header() {
                 >
                   {item.label}
                 </Link>
+              ))}
+              {ssrMenuItems.map((item) => (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
               ))}
             </div>
           </nav>
