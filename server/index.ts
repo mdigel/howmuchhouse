@@ -7,6 +7,7 @@ import { setupVite, serveStatic } from './vite';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import seoRoutes from './seo/routes';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config();
@@ -63,6 +64,18 @@ const setupServer = async () => {
       res.json({ status: 'healthy' });
     });
 
+    // Register SEO routes after API routes but before the SPA handling
+    console.log('Registering SEO routes...');
+    app.use('/', (req: Request, res: Response, next: NextFunction) => {
+      // Check if the route is a SEO route
+      if (req.path === '/affordability-by-income-level' || 
+          /^\/\d+k\/[a-z-]+$/.test(req.path)) {
+        seoRoutes(req, res, next);
+      } else {
+        next();
+      }
+    });
+
     if (!isProduction) {
       // Development mode: Setup Vite
       console.log('Setting up Vite in development mode...');
@@ -73,8 +86,14 @@ const setupServer = async () => {
       app.use(express.static(path.join(__dirname, '../dist/public')));
 
       // Handle SPA routes
-      app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+      app.get('*', (req: Request, res: Response, next: NextFunction) => {
+        // Check if it's a SEO route first
+        if (req.path === '/affordability-by-income-level' || 
+            /^\/\d+k\/[a-z-]+$/.test(req.path)) {
+          next();
+        } else {
+          res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+        }
       });
     }
 
