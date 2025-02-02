@@ -32,7 +32,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: ['/components/ui'],
+          ui: ['@/components/ui'],
         }
       }
     }
