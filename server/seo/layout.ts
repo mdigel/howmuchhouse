@@ -6,7 +6,7 @@ export function getLayout(title: string, metaDescription: string, content: strin
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title.replace(/<[^>]*>/g, '')}</title>
     <h1 class="text-4xl font-bold mb-6" dangerouslySetInnerHTML={{ __html: title }}></h1>
-    <meta name="description" content="${metaDescription.replace(/\n/g, ' ')}">
+    <meta name="description" content="${metaDescription}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
