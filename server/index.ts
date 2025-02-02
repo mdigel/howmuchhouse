@@ -28,6 +28,9 @@ console.log('Setting up middleware...');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve font files
+app.use('/node_modules/@fontsource/noto-sans', express.static(path.join(__dirname, '../node_modules/@fontsource/noto-sans')));
+
 // Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'development-secret-key',

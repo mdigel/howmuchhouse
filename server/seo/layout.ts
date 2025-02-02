@@ -7,7 +7,22 @@ export function getLayout(title: string, metaDescription: string, content: strin
     <title>${title}</title>
     <meta name="description" content="${metaDescription}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'noto-sans': ['Noto Sans', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
+    <link rel="stylesheet" href="/node_modules/@fontsource/noto-sans/index.css">
+    <link rel="stylesheet" href="/node_modules/@fontsource/noto-sans/400.css">
+    <link rel="stylesheet" href="/node_modules/@fontsource/noto-sans/500.css">
+    <link rel="stylesheet" href="/node_modules/@fontsource/noto-sans/600.css">
+    <link rel="stylesheet" href="/node_modules/@fontsource/noto-sans/700.css">
     <style>
       body {
         font-family: 'Noto Sans', sans-serif;
@@ -15,7 +30,7 @@ export function getLayout(title: string, metaDescription: string, content: strin
       }
     </style>
   </head>
-  <body class="min-h-screen bg-white">
+  <body class="min-h-screen bg-white font-noto-sans">
     <header class="w-full py-6 border-b border-border relative bg-white">
       <div class="container mx-auto px-4 md:px-4 lg:px-4 max-w-[1200px]">
         <div class="flex justify-between items-center">
