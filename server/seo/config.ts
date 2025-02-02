@@ -63,6 +63,12 @@ export interface PageContent {
   metaDescription: string;
 }
 
+// Map to store descriptions from CSV
+const descriptions: { [key: string]: { [key: string]: string } } = {
+  "alabama": {"70k": "With a 70k income, you're well-positioned to afford a home in Alabama...", /* CSV data */},
+  /* Other states and incomes from CSV */
+};
+
 export function generatePageContent(income: string, state: string): PageContent {
   const stateName = states.find(s => s.id === state.toLowerCase())?.name || state;
   const title = `How Much ${
@@ -72,7 +78,11 @@ export function generatePageContent(income: string, state: string): PageContent 
   } in ${
     '<span class="relative inline-block">' + stateName + '<span class="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span></span>'
   }?`;
-  const description = `Discover the home price range you can afford with a ${income} annual salary in ${stateName}. Get detailed insights into your buying power based on local market conditions, taxes, and living costs.`;
+
+  // Get description from CSV mapping
+  const description = descriptions[state.toLowerCase()]?.[income] || 
+    `Discover the home price range you can afford with a ${income} annual salary in ${stateName}. Get detailed insights into your buying power based on local market conditions, taxes, and living costs.`;
+  
   const metaDescription = `Calculate your home buying power with a ${income} salary in ${stateName}. Get personalized insights on affordable house prices, monthly payments, and local market factors.`;
 
   return { title, description, metaDescription };
