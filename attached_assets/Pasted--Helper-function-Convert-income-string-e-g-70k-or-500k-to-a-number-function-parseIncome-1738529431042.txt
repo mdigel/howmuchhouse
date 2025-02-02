@@ -1,0 +1,40 @@
+
+// Helper function: Convert income string (e.g., "70k" or "+500k") to a number
+function parseIncome(incomeStr) {
+  // Remove a potential "+" prefix and the "k"
+  let num = incomeStr.startsWith('+') ? incomeStr.slice(1) : incomeStr;
+  return parseInt(num.replace('k', '')) * 1000;
+}
+
+// For a given income, compute affordability data (using a 3x-4x multiplier)
+function getAffordabilityData(incomeStr) {
+  const incomeNum = parseIncome(incomeStr);
+  return {
+    minAffordPrice: incomeNum * 3,
+    maxAffordPrice: incomeNum * 4,
+    referenceHomePrice: incomeNum * 3 // using the minimum as a reference
+  };
+}
+
+// Compute the estimated annual tax for a given reference home price and tax rate
+function computeAnnualTax(referenceHomePrice, taxRate) {
+  return Math.round(referenceHomePrice * (taxRate / 100));
+}
+
+// Generate a descriptive paragraph for a given state and income
+function generateParagraph(stateName, incomeStr) {
+  const state = stateData[stateName];
+  const affordability = getAffordabilityData(incomeStr);
+  const annualTax = computeAnnualTax(state.medianPriceMajorCity, state.propertyTaxRate);
+
+  return `With an annual income of ${incomeStr}, you're well-positioned to purchase a home in ${stateName}. ` +
+    `Financial advisors often recommend spending about 3 to 4 times your annual income on a home, suggesting a ` +
+    `budget between $${affordability.minAffordPrice.toLocaleString()} and $${affordability.maxAffordPrice.toLocaleString()}, ` +
+    `depending on factors like your down payment and existing debts. In cities like ${state.majorCity}, where the ` +
+    `median home price is approximately $${state.medianPriceMajorCity.toLocaleString()}, you'll find a variety of ` +
+    `options within your budget. Other cities, such as ${state.otherCities.join(' and ')}, offer median home prices ` +
+    `${state.medianPriceOtherCities}, providing even more affordable choices. ${stateName} has a property tax rate ` +
+    `of about ${state.propertyTaxRate}%, which would add approximately $${annualTax.toLocaleString()} annually on a ` +
+    `$${state.medianPriceMajorCity.toLocaleString()} home. Considering that ${state.costOfLivingDifference}, your ` +
+    `${incomeStr} salary can comfortably support homeownership in many parts of the state.`;
+}
