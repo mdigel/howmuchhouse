@@ -1,8 +1,8 @@
 
-import { states, incomes } from './config';
 import { generateDescription } from './stateData';
+import { states, incomes } from './config';
 
-// Generate descriptions dynamically using state data
+// Initialize descriptions after imports
 const descriptions: { [key: string]: { [key: string]: string } } = {};
 
 // Initialize descriptions for all states and income levels
