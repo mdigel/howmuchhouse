@@ -1,0 +1,56 @@
+🏠 Buying a home? 
+
+Don’t just guess what you can afford. 
+
+We built a calculator that uses time-tested financial principles (shoutout to NerdWallet & MoneyUnder30) to help you stay stress-free. Here's how it works 🧵👇
+
+1/ Financial principles built into the Calculator:
+✅ 28/36 DTI Rule (Debt-to-Income Ratio):
+Front-end DTI = Mortgage payment shouldn’t be more than 28% of gross income
+Back-end DTI = Total debt payments shouldn’t be more than 36% of gross income
+DTI helps you measure how much of your income goes to debt. Lower is better—banks look at this to decide how much you can borrow.
+✅ 50/30/20 budget:
+50% needs (housing, transportation, etc.)
+30% wants (fun stuff)
+20% savings + debt repayment
+✅ 3x income rule: Keep your home price ≤ 3x your annual income
+These principles help protect your finances and prevent buyer’s remorse 🛟. Let’s dive into the process 👇
+
+2/ Step 1: We analyze your DTI.
+Lenders typically allow a max mortgage payment of 28% of your gross income. If your back-end DTI (total debt) exceeds 8% beyond that (36% total), we lower your max mortgage payment to stay within safe limits.
+
+3/ Step 2: We calculate your max monthly mortgage payment based on the 28/36:
+Max 28% of your gross income for mortgage 🏡
+Max 36% for total debt 💳
+
+4/ Step 3: We calculate how much you can borrow based on that payment.
+We factor in:
+Down payment
+Interest rate
+Loan term
+Property taxes, PMI, HOA fees, and insurance
+
+5/ Step 4: We calculate your net income.
+Gross income isn’t spendable income. After taxes, Social Security, and Medicare, your real take-home pay might be much lower 💵 and is what’s used for the 50/30/20 budget rule. 
+
+6/ Step 5: We check if your mortgage fits the 50/30/20 rule:
+50% needs (housing, transportation, insurance)
+30% wants (entertainment, hobbies)
+20% savings & extra debt payments 💰
+
+7/ Steps 6-7: We also run multiple budget scenarios with different savings rates of 15% and 25% in addition to the standard 20%.
+
+This helps you see how different home prices affect your ability to save and stay flexible.
+
+8/ Step 8: We calculate full housing costs for each scenario:
+Mortgage + property taxes + insurance + HOA fees + PMI (if needed).
+You get a realistic breakdown of what's affordable—and what’s risky 🏘️.
+
+9/ Step 9: We bring it all together:
+Max home price banks might approve 🏦
+Comfortable home prices for your budget 💰
+Payment breakdowns & tax implications 📊
+
+🔑 Key takeaway:
+Banks approve based on their risk assessment. We focus on your financial health. This calculator shows what you can comfortably afford without sacrificing your savings.
+Avoid regret. Sleep better. Enjoy your new home. 😴🏡
