@@ -9,6 +9,10 @@ if (import.meta.env.DEV) {
   };
 }
 
+// Initialize Microsoft Clarity
+import Clarity from "@microsoft/clarity";
+Clarity.init(process.env.MICROSOFT_CLARITY);
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
