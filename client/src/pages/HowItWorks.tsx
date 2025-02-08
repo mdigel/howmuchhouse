@@ -18,13 +18,15 @@ export default function HowItWorks() {
           <div className="space-y-6">
             <div>
               <h3 className="font-semibold">✅ 28/36 DTI Rule (Debt-to-Income Ratio):</h3>
-              <p>Front-end DTI = Mortgage payment shouldn't be more than 28% of gross income</p>
-              <p>Back-end DTI = Total debt payments shouldn't be more than 36% of gross income</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Front-end DTI = Mortgage payment shouldn't be more than 28% of gross income</li>
+                <li>Back-end DTI = Total debt payments shouldn't be more than 36% of gross income</li>
+              </ul>
               <p className="mt-2">DTI helps you measure how much of your income goes to debt. Lower is better—banks look at this to decide how much you can borrow.</p>
             </div>
             <div>
               <h3 className="font-semibold">✅ 50/30/20 budget:</h3>
-              <ul className="list-none pl-0">
+              <ul className="list-disc pl-6 space-y-1">
                 <li>50% needs (housing, transportation, etc.)</li>
                 <li>30% wants (fun stuff)</li>
                 <li>20% savings + debt repayment</li>
@@ -46,7 +48,7 @@ export default function HowItWorks() {
 
           <div>
             <h3 className="text-lg font-semibold">3/ Step 2: We calculate your max monthly mortgage payment based on the 28/36:</h3>
-            <ul className="list-none pl-0">
+            <ul className="list-disc pl-6 space-y-1">
               <li>Max 28% of your gross income for mortgage 🏡</li>
               <li>Max 36% for total debt 💳</li>
             </ul>
@@ -55,7 +57,7 @@ export default function HowItWorks() {
           <div>
             <h3 className="text-lg font-semibold">4/ Step 3: We calculate how much you can borrow based on that payment.</h3>
             <p>We factor in:</p>
-            <ul className="list-none pl-0">
+            <ul className="list-disc pl-6 space-y-1">
               <li>Down payment</li>
               <li>Interest rate</li>
               <li>Loan term</li>
@@ -70,7 +72,7 @@ export default function HowItWorks() {
 
           <div>
             <h3 className="text-lg font-semibold">6/ Step 5: We check if your mortgage fits the 50/30/20 rule:</h3>
-            <ul className="list-none pl-0">
+            <ul className="list-disc pl-6 space-y-1">
               <li>50% needs (housing, transportation, insurance)</li>
               <li>30% wants (entertainment, hobbies)</li>
               <li>20% savings & extra debt payments 💰</li>
@@ -90,7 +92,7 @@ export default function HowItWorks() {
 
           <div>
             <h3 className="text-lg font-semibold">9/ Step 9: We bring it all together:</h3>
-            <ul className="list-none pl-0">
+            <ul className="list-disc pl-6 space-y-1">
               <li>Max home price banks might approve 🏦</li>
               <li>Comfortable home prices for your budget 💰</li>
               <li>Payment breakdowns & tax implications 📊</li>
