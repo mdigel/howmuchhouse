@@ -11,7 +11,7 @@ if (import.meta.env.DEV) {
 
 // Initialize Microsoft Clarity
 import Clarity from "@microsoft/clarity";
-Clarity.init(process.env.MICROSOFT_CLARITY);
+Clarity.init(import.meta.env.VITE_MICROSOFT_CLARITY);
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
