@@ -17,35 +17,52 @@ export default function HowItWorks() {
       </h2>
       <div className="space-y-6">
         <div>
-          <h3 className="font-semibold">
-            ✅ 28/36 DTI Rule (Debt-to-Income Ratio):
+          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+            <span className="text-green-500">✅</span>
+            <span>28/36 DTI Rule (Debt-to-Income Ratio)</span>
           </h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>
-              Front-end DTI = Mortgage payment... this shouldn't be more than 28% of
-              gross income
+          <ul className="list-none space-y-2 pl-8">
+            <li className="flex items-start">
+              <span className="font-medium mr-2">Front-end DTI:</span>
+              <span className="text-muted-foreground">Mortgage payment should not exceed 28% of gross income</span>
             </li>
-            <li>
-              Back-end DTI = Total debt payments... this shouldn't be more than 36% of gross income
+            <li className="flex items-start">
+              <span className="font-medium mr-2">Back-end DTI:</span>
+              <span className="text-muted-foreground">Total debt payments should not exceed 36% of gross income</span>
             </li>
           </ul>
-          <p className="mt-2">
-            Banks look at DIR to decide how much you can borrow.
+          <p className="mt-3 text-sm text-muted-foreground italic">
+            Banks use DTI to determine your borrowing capacity
           </p>
         </div>
-        <div>
-          <h3 className="font-semibold">✅ 50/30/20 budget:</h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>50% needs (housing, transportation, minimum debt payments, etc.)</li>
-            <li>30% wants (fun stuff)</li>
-            <li>20% savings</li>
+        <div className="bg-muted/30 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+            <span className="text-green-500">✅</span>
+            <span>50/30/20 Budget Rule</span>
+          </h3>
+          <ul className="grid gap-2">
+            <li className="flex items-center">
+              <span className="w-16 font-medium">50%</span>
+              <span className="text-muted-foreground">Needs (housing, transportation, debt)</span>
+            </li>
+            <li className="flex items-center">
+              <span className="w-16 font-medium">30%</span>
+              <span className="text-muted-foreground">Wants (leisure, entertainment)</span>
+            </li>
+            <li className="flex items-center">
+              <span className="w-16 font-medium">20%</span>
+              <span className="text-muted-foreground">Savings & investments</span>
+            </li>
           </ul>
         </div>
-        <div>
-          <h3 className="font-semibold">✅ 3-4x income rule:</h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>Purchase a home for no more than 3-4x your annual income</li>
-          </ul>
+        <div className="bg-muted/30 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+            <span className="text-green-500">✅</span>
+            <span>3-4x Income Rule</span>
+          </h3>
+          <p className="text-muted-foreground">
+            Keep your home purchase price within 3-4 times your annual household income
+          </p>
           <br></br>
           <p>
             These principles help protect your financail flexibility and prevent buyer's remorse 🛟. Let's dive into how the calculator works: 👇
