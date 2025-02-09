@@ -57,6 +57,7 @@ export default function HowItWorks() {
             remorse 🛟. Let's dive into the process 👇
           </p>
         </div>
+      </div>
 
         <div>
           <h3 className="text-lg font-semibold">
