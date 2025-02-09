@@ -1,3 +1,4 @@
+
 import React from "react";
 
 export default function HowItWorks() {
@@ -13,51 +14,52 @@ export default function HowItWorks() {
         Here's how it works 🧵👇
       </p>
       <br />
-      <h2 className="text-lg font-semibold">
-        First, timeless financial principles:
-      </h2>
-      <br />
-      <div className="space-y-6">
-        <div>
-          <h3 className="font-semibold">
-            ✅ 28/36 DTI Rule (Debt-to-Income Ratio):
-          </h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>
-              Front-end DTI = Mortgage payment... this shouldn't be more than
-              28% of gross income
-            </li>
-            <li>
-              Back-end DTI = Total debt payments... this shouldn't be more than
-              36% of gross income
-            </li>
-          </ul>
-          <p className="mt-2">
-            Banks look at DIR to decide how much you can borrow.
-          </p>
+      <div>
+        <h2 className="text-lg font-semibold">
+          First, timeless financial principles:
+        </h2>
+        <br />
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-semibold">
+              ✅ 28/36 DTI Rule (Debt-to-Income Ratio):
+            </h3>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>
+                Front-end DTI = Mortgage payment... this shouldn't be more than
+                28% of gross income
+              </li>
+              <li>
+                Back-end DTI = Total debt payments... this shouldn't be more than
+                36% of gross income
+              </li>
+            </ul>
+            <p className="mt-2">
+              Banks look at DIR to decide how much you can borrow.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-semibold">✅ 50/30/20 budget:</h3>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>
+                50% needs (housing, transportation, minimum debt payments, etc.)
+              </li>
+              <li>30% wants (fun stuff)</li>
+              <li>20% savings</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold">✅ 3-4x income rule:</h3>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Purchase a home for no more than 3-4x your annual income</li>
+            </ul>
+            <br />
+            <p className="mt-2">
+              These principles help protect your finances and prevent buyer's
+              remorse 🛟. Let's dive into the process 👇
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-semibold">✅ 50/30/20 budget:</h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>
-              50% needs (housing, transportation, minimum debt payments, etc.)
-            </li>
-            <li>30% wants (fun stuff)</li>
-            <li>20% savings</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="font-semibold">✅ 3-4x income rule:</h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>Purchase a home for no more than 3-4x your annual income</li>
-          </ul>
-          <br />
-          <p className="mt-2">
-            These principles help protect your finances and prevent buyer's
-            remorse 🛟. Let's dive into the process 👇
-          </p>
-        </div>
-      </div>
 
         <div>
           <h3 className="text-lg font-semibold">
