@@ -199,25 +199,36 @@ export function BasicInputs({ form }: BasicInputsProps) {
   const [currentRate, setCurrentRate] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (import.meta.env.DEV) console.log("Fetching FRED data...");
+    console.log("Fetching FRED data...");
     fetch("/api/current-rate")
       .then((response) => {
-        if (import.meta.env.DEV) console.log("FRED API Response:", response);
+        console.log("FRED API Response status:", response.status, response.ok);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return response.json();
       })
       .then((data) => {
-        if (import.meta.env.DEV) console.log("FRED API Data:", data);
+        console.log("FRED API Data:", data);
+        if (data.error) {
+          console.error("FRED API error response:", data);
+          throw new Error(data.message || data.error);
+        }
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
+          console.log("Setting current rate:", rate, "for date:", date);
           setCurrentRate(String(rate));
           setRatePlaceholder(`${rate}% avg. rate (${date})`);
           setInterestRateTooltip(
             `Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`,
           );
+        } else {
+          console.warn("FRED API response missing observations:", data);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Error fetching current rate:", error);
         setInterestRateTooltip(
           "Failed to fetch current rates. Using 6.5% as a general 2025 estimate",
         );

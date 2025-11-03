@@ -41,14 +41,32 @@ export function registerRoutes(app: Express): Server {
   // API Routes
   app.get("/api/current-rate", async (_req: Request, res: Response) => {
     try {
+      console.log("Fetching current mortgage rate from FRED API...");
       const response = await fetch(
         "https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc",
       );
+      
+      if (!response.ok) {
+        console.error("FRED API response not OK:", response.status, response.statusText);
+        throw new Error(`FRED API returned ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
+      console.log("FRED API response:", JSON.stringify(data).substring(0, 200));
+      
+      // Validate response structure
+      if (!data.observations || !Array.isArray(data.observations) || data.observations.length === 0) {
+        console.error("FRED API response missing observations:", data);
+        throw new Error("Invalid response structure from FRED API");
+      }
+      
       res.json(data);
     } catch (error) {
       console.error("FRED API Error:", error);
-      res.status(500).json({ error: "Failed to fetch interest rate" });
+      res.status(500).json({ 
+        error: "Failed to fetch interest rate",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
   app.post("/api/calculate", async (req: Request, res: Response) => {
