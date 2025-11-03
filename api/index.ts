@@ -16,6 +16,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  // Log request details for debugging
+  console.log('Vercel handler - URL:', req.url, 'Path:', (req as any).path, 'Method:', req.method);
+  
   // Import app after setup
   const { default: app } = await import('../server/index');
   
@@ -23,6 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   return new Promise<void>((resolve, reject) => {
     app(req as any, res as any, (err?: any) => {
       if (err) {
+        console.error('Express handler error:', err);
         reject(err);
       } else {
         resolve();

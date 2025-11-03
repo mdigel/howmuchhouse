@@ -39,7 +39,9 @@ export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
 
   // API Routes
-  app.get("/api/current-rate", async (_req: Request, res: Response) => {
+  // Register route both with and without /api prefix for Vercel compatibility
+  const currentRateHandler = async (req: Request, res: Response) => {
+    console.log("Route matched: /api/current-rate", "Request path:", req.path, "Request url:", req.url);
     try {
       console.log("Fetching current mortgage rate from FRED API...");
       const response = await fetch(
@@ -68,7 +70,14 @@ export function registerRoutes(app: Express): Server {
         message: error instanceof Error ? error.message : "Unknown error"
       });
     }
-  });
+  };
+  
+  // Register route with /api prefix (for local dev and direct API calls)
+  app.get("/api/current-rate", currentRateHandler);
+  
+  // Also register without /api prefix (for Vercel rewrites where /api is stripped)
+  app.get("/current-rate", currentRateHandler);
+  
   app.post("/api/calculate", async (req: Request, res: Response) => {
     console.log("Received calculator request:", req.body);
     try {
