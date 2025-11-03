@@ -1,16 +1,18 @@
+// IMPORTANT: Load environment variables BEFORE any other imports
+import './config-loader';
+
 import express from "express";
 import compression from "compression";
 import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { registerRoutes } from './routes';
-import { setupVite, serveStatic } from './vite';
-import * as dotenv from 'dotenv';
+import { setupVite } from './vite';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import seoRoutes from './seo/routes';
+import { createServer, type Server } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config();
 
 console.log('Starting server initialization...');
 console.log('AI_CHARGE_MODE:', process.env.AI_CHARGE_MODE);
@@ -22,6 +24,7 @@ app.use(compression());
 // Environment variables and configuration
 const PORT = Number(process.env.PORT) || 3000;
 const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
+const isVercel = process.env.VERCEL === '1';
 
 // Basic middleware setup
 console.log('Setting up middleware...');
@@ -29,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve font files
-app.use('/node_modules/@fontsource/noto-sans', express.static(path.join(__dirname, '../node_modules/@fontsource/noto-sans')));
+app.use('/node_modules/@fontsource/noto-sans', express.static(path.resolve(process.cwd(), 'node_modules/@fontsource/noto-sans')));
 
 // Session configuration
 app.use(session({
@@ -56,7 +59,7 @@ if (!isProduction) {
 }
 
 // Setup server with proper middleware order
-const setupServer = async () => {
+export const setupServer = async (shouldListen: boolean = true): Promise<Server | null> => {
   try {
     // Register API routes first
     console.log('Registering routes...');
@@ -83,14 +86,15 @@ const setupServer = async () => {
       next();
     });
 
-    if (!isProduction) {
-      // Development mode: Setup Vite
+    if (!isProduction && !isVercel) {
+      // Development mode: Setup Vite (only for local dev)
       console.log('Setting up Vite in development mode...');
       await setupVite(app, server);
     } else {
       // Production mode: Serve static files
       console.log('Setting up static file serving in production mode...');
-      app.use(express.static(path.join(__dirname, '../dist/public')));
+      const publicDir = path.resolve(process.cwd(), 'dist/public');
+      app.use(express.static(publicDir));
 
       // Handle SPA routes (but not SEO routes)
       app.get('*', (req: Request, res: Response, next: NextFunction) => {
@@ -101,40 +105,54 @@ const setupServer = async () => {
               : path.test(req.path))) {
           return next();
         }
-        res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+        res.sendFile(path.join(publicDir, 'index.html'));
       });
     }
 
-    console.log('Starting HTTP server...');
-    server.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
-      console.log('Server initialization complete');
-    });
+    if (shouldListen && !isVercel) {
+      console.log('Starting HTTP server...');
+      server.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+        console.log('Server initialization complete');
+      });
 
-    // Server error handling
-    server.on('error', (error: NodeJS.ErrnoException) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use`);
-        process.exit(1);
-      }
-      console.error('Server error:', error);
-    });
+      // Server error handling
+      server.on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE') {
+          console.error(`Port ${PORT} is already in use`);
+          process.exit(1);
+        }
+        console.error('Server error:', error);
+      });
+    } else {
+      console.log('Server setup complete (Vercel/serverless mode)');
+    }
+
+    return server;
   } catch (error) {
     console.error('Failed to start server:', error);
-    process.exit(1);
+    if (shouldListen) {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
-// Global error handlers
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  setTimeout(() => process.exit(1), 1000);
-});
+// Global error handlers (only for long-running processes)
+if (!isVercel) {
+  process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    setTimeout(() => process.exit(1), 1000);
+  });
 
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled Rejection:', error);
-});
+  process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Rejection:', error);
+  });
+}
 
-setupServer();
+// Start server only if not in Vercel environment
+if (!isVercel) {
+  setupServer();
+}
 
 export default app;

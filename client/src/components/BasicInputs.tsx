@@ -51,6 +51,7 @@ function InfoTooltip({ text }: InfoTooltipProps) {
       <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
           <button
+            tabIndex={-1}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -142,6 +143,10 @@ export const basicInputSchema = z.object({
     .refine(
       (val) => val === "" || Number(val) > 0,
       "Please enter positive numbers only",
+    )
+    .refine(
+      (val) => val === "" || Number(val) >= 10000,
+      "Income must be at least $10,000 to calculate affordability",
     ),
   downPayment: z
     .string()
@@ -164,8 +169,8 @@ export const basicInputSchema = z.object({
     .min(1, "Interest rate is required")
     .regex(/^\d*\.?\d*$/, "Please enter a valid number")
     .refine(
-      (val) => val === "" || (Number(val) > 0 && Number(val) < 100),
-      "Please enter a valid interest rate between 0-100",
+      (val) => val === "" || (Number(val) > 0 && Number(val) <= 18.63),
+      "Interest rate too high. The highest rate in U.S. history was 18.63% for a 30-year fixed-rate mortgage.",
     ),
   loanTermYears: z
     .string()
@@ -191,19 +196,21 @@ export function BasicInputs({ form }: BasicInputsProps) {
   const [interestRateTooltip, setInterestRateTooltip] = React.useState(
     "Annual interest rate on the mortgage loan",
   );
+  const [currentRate, setCurrentRate] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    console.log("Fetching FRED data...");
+    if (import.meta.env.DEV) console.log("Fetching FRED data...");
     fetch("/api/current-rate")
       .then((response) => {
-        console.log("FRED API Response:", response);
+        if (import.meta.env.DEV) console.log("FRED API Response:", response);
         return response.json();
       })
       .then((data) => {
-        console.log("FRED API Data:", data);
+        if (import.meta.env.DEV) console.log("FRED API Data:", data);
         if (data.observations && data.observations[0]?.value) {
           const rate = data.observations[0].value;
           const date = data.observations[0].date;
+          setCurrentRate(String(rate));
           setRatePlaceholder(`${rate}% avg. rate (${date})`);
           setInterestRateTooltip(
             `Based on FRED (Federal Reserve Economic Data) national average for 30-year fixed mortgage as of ${date}: ${rate}%`,
@@ -356,24 +363,34 @@ export function BasicInputs({ form }: BasicInputsProps) {
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <div className="relative">
-                        <Input
-                          type="text"
-                          inputMode="decimal"
-                          placeholder={ratePlaceholder}
-                          {...field}
-                          className="max-w-md pr-7"
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/[^\d.]/g, '');
-                            if (value === '' || /^\d*\.?\d*$/.test(value)) {
-                              field.onChange(value);
-                            }
-                          }}
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-                          %
-                        </div>
-                      </div>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={ratePlaceholder}
+                      {...field}
+                      className="max-w-md pr-7"
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d.]/g, '');
+                        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                          field.onChange(value);
+                        }
+                      }}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+                      %
+                    </div>
+                    {currentRate && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          form.setValue("annualInterestRate", currentRate);
+                          form.trigger("annualInterestRate");
+                        }}
+                        className="absolute right-0 top-full -mt-2 text-xs text-primary hover:underline leading-none py-0 px-0 h-auto whitespace-nowrap"
+                      >
+                        Apply Today's Rate
+                      </button>
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage />

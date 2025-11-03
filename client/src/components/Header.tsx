@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Menu, X } from 'lucide-react';
+import mixpanel from 'mixpanel-browser';
+import { motion } from 'framer-motion'; // Added Mixpanel import
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,8 +11,7 @@ export function Header() {
   // Regular menu items using wouter Link
   const routerMenuItems = [
     { path: '/', label: 'Calculator' },
-    { path: '/how-it-works', label: 'How It Works?' },
-    { path: '/feedback', label: 'Feedback' },
+    { path: '/why', label: 'Why?' },
   ];
 
   // SSR routes that need regular anchor tags
@@ -24,17 +25,45 @@ export function Header() {
         <div className="flex justify-between items-center">
           <Link href="/" className="text-left space-y-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold font-noto-sans">
-                How Much <span className="relative inline-block">
+              <h1 className="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold">
+                <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                  How Much{" "}
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="relative inline-block"
+                >
                   House
                   <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
-                </span> Can I <span className="relative inline-block">
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  {" "}Can I{" "}
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                  className="relative inline-block"
+                >
                   Afford.ai
                   <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
-                </span>
+                </motion.span>
               </h1>
             </div>
-            <p className="text-muted-foreground text-xs md:text-base">An affordability calculator with an AI Assistant.</p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="text-muted-foreground text-xs md:text-base"
+            >
+              An affordability calculator with an AI Assistant.
+            </motion.p>
           </Link>
 
           {/* Desktop Menu */}
@@ -46,6 +75,7 @@ export function Header() {
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   location === item.path ? 'text-primary' : 'text-muted-foreground'
                 }`}
+                onClick={() => mixpanel.track('Navigation Clicked', { item: item.label })} // Added Mixpanel tracking
               >
                 {item.label}
               </Link>
@@ -55,6 +85,7 @@ export function Header() {
                 key={item.path}
                 href={item.path}
                 className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                onClick={() => mixpanel.track('Navigation Clicked', { item: item.label })} // Added Mixpanel tracking
               >
                 {item.label}
               </a>
@@ -88,7 +119,10 @@ export function Header() {
                   className={`text-sm font-medium transition-colors hover:text-primary ${
                     location === item.path ? 'text-primary' : 'text-muted-foreground'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    mixpanel.track('Navigation Clicked', { item: item.label }); // Added Mixpanel tracking
+                  }}
                 >
                   {item.label}
                 </Link>
@@ -98,7 +132,10 @@ export function Header() {
                   key={item.path}
                   href={item.path}
                   className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    mixpanel.track('Navigation Clicked', { item: item.label }); // Added Mixpanel tracking
+                  }}
                 >
                   {item.label}
                 </a>

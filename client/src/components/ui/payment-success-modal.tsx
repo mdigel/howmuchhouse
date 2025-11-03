@@ -49,8 +49,8 @@ export function PaymentSuccessModal({ isOpen, onClose }: PaymentSuccessModalProp
                     Payment Successful!
                   </DialogTitle>
                   <DialogDescription className="text-center mt-2">
-                    Thank you for your purchase! You now have access to 5 questions with our AI assistant.
-                    Make the most of your questions to get detailed insights about your home affordability calculation.
+                    Thank you for your purchase! You now have unlimited access to our AI assistant for this session.
+                    Make the most of your access to get detailed insights about your home affordability calculation.
                   </DialogDescription>
                 </motion.div>
               </DialogHeader>

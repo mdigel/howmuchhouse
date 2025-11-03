@@ -1,0 +1,110 @@
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+
+type Message = {
+  id: number;
+  content: string;
+  role: 'user' | 'ai';
+  isComplete: boolean;
+}
+
+export default function Chat() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textBufferRef = useRef('')
+  const animationFrameRef = useRef<number | null>(null)
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (input.trim() === '') return
+
+    const userMessage: Message = { id: Date.now(), content: input, role: 'user', isComplete: true }
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+
+    // Simulate AI response
+    setIsTyping(true)
+    setTimeout(() => {
+      const aiMessage: Message = { id: Date.now(), content: '', role: 'ai', isComplete: false }
+      setMessages(prev => [...prev, aiMessage])
+      textBufferRef.current = "This is a simulated AI response that will be revealed character by character. It demonstrates the typewriter effect without blocking user scrolling. You can freely scroll through the chat while this text is being revealed."
+      startTypewriterEffect(aiMessage.id)
+    }, 1000)
+  }
+
+  const startTypewriterEffect = (messageId: number) => {
+    let index = 0
+    const revealText = () => {
+      if (index < textBufferRef.current.length) {
+        setMessages(prev => prev.map(msg => 
+          msg.id === messageId 
+            ? { ...msg, content: msg.content + textBufferRef.current[index] }
+            : msg
+        ))
+        index++
+        animationFrameRef.current = requestAnimationFrame(revealText)
+      } else {
+        setMessages(prev => prev.map(msg => 
+          msg.id === messageId ? { ...msg, isComplete: true } : msg
+        ))
+        setIsTyping(false)
+      }
+    }
+    animationFrameRef.current = requestAnimationFrame(revealText)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <CardTitle>AI Chat</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[60vh] overflow-y-auto">
+          {messages.map(m => (
+            <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-block p-2 rounded-lg ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                {m.content}
+                {!m.isComplete && m.role === 'ai' && (
+                  <span className="inline-block ml-1 animate-pulse">▌</span>
+                )}
+              </span>
+            </div>
+          ))}
+          {isTyping && messages[messages.length - 1]?.role !== 'ai' && (
+            <div className="text-left">
+              <span className="inline-block p-2 rounded-lg bg-gray-200 text-black">
+                AI is typing...
+              </span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </CardContent>
+        <CardFooter>
+          <form onSubmit={handleSubmit} className="flex w-full space-x-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-grow"
+            />
+            <Button type="submit" disabled={isTyping}>Ask Question</Button>
+          </form>
+        </CardFooter>
+      </Card>
+    </div>
+  )
+}

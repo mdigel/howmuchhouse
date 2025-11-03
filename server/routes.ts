@@ -1,5 +1,5 @@
 import { config } from "./config";
-
+import { createGoogleSheet } from "./services/googleSheets";
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
@@ -14,15 +14,19 @@ import {
 } from "./calculatorLogic/Orchestrator";
 
 // Initialize Stripe
-const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
-const stripeSecretKey = isProduction 
-  ? process.env.STRIPE_SECRET_KEY 
+const isProduction =
+  process.env.NODE_ENV === "production" ||
+  process.env.REPLIT_DEPLOYMENT === "1";
+const stripeSecretKey = isProduction
+  ? process.env.STRIPE_SECRET_KEY
   : process.env.STRIPE_TEST_SECRET_KEY;
 
-console.log('Stripe Mode:', isProduction ? 'Production' : 'Test');
+console.log("Stripe Mode:", isProduction ? "Production" : "Test");
 
 if (!stripeSecretKey) {
-  throw new Error(`Missing Stripe ${isProduction ? 'production' : 'test'} secret key - Please check Replit Secrets`);
+  throw new Error(
+    `Missing Stripe ${isProduction ? "production" : "test"} secret key - Please check Replit Secrets`,
+  );
 }
 
 const stripe = new Stripe(stripeSecretKey, {
@@ -37,7 +41,9 @@ export function registerRoutes(app: Express): Server {
   // API Routes
   app.get("/api/current-rate", async (_req: Request, res: Response) => {
     try {
-      const response = await fetch('https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc');
+      const response = await fetch(
+        "https://api.stlouisfed.org/fred/series/observations?series_id=MORTGAGE30US&api_key=5e20a3e5e3f4547a87e7f935602f4504&file_type=json&limit=1&sort_order=desc",
+      );
       const data = await response.json();
       res.json(data);
     } catch (error) {
@@ -57,20 +63,28 @@ export function registerRoutes(app: Express): Server {
         state: req.body.state,
         filingStatus: req.body.filingStatus,
         hoaFees: req.body.hoaFees ? Number(req.body.hoaFees) : undefined,
-        homeownersInsurance: req.body.homeownersInsurance ? Number(req.body.homeownersInsurance) : undefined,
+        homeownersInsurance: req.body.homeownersInsurance
+          ? Number(req.body.homeownersInsurance)
+          : undefined,
         pmiInput: req.body.pmiInput ? Number(req.body.pmiInput) : null,
-        propertyTaxInput: req.body.propertyTaxInput ? Number(req.body.propertyTaxInput) : null,
-        pretaxContributions: req.body.pretaxContributions ? Number(req.body.pretaxContributions) : undefined,
-        dependents: req.body.dependents ? Number(req.body.dependents) : undefined
+        propertyTaxInput: req.body.propertyTaxInput
+          ? Number(req.body.propertyTaxInput)
+          : null,
+        pretaxContributions: req.body.pretaxContributions
+          ? Number(req.body.pretaxContributions)
+          : undefined,
+        dependents: req.body.dependents
+          ? Number(req.body.dependents)
+          : undefined,
       };
 
       // Validate numbers
       const requiredNumbers = {
-        'Household Income': input.householdIncome,
-        'Down Payment': input.downPayment,
-        'Monthly Debt': input.monthlyDebt,
-        'Annual Interest Rate': input.annualInterestRate,
-        'Loan Term Years': input.loanTermYears
+        "Household Income": input.householdIncome,
+        "Down Payment": input.downPayment,
+        "Monthly Debt": input.monthlyDebt,
+        "Annual Interest Rate": input.annualInterestRate,
+        "Loan Term Years": input.loanTermYears,
       };
 
       for (const [field, value] of Object.entries(requiredNumbers)) {
@@ -91,10 +105,10 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-app.post("/api/chat", async (req: Request, res: Response) => {
+  app.post("/api/chat", async (req: Request, res: Response) => {
     const { message, calculatorData, isPaid } = req.body;
     console.log("Received chat request");
-    const effectiveIsPaid = config.aiChargeMode ? isPaid : true; // Always treat as paid if charge mode is off
+    const effectiveIsPaid = config.aiChargeMode ? isPaid : true;
 
     try {
       if (message.length > 3000) {
@@ -104,7 +118,13 @@ app.post("/api/chat", async (req: Request, res: Response) => {
         });
       }
 
-      const sessionId = (req.headers["x-session-id"] as string) || crypto.randomUUID();
+      const sessionId =
+        (req.headers["x-session-id"] as string) || crypto.randomUUID();
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+      res.setHeader("X-Session-Id", sessionId);
 
       const chat = await db
         .insert(aiChats)
@@ -121,37 +141,46 @@ app.post("/api/chat", async (req: Request, res: Response) => {
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      const completion = await openai.chat.completions.create({
+      let fullResponse = "";
+      const stream = await openai.chat.completions.create({
         messages: [
           {
             role: "system",
-            content: "You are a helpful real estate and financial advisor assistant.",
+            content:
+              "You are a helpful real estate and financial advisor assistant.",
           },
           {
             role: "user",
             content: `Financial data:\n${JSON.stringify(calculatorData, null, 2)}\n\nQuestion: ${message}`,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: isProduction ? "gpt-4o-mini" : "gpt-3.5-turbo",
         max_tokens: 500,
         temperature: 0.7,
+        stream: true,
       });
 
-      const response = completion.choices[0]?.message?.content || 
-        "I apologize, but I couldn't generate a response. Please try again.";
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        if (content) {
+          fullResponse += content;
+          res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        }
+      }
 
       await db
         .update(aiChats)
-        .set({ response })
+        .set({ response: fullResponse })
         .where(eq(aiChats.id, chat[0].id));
 
-      res.setHeader("X-Session-Id", sessionId);
-      res.json({ response });
+      res.write("data: [DONE]\n\n");
+      res.end();
     } catch (error) {
       console.error("Chat API Error:", error);
       res.status(500).json({
         error: "Failed to get AI response",
-        message: "Our AI service is temporarily unavailable. Please try again later.",
+        message:
+          "Our AI service is temporarily unavailable. Please try again later.",
       });
     }
   });
@@ -191,6 +220,20 @@ app.post("/api/chat", async (req: Request, res: Response) => {
       console.error("Stripe checkout error:", error);
       res.status(500).json({
         error: "Failed to create checkout session",
+        details: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
+
+  app.post("/api/create-google-sheet", async (req: Request, res: Response) => {
+    try {
+      const { calculatorData } = req.body;
+      const sheetUrl = await createGoogleSheet(calculatorData);
+      res.json({ url: sheetUrl });
+    } catch (error) {
+      console.error("Google Sheets error:", error);
+      res.status(500).json({
+        error: "Failed to create Google Sheet",
         details: error instanceof Error ? error.message : "Unknown error",
       });
     }

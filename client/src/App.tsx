@@ -6,7 +6,6 @@ import { AffordabilitySkeleton } from './components/ui/affordability-skeleton';
 
 const Home = lazy(() => import('./pages/Home'));
 const HowItWorks = lazy(() => import('./pages/HowItWorks'));
-const Feedback = lazy(() => import('./pages/Feedback'));
 
 
 // Check if we're in production mode
@@ -32,8 +31,7 @@ function App() {
         <Suspense fallback={<AffordabilitySkeleton />}>
           <Switch>
             <Route path="/" component={Home} />
-            <Route path="/how-it-works" component={HowItWorks} />
-            <Route path="/feedback" component={Feedback} />
+            <Route path="/why" component={HowItWorks} />
             <Route>404 Page Not Found</Route>
           </Switch>
         </Suspense>

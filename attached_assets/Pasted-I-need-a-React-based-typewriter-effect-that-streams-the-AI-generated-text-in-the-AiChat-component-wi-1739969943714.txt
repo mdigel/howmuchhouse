@@ -1,0 +1,75 @@
+I need a React-based typewriter effect that streams the AI-generated text in the AiChat component without blocking user scrolling. Specifically:
+
+1. Character-by-Character Reveal (or small chunks)
+
+Use setInterval or requestAnimationFrame to append text incrementally from a buffer.
+No Forced Auto-Scroll
+
+2. The user must be able to scroll freely through the chat/container at any time.
+Do not scroll the container automatically when new text arrives.
+Non-Blocking Updates
+
+3. Keep the intervals small enough that the user can interact (e.g., scroll) while text is appearing.
+Use a ref to store the text buffer; on each timer tick, move a few characters from the buffer to the displayed text.
+
+4. Backend (Next.js or Express) calls OpenAI with stream: true and forwards chunks via SSE.
+
+Here is an example of how the frontend could work in React: 
+import { useEffect, useState, useRef } from "react";
+
+export default function TypewriterChat() {
+  const [displayedText, setDisplayedText] = useState("");
+  const bufferRef = useRef("");
+
+  // Typewriter effect: append 1 char from buffer every 30ms
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (bufferRef.current.length > 0) {
+        setDisplayedText((prev) => prev + bufferRef.current[0]);
+        bufferRef.current = bufferRef.current.slice(1);
+      }
+    }, 30);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Fetch SSE from backend
+  async function startStreaming() {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: [{ role: "user", content: "Hello!" }]
+      }),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      chunk.split("\n").forEach((line) => {
+        if (line.startsWith("data: ")) {
+          const jsonStr = line.slice(6);
+          if (jsonStr === "[DONE]") return;
+          try {
+            const { content } = JSON.parse(jsonStr);
+            if (content) bufferRef.current += content;
+          } catch {}
+        }
+      });
+    }
+  }
+
+  // Let user scroll freely: no auto-scroll calls here
+  return (
+    <div>
+      <button onClick={startStreaming}>Start Chat</button>
+      <div style={{ height: 200, overflowY: "auto", border: "1px solid #aaa" }}>
+        {displayedText}
+      </div>
+    </div>
+  );
+}

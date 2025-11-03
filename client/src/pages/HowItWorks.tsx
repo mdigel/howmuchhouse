@@ -1,24 +1,39 @@
-
 import React from "react";
+import { Link } from "wouter";
 
 export default function HowItWorks() {
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-lg font-semibold">🏠 Buying a home?</h1>
+      <h1 className="text-lg font-semibold">
+        🏠 We weren't going to buy a house for another 6 months.
+      </h1>
       <br />
-      <p>Don't just guess what you can afford.</p>
+      <p>But then we fell in love with a house and HAD to make an offer.</p>
       <br />
       <p>
-        We built a calculator that uses time-tested financial principles
+        The next 3 days were some of the most stressful of my life. What can we
+        actaully afford? Am I signing us up to be stressed out for the next 10
+        years? I hadn't done the analysis yet.
+      </p>
+      <br />
+      <p>
+        I ended up relying a ton on Ai for scenario planning. This calculator
+        and Ai assistant is what I wish I had then.
+      </p>
+      <br />
+      <p>
+        We built this calculator using time-tested financial principles
         (shoutout to NerdWallet & MoneyUnder30) to help you stay stress-free.
         Here's how it works 🧵👇
       </p>
       <br />
-      <div>
-        <h2 className="text-lg font-semibold">
-          First, timeless financial principles:
-        </h2>
-        <br />
+      <h2 className="text-lg font-semibold">
+        First, timeless financial principles:
+      </h2>
+      <br />
+      <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+        {" "}
+        {/* Added styled container */}
         <div className="space-y-6">
           <div>
             <h3 className="font-semibold">
@@ -30,8 +45,8 @@ export default function HowItWorks() {
                 28% of gross income
               </li>
               <li>
-                Back-end DTI = Total debt payments... this shouldn't be more than
-                36% of gross income
+                Back-end DTI = Total debt payments... this shouldn't be more
+                than 36% of gross income
               </li>
             </ul>
             <p className="mt-2">
@@ -56,11 +71,14 @@ export default function HowItWorks() {
             <br />
             <p className="mt-2">
               These principles help protect your finances and prevent buyer's
-              remorse 🛟. Let's dive into the process 👇
+              remorse. Let's dive into how the calculator works 👇
             </p>
           </div>
         </div>
-
+      </div>{" "}
+      {/* Closing the added container */}
+      <br />
+      <div className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold">
             Step 1: We analyze your DTI.
@@ -73,18 +91,18 @@ export default function HowItWorks() {
             limit.
           </p>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 2: We calculate your max monthly mortgage payment based on the
             28/36:
           </h3>
           <ul className="list-disc pl-6 space-y-1">
-            <li>Max 28% of your gross income for mortgage 🏡</li>
-            <li>Max 36% for total debt 💳</li>
+            <p>
+              This is the mortgage payment that comes out to be 28% (or lower
+              based on Step 1) of your monthly gross income.
+            </p>
           </ul>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 3: We calculate how much you can borrow based on that payment.
@@ -101,7 +119,6 @@ export default function HowItWorks() {
             <li>Property taxes, PMI, HOA fees, and insurance</li>
           </ul>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 4: We calculate your net income.
@@ -111,7 +128,6 @@ export default function HowItWorks() {
             what's used for the 50/30/20 budget rule.
           </p>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 5: We check if your mortgage fits the 50/30/20 rule:
@@ -122,10 +138,9 @@ export default function HowItWorks() {
             <li>20% savings & extra debt payments 💰</li>
           </ul>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
-            Step 6: We check different budget scenarios.
+            Step 6: We run different budget scenarios.
           </h3>
           <p>
             Each scenario has a different savings rate (15% and 25%). This helps
@@ -133,22 +148,24 @@ export default function HowItWorks() {
             stay financially flexible.
           </p>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 7: We calculate the monthly mortgage payment for each scenario:
           </h3>
-          <p>
-            Mortgage + property taxes + insurance + HOA fees + PMI (if needed).
-          </p>
+          <p>Your total monthly mortgage payment will be the combination of:</p>
+          <ul className="list-disc pl-6 space-y-1">
+            <li>
+              Mortgage + property taxes + insurance + HOA fees + PMI (if
+              needed).
+            </li>
+          </ul>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold">
             Step 8: We bring it all together:
           </h3>
           <ul className="list-disc pl-6 space-y-1">
-            <li>Max home price under the 28/36 DIR Rule 🏦</li>
+            <li>Your max home price under the 28/36 DIR Rule 🏦</li>
             <li>
               Comfortable home prices that allow for different rates of saving
               💰
@@ -158,19 +175,28 @@ export default function HowItWorks() {
             </li>
           </ul>
         </div>
-
         <div className="mt-8">
           <h3 className="text-lg font-semibold">🔑 Key takeaway:</h3>
           <p>
-            Banks issue approvals according to their risk assessment. We
-            concentrate on your financial wellness and the ease with which you
-            make mortgage payments. This calculator is set up to help you figure
-            out what you can pay without pinching your lifestyle.
+            Banks approve loans based on their risk assessment, but we focus on
+            your financial well-being and how comfortably you can handle
+            mortgage payments. This calculator is designed to help you determine
+            what you can afford without stretching your budget or compromising
+            your lifestyle.
           </p>
           <p className="mt-2">
             Avoid regret. House hunt with confidence in your budget. 😴🏡
           </p>
         </div>
+      </div>
+      <div className="flex justify-center mt-8">
+        <Link
+          to="/"
+          onClick={() => window.scrollTo(0, 0)}
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Calculate Your Exact Budget 🏠
+        </Link>
       </div>
     </div>
   );

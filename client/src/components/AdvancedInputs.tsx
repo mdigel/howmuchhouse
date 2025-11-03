@@ -30,6 +30,7 @@ function InfoTooltip({ text }: InfoTooltipProps) {
       <Tooltip open={isMobile ? isOpen : undefined} delayDuration={0}>
         <TooltipTrigger asChild>
           <button 
+            tabIndex={-1}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

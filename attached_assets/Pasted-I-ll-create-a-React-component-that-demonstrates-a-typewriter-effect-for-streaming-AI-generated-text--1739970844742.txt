@@ -1,0 +1,140 @@
+I'll create a React component that demonstrates a typewriter effect for streaming AI-generated text without blocking user scrolling. We'll use Next.js with the App Router and implement the features you've requested. Let's break this down into steps:
+
+1. First, we'll create the main component with a chat-like interface.
+2. We'll implement the typewriter effect using `requestAnimationFrame` for smooth animation.
+3. We'll ensure that the text reveal doesn't interfere with user scrolling.
+
+
+Here's the implementation:
+
+```typescriptreact
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+
+type Message = {
+  id: number;
+  content: string;
+  role: 'user' | 'ai';
+  isComplete: boolean;
+}
+
+export default function Chat() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textBufferRef = useRef('')
+  const animationFrameRef = useRef<number | null>(null)
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (input.trim() === '') return
+
+    const userMessage: Message = { id: Date.now(), content: input, role: 'user', isComplete: true }
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+
+    // Simulate AI response
+    setIsTyping(true)
+    setTimeout(() => {
+      const aiMessage: Message = { id: Date.now(), content: '', role: 'ai', isComplete: false }
+      setMessages(prev => [...prev, aiMessage])
+      textBufferRef.current = "This is a simulated AI response that will be revealed character by character. It demonstrates the typewriter effect without blocking user scrolling. You can freely scroll through the chat while this text is being revealed."
+      startTypewriterEffect(aiMessage.id)
+    }, 1000)
+  }
+
+  const startTypewriterEffect = (messageId: number) => {
+    let index = 0
+    const revealText = () => {
+      if (index < textBufferRef.current.length) {
+        setMessages(prev => prev.map(msg => 
+          msg.id === messageId 
+            ? { ...msg, content: msg.content + textBufferRef.current[index] }
+            : msg
+        ))
+        index++
+        animationFrameRef.current = requestAnimationFrame(revealText)
+      } else {
+        setMessages(prev => prev.map(msg => 
+          msg.id === messageId ? { ...msg, isComplete: true } : msg
+        ))
+        setIsTyping(false)
+      }
+    }
+    animationFrameRef.current = requestAnimationFrame(revealText)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <CardTitle>AI Chat</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[60vh] overflow-y-auto">
+          {messages.map(m => (
+            <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-block p-2 rounded-lg ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                {m.content}
+                {!m.isComplete && m.role === 'ai' && (
+                  <span className="inline-block ml-1 animate-pulse">▌</span>
+                )}
+              </span>
+            </div>
+          ))}
+          {isTyping && messages[messages.length - 1]?.role !== 'ai' && (
+            <div className="text-left">
+              <span className="inline-block p-2 rounded-lg bg-gray-200 text-black">
+                AI is typing...
+              </span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </CardContent>
+        <CardFooter>
+          <form onSubmit={handleSubmit} className="flex w-full space-x-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-grow"
+            />
+            <Button type="submit" disabled={isTyping}>Ask Question</Button>
+          </form>
+        </CardFooter>
+      </Card>
+    </div>
+  )
+}
+```
+
+This implementation addresses all your requirements:
+
+1. Character-by-Character Reveal: We use `requestAnimationFrame` to append text incrementally from a buffer (`textBufferRef`). This provides a smooth typewriter effect .
+2. No Forced Auto-Scroll: The chat container (`CardContent`) has a fixed height with `overflow-y-auto`, allowing the user to scroll freely at any time. We don't force any automatic scrolling when new text arrives .
+3. Non-Blocking Updates: By using `requestAnimationFrame`, we ensure that the text reveal process is non-blocking and allows for smooth user interaction, including scrolling .
+4. Simulated AI Response: When the "Ask Question" button is pressed, it simulates an AI response by adding a new message and then revealing its content character by character .
+
+
+Key features of this implementation:
+
+- The typewriter effect is implemented using `requestAnimationFrame` for smooth animation.
+- Each message has an `isComplete` flag to track whether it's fully revealed.
+- The AI "typing" indicator is shown separately from the message being revealed.
+- The component cleans up the animation frame on unmount to prevent memory leaks.
+- The chat interface uses shadcn/ui components for a clean, modern look .
+
+
+This implementation provides a realistic typewriter effect for streaming AI-generated text without interfering with user scrolling or interaction. You can easily modify the simulated AI response or connect it to an actual AI API in the future .

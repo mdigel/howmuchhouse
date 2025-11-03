@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
+import mixpanel from 'mixpanel-browser';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BasicInputs, basicInputSchema } from "@/components/BasicInputs";
 import { AdvancedInputs, advancedInputSchema } from "@/components/AdvancedInputs";
 import { AffordabilityResults } from "@/components/AffordabilityResults";
 import { AiChat } from "@/components/AiChat";
+import { TextMeListings } from "@/components/TextMeListings";
+import { RealEstateAgents } from "@/components/RealEstateAgents";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showAiChat, setShowAiChat] = useState(false);
+  const [showTextListings, setShowTextListings] = useState(false);
+  const [showRealEstateAgents, setShowRealEstateAgents] = useState(false);
 
   const basicForm = useForm<BasicInputType>({
     resolver: zodResolver(basicInputSchema),
@@ -40,16 +47,33 @@ export default function Home() {
 
   // Add event listeners for state restoration after payment
   useEffect(() => {
+    const handleTextListings = () => {
+      setShowAiChat(false);
+      setShowTextListings(true);
+      setShowRealEstateAgents(false);
+    };
+
+    window.addEventListener('showTextListings', handleTextListings);
+    return () => {
+      window.removeEventListener('showTextListings', handleTextListings);
+    };
+  }, []);
+
+  useEffect(() => {
     const restoreAndCalculate = async () => {
       const handleRestoreInputs = async (event: CustomEvent<{ inputs: { basic?: Record<string, string | number>; advanced?: Record<string, string | number | null> } }>) => {
         const { basic, advanced } = event.detail.inputs;
-        console.log('Restoring form inputs:', { basic, advanced });
+        if (import.meta.env.DEV) {
+          console.log('Restoring form inputs:', { basic, advanced });
+        }
 
         try {
           if (basic) {
             await Promise.all(
               Object.entries(basic).map(async ([key, value]) => {
-                console.log(`Setting basic form value: ${key} = ${value}`);
+                if (import.meta.env.DEV) {
+                  console.log(`Setting basic form value: ${key} = ${value}`);
+                }
                 await basicForm.setValue(key as keyof BasicInputType, String(value));
               })
             );
@@ -58,7 +82,9 @@ export default function Home() {
           if (advanced) {
             await Promise.all(
               Object.entries(advanced).map(async ([key, value]) => {
-                console.log(`Setting advanced form value: ${key} = ${value}`);
+                if (import.meta.env.DEV) {
+                  console.log(`Setting advanced form value: ${key} = ${value}`);
+                }
                 await advancedForm.setValue(key as keyof AdvancedInputType, value === null ? null : String(value));
               })
             );
@@ -71,7 +97,9 @@ export default function Home() {
           ]);
 
           if (basicValid && advancedValid) {
-            console.log('Forms validated, triggering calculation');
+            if (import.meta.env.DEV) {
+              console.log('Forms validated, triggering calculation');
+            }
             await handleCalculate();
           } else {
             console.error('Form validation failed after restoration');
@@ -89,7 +117,9 @@ export default function Home() {
       if (storedInputs) {
         try {
           const inputs = JSON.parse(storedInputs);
-          console.log('Found stored inputs:', inputs);
+          if (import.meta.env.DEV) {
+            console.log('Found stored inputs:', inputs);
+          }
           await handleRestoreInputs(new CustomEvent('restoreUserInputs', { detail: { inputs } }));
         } catch (error) {
           console.error('Failed to parse stored inputs:', error);
@@ -106,15 +136,29 @@ export default function Home() {
 
   const handleCalculate = async () => {
     setIsCalculating(true);
+    
+    // Track calculation event with form data
+    mixpanel.track('Calculator Used', {
+      householdIncome: basicForm.getValues('householdIncome'),
+      downPayment: basicForm.getValues('downPayment'),
+      monthlyDebt: basicForm.getValues('monthlyDebt'),
+      state: basicForm.getValues('state'),
+      filingStatus: basicForm.getValues('filingStatus'),
+      interestRate: basicForm.getValues('annualInterestRate'),
+    });
     try {
       const basicValid = await basicForm.trigger();
       const advancedValid = await advancedForm.trigger();
 
-      console.log('Form validation results:', { basicValid, advancedValid });
-      console.log('Form errors:', basicForm.formState.errors, advancedForm.formState.errors);
+      if (import.meta.env.DEV) {
+        console.log('Form validation results:', { basicValid, advancedValid });
+        console.log('Form errors:', basicForm.formState.errors, advancedForm.formState.errors);
+      }
 
       if (!basicValid || !advancedValid) {
-        console.log('Form validation failed');
+        if (import.meta.env.DEV) {
+          console.log('Form validation failed');
+        }
         return;
       }
 
@@ -127,9 +171,13 @@ export default function Home() {
         advanced: advancedData
       };
       sessionStorage.setItem('userInputs', JSON.stringify(userInputs));
-      console.log('Saved form inputs to sessionStorage:', userInputs);
+      if (import.meta.env.DEV) {
+        console.log('Saved form inputs to sessionStorage:', userInputs);
+      }
 
-      console.log('Sending calculation request with data:', { ...basicData, ...advancedData });
+      if (import.meta.env.DEV) {
+        console.log('Sending calculation request with data:', { ...basicData, ...advancedData });
+      }
 
       const response = await fetch('/api/calculate', {
         method: 'POST',
@@ -153,9 +201,12 @@ export default function Home() {
       }
 
       const data = await response.json();
-      console.log('Received calculation results:', data);
+      if (import.meta.env.DEV) {
+        console.log('Received calculation results:', data);
+        console.log('Updated results state:', data);
+      }
       setResults(data);
-      console.log('Updated results state:', data);
+      setShowAiChat(false); // Reset AI chat visibility when new results are calculated
     } catch (error) {
       console.error('Failed to calculate:', error);
       // You might want to show this error to the user with a toast notification
@@ -170,7 +221,7 @@ export default function Home() {
             const headerOffset = 20;
             const elementPosition = resultsElement.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-            
+
             window.scrollTo({
               top: offsetPosition,
               behavior: 'smooth'
@@ -188,29 +239,42 @@ export default function Home() {
           <Card className="p-6 space-y-6 bg-gradient-to-br from-[#F8FAFF] via-[#F0F4FF] to-[#EDF2FF]">
             <BasicInputs form={basicForm} />
             <AdvancedInputs form={advancedForm} />
-            <Button
-              onClick={handleCalculate}
-              disabled={isCalculating}
-              className="w-full bg-[#006AFF] hover:bg-[#006AFF]/90 text-white font-semibold py-3 px-6 rounded transition-all duration-300 transform hover:scale-[1.02] relative animate-fade-in"
-            >
-              {isCalculating ? (
-                <>
-                  <span className="opacity-0">Calculate</span>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
-                </>
-              ) : (
-                'Calculate'
-              )}
-            </Button>
+            <div className="space-y-3">
+              <Button
+                onClick={handleCalculate}
+                disabled={isCalculating}
+                className="w-full bg-gradient-to-r from-[#006AFF] via-blue-600 to-indigo-600 hover:from-[#006AFF] hover:via-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.98] active:translate-y-0 relative animate-fade-in disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none border-0 focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
+              >
+                {isCalculating ? (
+                  <>
+                    <span className="opacity-0">Calculate</span>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    </div>
+                  </>
+                ) : (
+                  'Calculate'
+                )}
+              </Button>
+              <Link href="/why" className="block text-center text-sm text-muted-foreground hover:text-foreground transition-colors">
+                How it works?
+              </Link>
+            </div>
           </Card>
         </div>
 
-        <div className="lg:pl-8">
+        <div className="lg:pl-8 lg:flex lg:flex-col">
           {results ? (
-            <div>
-              <AffordabilityResults results={results} />
+            <div className="lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
+              <AffordabilityResults 
+                results={results} 
+                showAiChat={showAiChat}
+                onLaunchAiChat={() => {
+                  setShowAiChat(true);
+                  setShowTextListings(false);
+                  setShowRealEstateAgents(false);
+                }}
+              />
             </div>
           ) : (
             <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
@@ -243,29 +307,22 @@ export default function Home() {
           )}
         </div>
       </div>
-      {results && (
-        <div className="col-span-2 mt-8">
+      {results && showAiChat && (
+        <div className="max-w-7xl mx-auto mt-8">
           <AiChat calculatorData={results} />
+        </div>
+      )}
+      {results && (
+        <div className="max-w-7xl mx-auto mt-8">
+          {showTextListings && <TextMeListings />}
+          {showRealEstateAgents && <RealEstateAgents />}
         </div>
       )}
       <footer className="mt-36 md:mt-48 pb-6 text-center space-y-4">
         <div className="w-full max-w-2xl mx-auto border-t border-border pt-6" />
-        <div className="space-y-4">
-          <a
-            href="https://x.com/Elder_Deagle"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex flex-col items-center gap-2 text-foreground hover:text-muted-foreground transition-colors"
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-            </svg>
-            <span className="text-base">ideas, feedback, bugs</span>
-          </a>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} A Plymouth Holding Production</p>
-            <p className="text-xs">Talk to a human before making a huge financial decision.</p>
-          </div>
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} A Plymouth Holding Production</p>
+          <p className="text-xs">Talk to a human before making a huge financial decision.</p>
         </div>
       </footer>
     </div>

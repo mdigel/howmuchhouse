@@ -56,13 +56,9 @@ export function getLayout(title: string, metaDescription: string, content: strin
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                Calculator
             </a>
-            <a href="/how-it-works"
+            <a href="/why"
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
-               How It Works?
-            </a>
-            <a href="/feedback"
-               class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
-               Feedback
+               Why?
             </a>
             <a href="/affordability-by-income-level"
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
@@ -93,13 +89,9 @@ export function getLayout(title: string, metaDescription: string, content: strin
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                Calculator
             </a>
-            <a href="/how-it-works"
+            <a href="/why"
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
-               How It Works?
-            </a>
-            <a href="/feedback"
-               class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
-               Feedback
+               Why?
             </a>
             <a href="/affordability-by-income-level"
                class="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
