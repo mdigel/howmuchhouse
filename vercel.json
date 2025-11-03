@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api"
+    },
+    {
+      "source": "/affordability-by-income-level",
+      "destination": "/api"
+    },
+    {
+      "source": "/:income([0-9]+k)/:state([a-z-]+)",
+      "destination": "/api"
+    },
+    {
+      "source": "/health",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
+

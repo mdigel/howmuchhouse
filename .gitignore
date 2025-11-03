@@ -7,6 +7,11 @@ vite.config.ts.*
 .env
 .env.production
 *.json
+!vercel.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!tailwind.config.ts
 attached_assets/*.json
 .env.google
 .local/
