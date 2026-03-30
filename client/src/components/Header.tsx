@@ -25,7 +25,7 @@ export function Header() {
         <div className="flex justify-between items-center">
           <Link href="/" className="text-left space-y-2 hover:opacity-80 transition-opacity">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold">
+              <h1 className="text-lg md:text-[2rem] leading-tight md:leading-8 tracking-tight font-bold text-black">
                 <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                   How Much{" "}
                 </motion.span>
@@ -36,7 +36,7 @@ export function Header() {
                   className="relative inline-block"
                 >
                   House
-                  <span className="absolute inset-0 bg-[#006AFF]/20 -rotate-1"></span>
+                  <span className="absolute inset-0 bg-uber-blue/20 -rotate-1"></span>
                 </motion.span>
                 <motion.span
                   initial={{ opacity: 0, y: 20 }}
@@ -52,7 +52,7 @@ export function Header() {
                   className="relative inline-block"
                 >
                   Afford.ai
-                  <span className="absolute inset-0 bg-[#006AFF]/20 rotate-1"></span>
+                  <span className="absolute inset-0 bg-uber-blue/20 rotate-1"></span>
                 </motion.span>
               </h1>
             </div>
@@ -72,8 +72,8 @@ export function Header() {
               <Link 
                 key={item.path} 
                 href={item.path}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location === item.path ? 'text-primary' : 'text-muted-foreground'
+                className={`text-sm font-medium transition-colors hover:text-uber-blue ${
+                  location === item.path ? 'text-foreground font-semibold' : 'text-muted-foreground'
                 }`}
                 onClick={() => mixpanel.track('Navigation Clicked', { item: item.label })} // Added Mixpanel tracking
               >
@@ -84,7 +84,7 @@ export function Header() {
               <a
                 key={item.path}
                 href={item.path}
-                className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                className="text-sm font-medium transition-colors hover:text-uber-blue text-muted-foreground"
                 onClick={() => mixpanel.track('Navigation Clicked', { item: item.label })} // Added Mixpanel tracking
               >
                 {item.label}
@@ -116,8 +116,8 @@ export function Header() {
                 <Link
                   key={item.path}
                   href={item.path}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    location === item.path ? 'text-primary' : 'text-muted-foreground'
+                  className={`text-sm font-medium transition-colors hover:text-uber-blue ${
+                    location === item.path ? 'text-foreground font-semibold' : 'text-muted-foreground'
                   }`}
                   onClick={() => {
                     setIsMenuOpen(false);
@@ -131,7 +131,7 @@ export function Header() {
                 <a
                   key={item.path}
                   href={item.path}
-                  className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                  className="text-sm font-medium transition-colors hover:text-uber-blue text-muted-foreground"
                   onClick={() => {
                     setIsMenuOpen(false);
                     mixpanel.track('Navigation Clicked', { item: item.label }); // Added Mixpanel tracking

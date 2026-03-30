@@ -1,7 +1,10 @@
 import React, { Suspense, lazy } from "react";
 import { Switch, Route } from "wouter";
 import { Header } from "./components/Header";
-import "@fontsource/noto-sans/700.css"; // Import Noto Sans Bold weight
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 import { AffordabilitySkeleton } from './components/ui/affordability-skeleton';
 
 const Home = lazy(() => import('./pages/Home'));

@@ -397,7 +397,7 @@ export function BasicInputs({ form }: BasicInputsProps) {
                           form.setValue("annualInterestRate", currentRate);
                           form.trigger("annualInterestRate");
                         }}
-                        className="absolute right-0 top-full -mt-2 text-xs text-primary hover:underline leading-none py-0 px-0 h-auto whitespace-nowrap"
+                        className="absolute right-0 top-full -mt-2 text-xs text-uber-blue hover:underline leading-none py-0 px-0 h-auto whitespace-nowrap"
                       >
                         Apply Today's Rate
                       </button>

@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import type { BasicInputType, AdvancedInputType, CalculatorResults } from "@/lib/calculatorTypes";
+import { CONFIG } from "@/config";
 
 export default function Home() {
   const [results, setResults] = useState<CalculatorResults | null>(null);
@@ -236,26 +237,53 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-8">
         <div>
-          <Card className="p-6 space-y-6 bg-gradient-to-br from-[#F8FAFF] via-[#F0F4FF] to-[#EDF2FF]">
+          <Card className="p-6 space-y-6 bg-white border-[#E8E8E8]">
             <BasicInputs form={basicForm} />
             <AdvancedInputs form={advancedForm} />
             <div className="space-y-3">
-              <Button
-                onClick={handleCalculate}
-                disabled={isCalculating}
-                className="w-full bg-gradient-to-r from-[#006AFF] via-blue-600 to-indigo-600 hover:from-[#006AFF] hover:via-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.98] active:translate-y-0 relative animate-fade-in disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none border-0 focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2"
-              >
-                {isCalculating ? (
-                  <>
-                    <span className="opacity-0">Calculate</span>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    </div>
-                  </>
-                ) : (
-                  'Calculate'
-                )}
-              </Button>
+              <div className="relative w-full group animate-fade-in isolate">
+                <div
+                  className="absolute inset-0 -z-10 rounded-lg transition-opacity duration-200 group-hover:opacity-80"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(128, 0, 255, 0.4), rgba(0, 128, 255, 0.4), rgba(0, 255, 255, 0.4), rgba(0, 255, 128, 0.4), rgba(200, 255, 0, 0.4))',
+                    filter: 'blur(20px)',
+                    transform: 'scale(1.1)',
+                    opacity: 0.6,
+                  }}
+                />
+                <button
+                  onClick={handleCalculate}
+                  disabled={isCalculating}
+                  className="relative z-0 w-full px-6 py-3 border border-border rounded-lg text-foreground text-sm font-semibold hover:bg-gray-50 hover:-translate-y-0.5 transition-all bg-white flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                >
+                  {isCalculating ? (
+                    <>
+                      <span className="opacity-0">Calculate</span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span>Calculate</span>
+                      <span className="relative inline-block w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-1">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <line
+                            x1="3" y1="8" x2="9" y2="8"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                            className="transition-all duration-300 ease-out scale-x-0 group-hover:scale-x-100"
+                            style={{ transformOrigin: '9px 8px' }}
+                          />
+                          <path
+                            d="M9 4L13 8L9 12"
+                            stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </>
+                  )}
+                </button>
+              </div>
               <Link href="/why" className="block text-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                 How it works?
               </Link>
@@ -269,36 +297,41 @@ export default function Home() {
               <AffordabilityResults 
                 results={results} 
                 showAiChat={showAiChat}
-                onLaunchAiChat={() => {
+                onLaunchAiChat={CONFIG.AI_CHAT_ENABLED ? () => {
                   setShowAiChat(true);
                   setShowTextListings(false);
                   setShowRealEstateAgents(false);
-                }}
+                } : undefined}
               />
             </div>
           ) : (
-            <div className="hidden lg:flex flex-col gap-6 justify-center h-full p-8">
-              <h2 className="text-2xl font-semibold">Let’s Find What You Can Afford 🏡</h2>
-              {/* <p className="text-muted-foreground mb-6">Fill in your details on the left to see:</p> */}
+            <div className="hidden lg:flex flex-col gap-8 justify-center h-full p-8">
+              <h2 className="text-3xl font-bold tracking-tight text-black">Find what you can afford</h2>
               <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">💰</span>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#F3F3F3] flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">$</span>
+                  </div>
                   <div>
-                    <h3 className="font-medium">Maximum Home Price</h3>
+                    <h3 className="font-semibold text-black">Maximum Home Price</h3>
                     <p className="text-sm text-muted-foreground">See the highest price the bank will likely allow</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">📊</span>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#F3F3F3] flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">%</span>
+                  </div>
                   <div>
-                    <h3 className="font-medium">Comfortable Home Prices</h3>
+                    <h3 className="font-semibold text-black">Comfortable Home Prices</h3>
                     <p className="text-sm text-muted-foreground">Purchase & save a significant portion of your income</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">🤖</span>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#F3F3F3] flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">AI</span>
+                  </div>
                   <div>
-                    <h3 className="font-medium">AI Personalized Advisor</h3>
+                    <h3 className="font-semibold text-black">AI Personalized Advisor</h3>
                     <p className="text-sm text-muted-foreground">Get analysis for your exact situation</p>
                   </div>
                 </div>
@@ -307,7 +340,7 @@ export default function Home() {
           )}
         </div>
       </div>
-      {results && showAiChat && (
+      {CONFIG.AI_CHAT_ENABLED && results && showAiChat && (
         <div className="max-w-7xl mx-auto mt-8">
           <AiChat calculatorData={results} />
         </div>

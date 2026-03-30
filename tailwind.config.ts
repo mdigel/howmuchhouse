@@ -5,10 +5,13 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "0.5rem",
+        md: "calc(0.5rem - 2px)",
+        sm: "calc(0.5rem - 4px)",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -22,8 +25,11 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "#006AFF",
-          foreground: "white",
+          DEFAULT: "#000000",
+          foreground: "#FFFFFF",
+        },
+        uber: {
+          blue: "#276EF1",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

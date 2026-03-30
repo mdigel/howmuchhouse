@@ -23,7 +23,7 @@ interface AffordabilityResultsProps {
   results: CalculatorResults;
   isLoading?: boolean;
   showAiChat?: boolean;
-  onLaunchAiChat: () => void;
+  onLaunchAiChat?: () => void;
 }
 
 interface InfoTooltipProps {
@@ -235,7 +235,7 @@ export function AffordabilityResults({
       >
         {/* Max Price Result */}
         <AccordionItem value="item-0">
-          <AccordionTrigger className="text-lg font-semibold py-3 px-4 bg-card rounded-lg hover:no-underline hover:bg-accent group">
+          <AccordionTrigger className="text-lg font-semibold py-3 px-4 bg-white rounded-lg hover:no-underline hover:bg-[#F3F3F3] group">
             <div className="flex flex-col w-full">
               <span className="text-xs md:text-sm text-foreground group-hover:text-foreground transition-colors mb-1.5 text-left w-full">
                 Max Price The Bank Will Allow
@@ -243,7 +243,7 @@ export function AffordabilityResults({
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">🥵</span>
-                  <span className="text-xl font-bold text-destructive">
+                  <span className="text-xl font-bold text-black">
                     {
                       formatCurrency(
                         results.maxHomePrice.mortgagePaymentStats.purchasePrice,
@@ -259,7 +259,7 @@ export function AffordabilityResults({
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="pt-4 px-4 bg-card rounded-lg">
+          <AccordionContent className="pt-4 px-4 bg-white rounded-lg">
             <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
               This scenario reflects the highest house price the bank/lender
               will allow under the '28/36 rule,' (
@@ -267,7 +267,7 @@ export function AffordabilityResults({
                 href="https://www.nerdwallet.com/article/mortgages/debt-income-ratio-mortgage"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-uber-blue hover:underline"
               >
                 NerdWallet
               </a>
@@ -282,7 +282,7 @@ export function AffordabilityResults({
               {/* First row: Transaction and Mortgage Payment */}
               <div className="grid md:grid-cols-2 gap-4">
                 {/* Transaction Section */}
-                <div className="bg-muted/30 p-4 rounded-lg">
+                <div className="bg-[#F3F3F3] p-4 rounded-lg">
                   <h3 className="text-base font-semibold mb-4">Transaction</h3>
                   <div className="space-y-3">
                     <div className="flex flex-col">
@@ -290,7 +290,7 @@ export function AffordabilityResults({
                         Purchase Price
                         <InfoTooltip text="The total price of the home you can purchase in this scenario" />
                       </span>
-                      <span className="text-base font-semibold text-primary">
+                      <span className="text-base font-semibold text-black">
                         {
                           formatCurrency(
                             results.maxHomePrice.mortgagePaymentStats
@@ -356,7 +356,7 @@ export function AffordabilityResults({
                 </div>
 
                 {/* Mortgage Payment Section */}
-                <div className="bg-muted/30 p-4 rounded-lg">
+                <div className="bg-[#F3F3F3] p-4 rounded-lg">
                   <h3 className="text-base font-semibold mb-4">
                     Mortgage Payment
                   </h3>
@@ -366,7 +366,7 @@ export function AffordabilityResults({
                         Total Monthly Payment
                         <InfoTooltip text="Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" />
                       </span>
-                      <span className="text-base font-semibold text-primary">
+                      <span className="text-base font-semibold text-black">
                         {
                           formatCurrency(
                             results.maxHomePrice.mortgagePaymentStats
@@ -435,7 +435,7 @@ export function AffordabilityResults({
               </div>
 
               {/* Second row: Monthly Budget (full width) */}
-              <div className="bg-muted/30 p-4 rounded-lg w-full">
+              <div className="bg-[#F3F3F3] p-4 rounded-lg w-full">
                 <h3 className="text-base font-semibold mb-3">Monthly Budget</h3>
                 <div className="space-y-1.5">
                   <div className="flex flex-col">
@@ -551,11 +551,11 @@ export function AffordabilityResults({
           )
           .map((scenario, index) => (
           <AccordionItem key={index} value={`item-${index + 1}`}>
-            <AccordionTrigger className="text-lg font-semibold py-3 px-4 bg-card rounded-lg hover:no-underline hover:bg-accent group">
+            <AccordionTrigger className="text-lg font-semibold py-3 px-4 bg-white rounded-lg hover:no-underline hover:bg-[#F3F3F3] group">
               <div className="flex flex-col w-full">
                 <span className="text-xs md:text-sm text-foreground group-hover:text-foreground transition-colors mb-1.5 text-left w-full">
                   Save{" "}
-                  <span className="text-[#22C55E]">
+                  <span className="text-uber-blue font-semibold">
                     {formatPercentage(scenario.scenario.savings.percentage)}
                   </span>{" "}
                   of your Net Income each month
@@ -563,7 +563,7 @@ export function AffordabilityResults({
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🙂</span>
-                    <span className="text-xl font-bold text-primary">
+                    <span className="text-xl font-bold text-uber-blue">
                       {
                         formatCurrency(
                           scenario.mortgagePaymentStats.purchasePrice,
@@ -574,7 +574,7 @@ export function AffordabilityResults({
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-4 px-4 bg-card rounded-lg">
+            <AccordionContent className="pt-4 px-4 bg-white rounded-lg">
               <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
                 If you want to save{" "}
                 {formatPercentage(scenario.scenario.savings.percentage)} of your
@@ -590,7 +590,7 @@ export function AffordabilityResults({
                   href="https://www.nerdwallet.com/article/finance/nerdwallet-budget-calculator"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline"
+                  className="text-uber-blue hover:underline"
                 >
                   NerdWallet's 50/30/20 Budget Rule
                 </a>{" "}
@@ -601,7 +601,7 @@ export function AffordabilityResults({
                 {/* First row: Transaction and Mortgage Payment */}
                 <div className="grid md:grid-cols-2 gap-4">
                   {/* Transaction Section */}
-                  <div className="bg-muted/30 p-4 rounded-lg">
+                  <div className="bg-[#F3F3F3] p-4 rounded-lg">
                     <h3 className="text-base font-semibold mb-4">Transaction</h3>
                     <div className="space-y-3">
                       <div className="flex flex-col">
@@ -609,7 +609,7 @@ export function AffordabilityResults({
                           Purchase Price
                           <InfoTooltip text="The total price of the home you can purchase in this scenario" />
                         </span>
-                        <span className="text-base font-semibold text-primary">
+                        <span className="text-base font-semibold text-black">
                           {
                             formatCurrency(
                               scenario.mortgagePaymentStats.purchasePrice,
@@ -670,7 +670,7 @@ export function AffordabilityResults({
                   </div>
 
                   {/* Mortgage Payment Section */}
-                  <div className="bg-muted/30 p-4 rounded-lg">
+                  <div className="bg-[#F3F3F3] p-4 rounded-lg">
                     <h3 className="text-base font-semibold mb-4">
                       Mortgage Payment
                     </h3>
@@ -680,7 +680,7 @@ export function AffordabilityResults({
                           Total Monthly Payment
                           <InfoTooltip text="Your complete monthly housing payment including mortgage, taxes, insurance, and other fees" />
                         </span>
-                        <span className="text-base font-semibold text-primary">
+                        <span className="text-base font-semibold text-black">
                           {
                             formatCurrency(
                               scenario.mortgagePaymentStats.totalPayment,
@@ -745,7 +745,7 @@ export function AffordabilityResults({
                 </div>
 
                 {/* Monthly Budget Section */}
-                <div className="bg-muted/30 p-4 rounded-lg w-full">
+                <div className="bg-[#F3F3F3] p-4 rounded-lg w-full">
                   <h3 className="text-base font-semibold mb-3">Monthly Budget</h3>
                   <div className="space-y-1.5">
                     <div className="flex flex-col">
@@ -847,7 +847,7 @@ export function AffordabilityResults({
       </Accordion>
       <div className="lg:mt-auto lg:pt-4">
         <CustomButtons 
-          onLaunchAiChat={() => {
+          onLaunchAiChat={onLaunchAiChat ? () => {
             mixpanel.track('Ai Chat Triggered');
             onLaunchAiChat();
             setTimeout(() => {
@@ -856,7 +856,7 @@ export function AffordabilityResults({
                 aiChatElement.scrollIntoView({ behavior: 'smooth' });
               }
             }, 100);
-          }}
+          } : undefined}
           onGoogleSheet={() => {
             mixpanel.track('Google Sheet Triggered');
             handleGoogleSheet();

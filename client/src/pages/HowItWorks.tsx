@@ -31,7 +31,7 @@ export default function HowItWorks() {
         First, timeless financial principles:
       </h2>
       <br />
-      <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+      <div className="bg-[#F3F3F3] p-6 rounded-lg">
         {" "}
         {/* Added styled container */}
         <div className="space-y-6">

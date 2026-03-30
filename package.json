@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.2",
+    "@fontsource/inter": "^5.2.8",
     "@fontsource/noto-sans": "^5.1.0",
     "@google-cloud/local-auth": "^3.0.1",
     "@hookform/resolvers": "^3.9.1",
