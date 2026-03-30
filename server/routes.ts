@@ -4,9 +4,6 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import Stripe from "stripe";
 import OpenAI from "openai";
-import { db } from "../db";
-import { aiChats } from "../db/schema";
-import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import {
   calculateAllScenarios,
@@ -155,17 +152,6 @@ export function registerRoutes(app: Express): Server {
       res.setHeader("Connection", "keep-alive");
       res.setHeader("X-Session-Id", sessionId);
 
-      const chat = await db
-        .insert(aiChats)
-        .values({
-          sessionId,
-          message,
-          response: "",
-          characterCount: message.length,
-          hasPaid: effectiveIsPaid,
-        })
-        .returning();
-
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
@@ -196,11 +182,6 @@ export function registerRoutes(app: Express): Server {
           res.write(`data: ${JSON.stringify({ content })}\n\n`);
         }
       }
-
-      await db
-        .update(aiChats)
-        .set({ response: fullResponse })
-        .where(eq(aiChats.id, chat[0].id));
 
       res.write("data: [DONE]\n\n");
       res.end();
