@@ -7,23 +7,15 @@ import pg from "pg";
 import * as schema from "@db/schema";
 
 if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  console.warn("DATABASE_URL is not set. Database features will be unavailable.");
 }
 
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || '',
 });
 
-// Use different schema based on environment
-const schemaName = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-
-// Create schema if it doesn't exist
-pool.query(`CREATE SCHEMA IF NOT EXISTS ${schemaName}`);
-
-export const db = drizzle(pool, { 
-  schema,
-  // Set the schema for all queries
-  defaultSchema: schemaName 
+pool.on('error', (err) => {
+  console.error('Unexpected database pool error:', err.message);
 });
+
+export const db = drizzle(pool, { schema });

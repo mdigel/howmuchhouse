@@ -144,7 +144,7 @@ function calculateAllScenarios({
   // Check for Errors in Step 7
   allSavingScenariosStats.forEach((scenario) => {
     if ("error" in scenario) {
-      calcuationError.savingsScenario.push({
+      calculationError.savingsScenario.push({
         scenarioDescription: scenario.description,
         message:
           "This saving scenario had an error likely because it's not realistic",

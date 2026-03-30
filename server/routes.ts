@@ -24,15 +24,17 @@ const stripeSecretKey = isProduction
 console.log("Stripe Mode:", isProduction ? "Production" : "Test");
 
 if (!stripeSecretKey) {
-  throw new Error(
-    `Missing Stripe ${isProduction ? "production" : "test"} secret key - Please check Replit Secrets`,
+  console.warn(
+    `Missing Stripe ${isProduction ? "production" : "test"} secret key - Stripe features will be unavailable`,
   );
 }
 
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2024-12-18.acacia",
-  typescript: true,
-});
+const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: "2024-12-18.acacia",
+      typescript: true,
+    })
+  : null;
 
 export function registerRoutes(app: Express): Server {
   console.log("Registering core API routes...");
@@ -216,6 +218,10 @@ export function registerRoutes(app: Express): Server {
     try {
       const origin = `${req.protocol}://${req.get("host")}`;
       console.log("Creating checkout session with origin:", origin);
+
+      if (!stripe) {
+        return res.status(503).json({ error: "Stripe is not configured" });
+      }
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
