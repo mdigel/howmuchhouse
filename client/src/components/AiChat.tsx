@@ -99,17 +99,32 @@ export function AiChat({ calculatorData }: AiChatProps) {
   const { toast } = useToast();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textBufferRef = useRef("");
   const animationFrameId = useRef<number | null>(null);
+  const isUserNearBottomRef = useRef(true);
 
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+  const isNearBottom = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return true;
+    const threshold = 100;
+    return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+  };
+
+  const scrollToBottom = (instant = false) => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: instant ? "instant" : "smooth",
+    });
   };
 
   useEffect(() => {
-    scrollToBottom();
+    if (isUserNearBottomRef.current) {
+      const hasStreamingMessage = messages.some(m => m.isStreaming);
+      scrollToBottom(hasStreamingMessage);
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -288,11 +303,8 @@ export function AiChat({ calculatorData }: AiChatProps) {
         isStreaming: true,
       };
 
-      setMessages(prev => {
-        const newMessages = [...prev, userMessage, assistantMessage];
-        scrollToBottom(); // Scroll immediately after updating messages
-        return newMessages;
-      });
+      isUserNearBottomRef.current = true;
+      setMessages(prev => [...prev, userMessage, assistantMessage]);
       setMessage("");
 
       const messageIndex = messages.length -1;
@@ -481,7 +493,11 @@ export function AiChat({ calculatorData }: AiChatProps) {
   return (
     <div className="AiChat flex flex-col h-[70vh] max-h-[800px] min-h-[600px] md:h-[75vh] bg-white rounded-lg overflow-hidden border border-[#E8E8E8] shadow-lg">
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#d1d1d2] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white hover:[&::-webkit-scrollbar-thumb]:bg-[#b3b3b3]">
+      <div
+        ref={messagesContainerRef}
+        onScroll={() => { isUserNearBottomRef.current = isNearBottom(); }}
+        className="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#d1d1d2] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white hover:[&::-webkit-scrollbar-thumb]:bg-[#b3b3b3]"
+      >
         {!messages.length ? (
           <div className="flex flex-col items-center justify-center h-full max-w-3xl mx-auto">
             <div className="mb-8">

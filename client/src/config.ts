@@ -1,5 +1,6 @@
 
 export const CONFIG = {
+  AI_CHAT_ENABLED: true,
   AI_CHARGE_MODE: true,
   FREE_QUESTIONS: 5,
   PAID_QUESTIONS: 100
