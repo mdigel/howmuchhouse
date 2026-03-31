@@ -1,13 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { setupServer } from '../server/index';
 
 // Setup server once (Vercel may cache this module)
 let serverInitialized = false;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const url = new URL(req.url || '/', 'http://localhost');
+  const isCanaryRequest =
+    url.searchParams.get('__canary') === '1' ||
+    req.headers['x-canary'] === '1';
+
+  if (isCanaryRequest) {
+    return res.status(200).json({
+      ok: true,
+      mode: 'canary',
+      message: 'Vercel function executed before Express import',
+      env: {
+        vercel: process.env.VERCEL ?? null,
+        nodeEnv: process.env.NODE_ENV ?? null,
+      },
+    });
+  }
+
   // Initialize server on first request if needed
   if (!serverInitialized) {
     try {
+      const { setupServer } = await import('../server/index');
       await setupServer(false); // false = don't listen on a port
       serverInitialized = true;
     } catch (error) {
