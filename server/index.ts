@@ -6,7 +6,6 @@ import compression from "compression";
 import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { registerRoutes } from './routes';
-import { setupVite } from './vite';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import seoRoutes from './seo/routes';
@@ -89,6 +88,7 @@ export const setupServer = async (shouldListen: boolean = true): Promise<Server 
     if (!isProduction && !isVercel) {
       // Development mode: Setup Vite (only for local dev)
       console.log('Setting up Vite in development mode...');
+      const { setupVite } = await import('./vite');
       await setupVite(app, server);
     } else {
       // Production mode: Serve static files
