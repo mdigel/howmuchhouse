@@ -1,4 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import {
+  calculateAllScenarios,
+} from "../server/calculatorLogic/Orchestrator";
 
 type JsonBody = Record<string, any>;
 
@@ -97,7 +100,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       (pathname === "/api/calculate" || pathname === "/calculate")
     ) {
       const body = await readRequestBody(req);
-      const { calculateAllScenarios } = await import("../server/calculatorLogic/Orchestrator");
 
       const input = {
         householdIncome: Number(body.householdIncome),
