@@ -36,9 +36,13 @@ async function getStripe() {
 }
 
 export function registerRoutes(app: Express): Server {
-  console.log("Registering core API routes...");
   const httpServer = createServer(app);
+  registerApiRoutes(app);
+  return httpServer;
+}
 
+export function registerApiRoutes(app: Express): void {
+  console.log("Registering core API routes...");
   // API Routes
   // Register route both with and without /api prefix for Vercel compatibility
   const currentRateHandler = async (req: Request, res: Response) => {
@@ -269,6 +273,4 @@ export function registerRoutes(app: Express): Server {
       res.status(500).json({ error: "Failed to save feedback" });
     }
   });
-
-  return httpServer;
 }

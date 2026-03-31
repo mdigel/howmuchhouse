@@ -1,8 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import app, { setupServer } from '../server/app';
+import '../server/config-loader';
+import express from 'express';
+import { registerApiRoutes } from '../server/routes';
 
-// Setup server once (Vercel may cache this module)
-let serverInitialized = false;
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+let routesRegistered = false;
+
+function ensureApiRoutesRegistered() {
+  if (!routesRegistered) {
+    registerApiRoutes(app);
+    routesRegistered = true;
+  }
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const url = new URL(req.url || '/', 'http://localhost');
@@ -15,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({
       ok: true,
       mode: 'canary',
-      message: 'Vercel function executed and loaded shared app module',
+      message: 'Vercel function executed and loaded minimal API entry',
       env: {
         vercel: process.env.VERCEL ?? null,
         nodeEnv: process.env.NODE_ENV ?? null,
@@ -27,17 +39,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({
       ok: true,
       checkpoint,
-      message: 'Shared app module loaded successfully',
+      message: 'Minimal API entry loaded successfully',
     });
   }
 
   if (checkpoint === 'setup-server') {
     try {
-      await setupServer(false);
+      ensureApiRoutesRegistered();
       return res.status(200).json({
         ok: true,
         checkpoint,
-        message: 'setupServer(false) completed successfully',
+        message: 'API routes registered successfully',
       });
     } catch (error) {
       console.error('Checkpoint setup-server failed:', error);
@@ -49,16 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // Initialize server on first request if needed
-  if (!serverInitialized) {
-    try {
-      await setupServer(false); // false = don't listen on a port
-      serverInitialized = true;
-    } catch (error) {
-      console.error('Failed to initialize server:', error);
-      return res.status(500).json({ error: 'Server initialization failed' });
-    }
-  }
+  ensureApiRoutesRegistered();
 
   // Log request details for debugging
   console.log('Vercel handler - URL:', req.url, 'Path:', (req as any).path, 'Method:', req.method);
