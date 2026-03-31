@@ -1,5 +1,4 @@
 // Import modules
-import { forEachChild } from "typescript";
 import { debtCheck, DebtCheckOutput, calculationError } from "./Step 1";
 import { calculateMaxMortgagePayment } from "./Step 2";
 import {
