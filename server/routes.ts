@@ -138,11 +138,19 @@ export function registerApiRoutes(app: Express): void {
   });
 
   app.post("/api/chat", async (req: Request, res: Response) => {
-    const { message, calculatorData, isPaid } = req.body;
+    const { message, calculatorData, isPaid, questionsAsked = 0 } = req.body;
     console.log("Received chat request");
-    const effectiveIsPaid = config.aiChargeMode ? isPaid : true;
+    const freeQuestionLimit = 1;
+    const isWithinFreeQuestionLimit = Number(questionsAsked) < freeQuestionLimit;
+    const effectiveIsPaid = config.aiChargeMode
+      ? Boolean(isPaid) || isWithinFreeQuestionLimit
+      : true;
 
     try {
+      if (!effectiveIsPaid) {
+        return res.status(402).json({ error: "Payment required" });
+      }
+
       if (message.length > 3000) {
         return res.status(400).json({
           error: "Message too long",

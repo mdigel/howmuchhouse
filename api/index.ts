@@ -141,10 +141,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (req.method === "POST" && pathname === "/api/chat") {
       const body = await readRequestBody(req);
-      const { message, calculatorData, isPaid } = body;
+      const { message, calculatorData, isPaid, questionsAsked = 0 } = body;
       const isProduction =
         process.env.NODE_ENV === "production" || process.env.REPLIT_DEPLOYMENT === "1";
-      const effectiveIsPaid = process.env.AI_CHARGE_MODE === "true" ? isPaid : true;
+      const freeQuestionLimit = 1;
+      const isWithinFreeQuestionLimit = Number(questionsAsked) < freeQuestionLimit;
+      const effectiveIsPaid =
+        process.env.AI_CHARGE_MODE === "true"
+          ? Boolean(isPaid) || isWithinFreeQuestionLimit
+          : true;
 
       if (!effectiveIsPaid) {
         return sendJson(res, 402, { error: "Payment required" });
