@@ -1,6 +1,4 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import "../server/config-loader";
-import crypto from "crypto";
 
 type JsonBody = Record<string, any>;
 
@@ -157,6 +155,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
+      const crypto = await import("crypto");
       const sessionId =
         (req.headers["x-session-id"] as string) || crypto.randomUUID();
 
