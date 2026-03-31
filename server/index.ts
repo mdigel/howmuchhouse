@@ -8,7 +8,6 @@ import session from 'express-session';
 import { registerRoutes } from './routes';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import seoRoutes from './seo/routes';
 import { createServer, type Server } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -57,6 +56,13 @@ if (!isProduction) {
   });
 }
 
+let seoRoutesPromise: Promise<typeof import("./seo/routes")> | null = null;
+
+async function getSeoRoutes() {
+  seoRoutesPromise ??= import("./seo/routes");
+  return seoRoutesPromise;
+}
+
 // Setup server with proper middleware order
 export const setupServer = async (shouldListen: boolean = true): Promise<Server | null> => {
   try {
@@ -80,7 +86,10 @@ export const setupServer = async (shouldListen: boolean = true): Promise<Server 
           typeof path === 'string' 
             ? req.path === path 
             : path.test(req.path))) {
-        return seoRoutes(req, res, next);
+        void getSeoRoutes()
+          .then(({ default: seoRoutes }) => seoRoutes(req, res, next))
+          .catch(next);
+        return;
       }
       next();
     });

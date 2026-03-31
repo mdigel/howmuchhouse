@@ -1,9 +1,6 @@
 import { config } from "./config";
-import { createGoogleSheet } from "./services/googleSheets";
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import Stripe from "stripe";
-import OpenAI from "openai";
 import crypto from "crypto";
 import {
   calculateAllScenarios,
@@ -26,12 +23,17 @@ if (!stripeSecretKey) {
   );
 }
 
-const stripe = stripeSecretKey
-  ? new Stripe(stripeSecretKey, {
-      apiVersion: "2024-12-18.acacia",
-      typescript: true,
-    })
-  : null;
+async function getStripe() {
+  if (!stripeSecretKey) {
+    return null;
+  }
+
+  const { default: Stripe } = await import("stripe");
+  return new Stripe(stripeSecretKey, {
+    apiVersion: "2024-12-18.acacia",
+    typescript: true,
+  });
+}
 
 export function registerRoutes(app: Express): Server {
   console.log("Registering core API routes...");
@@ -152,6 +154,7 @@ export function registerRoutes(app: Express): Server {
       res.setHeader("Connection", "keep-alive");
       res.setHeader("X-Session-Id", sessionId);
 
+      const { default: OpenAI } = await import("openai");
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
@@ -200,6 +203,7 @@ export function registerRoutes(app: Express): Server {
       const origin = `${req.protocol}://${req.get("host")}`;
       console.log("Creating checkout session with origin:", origin);
 
+      const stripe = await getStripe();
       if (!stripe) {
         return res.status(503).json({ error: "Stripe is not configured" });
       }
@@ -242,6 +246,7 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/create-google-sheet", async (req: Request, res: Response) => {
     try {
       const { calculatorData } = req.body;
+      const { createGoogleSheet } = await import("./services/googleSheets");
       const sheetUrl = await createGoogleSheet(calculatorData);
       res.json({ url: sheetUrl });
     } catch (error) {
