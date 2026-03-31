@@ -1,10 +1,10 @@
 // Import interfaces from other backend files
-import { calculationError } from "./Step 1";
-import { LoanCalculationResult } from "./Step 3";
-import { NetIncomeAnnualStats } from "./Step 4";
-import { BudgetOutput } from "./Step 5";
-import { ComplexBudgetBreakdown } from "./Step 7";
-import { MortgageAndBudgetStatsPerScenario } from "./Step 8";
+import type { calculationError } from "./Step 1.js";
+import type { LoanCalculationResult } from "./Step 3.js";
+import type { NetIncomeAnnualStats } from "./Step 4.js";
+import type { BudgetOutput } from "./Step 5.js";
+import type { ComplexBudgetBreakdown } from "./Step 7.js";
+import type { MortgageAndBudgetStatsPerScenario } from "./Step 8.js";
 
 // Matt's function output
 interface CalculateAllScenariosOutput {

@@ -1,5 +1,5 @@
-import { BudgetOutput } from './Step 5';
-import { calculateComplexBudgetMortgagePayment } from './Step 6';
+import type { BudgetOutput } from "./Step 5.js";
+import { calculateComplexBudgetMortgagePayment } from "./Step 6.js";
 
 type ComplexBudgetBreakdown = BudgetOutput & {
   savingsPercentage: number; // Adding the savings percentage to match the expected structure

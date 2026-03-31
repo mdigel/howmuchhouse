@@ -1,28 +1,29 @@
 // Import modules
-import { debtCheck, DebtCheckOutput, calculationError } from "./Step 1";
-import { calculateMaxMortgagePayment } from "./Step 2";
+import { debtCheck } from "./Step 1.js";
+import type { DebtCheckOutput, calculationError } from "./Step 1.js";
+import { calculateMaxMortgagePayment } from "./Step 2.js";
 import {
   calculateLoanAmountFromMonthlyPayment,
-  LoanCalculationResult,
-} from "./Step 3";
+} from "./Step 3.js";
+import type { LoanCalculationResult } from "./Step 3.js";
 import {
   calculateNetIncome,
-  NetIncomeAnnualStats,
-  FilingStatus,
-} from "./Step 4";
-import { calculateSimpleMonthlyBudget, BudgetOutput } from "./Step 5";
+} from "./Step 4.js";
+import type { NetIncomeAnnualStats, FilingStatus } from "./Step 4.js";
+import { calculateSimpleMonthlyBudget } from "./Step 5.js";
+import type { BudgetOutput } from "./Step 5.js";
 import {
   calculateComplexBudgetsForSavingsPercentages,
-  ComplexBudgetBreakdown,
-} from "./Step 7";
+} from "./Step 7.js";
+import type { ComplexBudgetBreakdown } from "./Step 7.js";
 import {
   calculateMortgageForEachSavingScenario,
-  MortgageAndBudgetStatsPerScenario,
-} from "./Step 8";
+} from "./Step 8.js";
+import type { MortgageAndBudgetStatsPerScenario } from "./Step 8.js";
 import {
   transformCalculateAllScenariosOutput,
-  CalculatorResults,
-} from "./Step 9";
+} from "./Step 9.js";
+import type { CalculatorResults } from "./Step 9.js";
 
 // Interfaces
 

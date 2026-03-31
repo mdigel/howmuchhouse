@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   calculateAllScenarios,
-} from "../server/calculatorLogic/Orchestrator";
+} from "../server/calculatorLogic/Orchestrator.js";
 
 type JsonBody = Record<string, any>;
 

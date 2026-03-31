@@ -1,9 +1,9 @@
 import {
   calculateLoanAmountFromMonthlyPayment,
-  LoanCalculationResult,
-} from './Step 3';
-import { BudgetOutput } from './Step 5';
-import { ComplexBudgetBreakdown } from './Step 7';
+} from "./Step 3.js";
+import type { LoanCalculationResult } from "./Step 3.js";
+import type { BudgetOutput } from "./Step 5.js";
+import type { ComplexBudgetBreakdown } from "./Step 7.js";
 
 type MortgageAndBudgetStatsPerScenario = {
   description: string;

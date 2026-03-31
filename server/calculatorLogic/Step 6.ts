@@ -1,4 +1,4 @@
-import { BudgetOutput } from './Step 5';
+import type { BudgetOutput } from "./Step 5.js";
 
 type BudgetInput = {
   annualNetIncome: number;
